@@ -1295,6 +1295,21 @@
       }
     }
 
+    function resolveOfficialProgramUrl(progStr) {
+      if (!progStr) return 'https://www.scaler.com/academy/';
+      const s = String(progStr).toLowerCase();
+      if (s.includes('devops') || s.includes('cloud') || s.includes('platform') || s.includes('program 5') || s.includes('p5')) {
+        return 'https://www.scaler.com/devops-course/';
+      } else if (s.includes('agentic') || s.includes('program 4') || s.includes('p4')) {
+        return 'https://www.scaler.com/ai-machine-learning-course/';
+      } else if (s.includes('fde') || s.includes('forward deployed') || s.includes('program 3') || s.includes('p3')) {
+        return 'https://www.scaler.com/ai-forward-deployed-engineer-course/';
+      } else if (s.includes('dsml') || s.includes('data science') || s.includes('program 2') || s.includes('p2')) {
+        return 'https://www.scaler.com/data-science-course/';
+      }
+      return 'https://www.scaler.com/academy/';
+    }
+
     function openModalWithLead(lead) {
       const p = lead.person;
       const prim = lead.primary;
@@ -1364,18 +1379,16 @@
         }
       }
 
-      // Market Intelligence & Catalog Links
+      // Program Official Catalogue & Syllabus Links
       const mkt = prim.market_intelligence || lead.market_intelligence || {};
-      const primCatUrl = prim.catalogue_url || mkt.catalogue_url || 'https://www.scaler.com/academy/';
-      const fallCatUrl = fall.catalogue_url || 'https://www.scaler.com/data-science-course/';
+      const primCatUrl = prim.catalogue_url || resolveOfficialProgramUrl(prim.program || prim.catalog_code);
+      const fallCatUrl = fall.catalogue_url || resolveOfficialProgramUrl(fall.program || fall.catalog_code);
 
       // Set catalogue anchor links
       const elPrimCat = document.getElementById('modal-primary-catalogue');
       if (elPrimCat) elPrimCat.href = primCatUrl;
       const elFallCat = document.getElementById('modal-fallback-catalogue');
       if (elFallCat) elFallCat.href = fallCatUrl;
-      const elTabCat = document.getElementById('modal-tab-catalogue-link');
-      if (elTabCat) elTabCat.href = primCatUrl;
       const elCurrCat = document.getElementById('modal-curriculum-catalogue-link');
       if (elCurrCat) elCurrCat.href = primCatUrl;
 

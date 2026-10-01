@@ -76,7 +76,7 @@ PROGRAM_CATALOG_DATA = {
     },
     'P3_FDE': {
         'program_name': 'AI Forward Deployed Engineer (FDE) Program',
-        'catalogue_url': 'https://www.scaler.com/ai/',
+        'catalogue_url': 'https://www.scaler.com/ai-forward-deployed-engineer-course/',
         'top_hiring_companies': ['Palantir', 'Fractal', 'Tiger Analytics', 'Accenture AI', 'EY Tech', 'KPMG Lighthouse'],
         'curriculum_modules': [
             {
@@ -101,7 +101,7 @@ PROGRAM_CATALOG_DATA = {
     },
     'P4_AIML_AGENTIC': {
         'program_name': 'AI & Machine Learning with Agentic AI Program',
-        'catalogue_url': 'https://www.scaler.com/ai/',
+        'catalogue_url': 'https://www.scaler.com/ai-machine-learning-course/',
         'top_hiring_companies': ['Google DeepMind Ecosystem', 'Microsoft Research', 'NVIDIA', 'Siemens Healthineers', 'Zoho AI'],
         'curriculum_modules': [
             {
@@ -126,7 +126,7 @@ PROGRAM_CATALOG_DATA = {
     },
     'P5_DEVOPS_CLOUD': {
         'program_name': 'DevOps, Cloud & AI Platform Engineering',
-        'catalogue_url': 'https://www.scaler.com/devops/',
+        'catalogue_url': 'https://www.scaler.com/devops-course/',
         'top_hiring_companies': ['Cisco', 'NetApp', 'AWS', 'VMware', 'Red Hat', 'BrowserStack'],
         'curriculum_modules': [
             {

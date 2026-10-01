@@ -2,6 +2,7 @@ import os
 import json
 import re
 from .matrix_engine import get_cohort_stats, normalize_persona, normalize_experience, normalize_program
+from .market_intelligence import get_market_intelligence
 
 # ==============================================================================
 # OFFICIAL SCALER 5-PROGRAM CATALOG DEFINITIONS (from Documentation_Scaler_Updated.pdf)
@@ -829,6 +830,18 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         'commitment_setting': commitment_setting
     }
 
+    # 5. Market Intelligence, Audited Placement Metrics & Curriculum Attachment
+    prim_market = get_market_intelligence(primary.get('program', ''), raw_role, raw_exp, company_type, primary.get('track', ''))
+    fall_market = get_market_intelligence(fallback.get('program', ''), raw_role, raw_exp, company_type, fallback.get('track', ''))
+
+    primary['market_intelligence'] = prim_market
+    primary['catalogue_url'] = prim_market.get('catalogue_url', 'https://www.scaler.com/')
+    primary['curriculum_modules'] = prim_market.get('curriculum_modules', [])
+
+    fallback['market_intelligence'] = fall_market
+    fallback['catalogue_url'] = fall_market.get('catalogue_url', 'https://www.scaler.com/')
+    fallback['curriculum_modules'] = fall_market.get('curriculum_modules', [])
+
     return {
         'person': {
             'name': name,
@@ -849,5 +862,6 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         },
         'primary': primary,
         'fallback': fallback,
-        'sales_script': sales_script
+        'sales_script': sales_script,
+        'market_intelligence': prim_market
     }

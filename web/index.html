@@ -652,14 +652,212 @@
       border-left: 3px solid var(--scaler-blue);
     }
 
-    .rec-why-box b {
+    /* INTELLIGENCE TABS & MARKET MODULES */
+    .intel-nav-tabs {
+      display: flex;
+      gap: var(--space-4);
+      border-bottom: 1px solid var(--color-surface-raised);
+      margin-bottom: var(--space-7);
+      margin-top: var(--space-7);
+    }
+
+    .intel-tab-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-family-stack);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-text-inverse);
+      padding: var(--space-4) var(--space-6);
+      cursor: pointer;
+      position: relative;
+      transition: color var(--motion-duration-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .intel-tab-btn:hover {
       color: var(--color-text-tertiary);
     }
 
+    .intel-tab-btn.active {
+      color: var(--scaler-blue);
+      font-weight: 700;
+      border-bottom-color: var(--scaler-blue);
+    }
+
+    .intel-tab-pane {
+      display: none;
+    }
+
+    .intel-tab-pane.active {
+      display: block;
+    }
 
 
+    /* CURRICULUM MODULE LIST */
+    .curriculum-module-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      margin-bottom: var(--space-7);
+    }
 
-    .modal-footer {
+    .curriculum-module-card {
+      background: var(--color-surface-muted);
+      border: 1px solid var(--color-surface-raised);
+      border-radius: var(--radius-xs);
+      padding: var(--space-5) var(--space-6);
+      box-shadow: var(--shadow-3);
+    }
+
+    .curriculum-phase-title {
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      color: var(--color-text-tertiary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-3);
+    }
+
+    .curriculum-duration-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      border-radius: var(--radius-xs);
+      padding: 1px 8px;
+    }
+
+    .curriculum-topics {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+      line-height: 1.5;
+    }
+
+    .curriculum-deliverable {
+      font-size: 11.5px;
+      color: #15803d;
+      background: #f0fdf4;
+      border-left: 2px solid #22c55e;
+      padding: 4px 8px;
+      border-radius: var(--radius-xs);
+    }
+
+    /* COMPARISON MATRIX TABLE */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-xs);
+      background: var(--color-surface-muted);
+      border: 1px solid var(--color-surface-raised);
+      border-radius: var(--radius-xs);
+      overflow: hidden;
+      margin-bottom: var(--space-7);
+    }
+
+    .comp-table th {
+      background: #f8fafc;
+      padding: var(--space-5) var(--space-6);
+      text-align: left;
+      font-weight: 700;
+      color: var(--color-text-tertiary);
+      border-bottom: 1px solid var(--color-surface-raised);
+    }
+
+    .comp-table td {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid var(--color-surface-raised);
+      vertical-align: top;
+      color: var(--color-text-primary);
+    }
+
+    .comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comp-dim-col {
+      font-weight: 700;
+      color: var(--color-text-tertiary);
+      width: 22%;
+    }
+
+    .comp-inbound-col {
+      color: #64748b;
+      width: 39%;
+      background: #fdfdfe;
+    }
+
+    .comp-scaler-col {
+      color: #0f172a;
+      font-weight: 600;
+      width: 39%;
+      background: #f0fdf4;
+      border-left: 1px solid #dcfce7;
+    }
+
+    .btn-catalogue {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-family-stack);
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      color: var(--scaler-blue);
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-xs);
+      padding: 6px 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all var(--motion-duration-fast);
+    }
+
+    .btn-catalogue:hover {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .company-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #334155;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-xs);
+      padding: 3px 8px;
+    }
+
+    .script-dialogue-block {
+      background: #fafbfc;
+      border: 1px solid var(--color-surface-raised);
+      border-radius: var(--radius-xs);
+      padding: var(--space-5) var(--space-6);
+      margin-bottom: var(--space-5);
+    }
+
+    .script-step-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--scaler-blue);
+      margin-bottom: var(--space-2);
+    }
+
+    .script-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      line-height: var(--font-line-height-base);
+      font-style: italic;
+    }
+
       padding: var(--space-6) 24px;
       border-top: 1px solid var(--color-surface-raised);
       background: var(--color-surface-muted);
@@ -930,8 +1128,13 @@
               <div class="rec-program-name" id="modal-primary-prog">-</div>
               <div class="rec-track-name" id="modal-primary-track">-</div>
 
-              <div class="rec-why-box" id="modal-primary-why" style="margin-bottom:0;">
+              <div class="rec-why-box" id="modal-primary-why">
                 <b>Why This Program:</b> -
+              </div>
+              <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                <a id="modal-primary-catalogue" href="https://www.scaler.com/academy/" target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
+                  View Brochure &amp; Syllabus &rarr;
+                </a>
               </div>
             </div>
           </div>
@@ -948,20 +1151,133 @@
               <div class="rec-program-name" id="modal-fallback-prog">-</div>
               <div class="rec-track-name" id="modal-fallback-track">-</div>
 
-              <div class="rec-why-box" style="border-left-color: var(--accent-amber); margin-bottom:0;" id="modal-fallback-why">
+              <div class="rec-why-box" style="border-left-color: var(--accent-amber);" id="modal-fallback-why">
                 <b>Why Fallback:</b> -
+              </div>
+              <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                <a id="modal-fallback-catalogue" href="https://www.scaler.com/data-science-course/" target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
+                  View Brochure &amp; Syllabus &rarr;
+                </a>
               </div>
             </div>
           </div>
 
         </div>
 
+        <!-- TAB NAVIGATION -->
+        <div class="intel-nav-tabs">
+          <button class="intel-tab-btn active" id="tab-btn-curriculum" onclick="switchIntelTab('curriculum')">
+            <span>&#128218;</span> Complete Curriculum &amp; Modules
+          </button>
+          <button class="intel-tab-btn" id="tab-btn-comparison" onclick="switchIntelTab('comparison')">
+            <span>&#9878;</span> Inbound Masterclass vs Scaler
+          </button>
+          <button class="intel-tab-btn" id="tab-btn-script" onclick="switchIntelTab('script')">
+            <span>&#128222;</span> Counselor Call Script
+          </button>
+        </div>
+
+        <!-- TAB 1: COMPLETE CURRICULUM & MODULES (DEFAULT ACTIVE) -->
+        <div class="intel-tab-pane active" id="tab-pane-curriculum">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);" id="curriculum-prog-title">
+                Curriculum Structure &amp; Production Milestones
+              </div>
+              <div style="font-size:11px; color:var(--color-text-inverse);" id="curriculum-prog-sub">
+                Taught by senior engineering leaders from Google, Meta, Amazon, and Microsoft.
+              </div>
+            </div>
+            <a id="modal-curriculum-catalogue-link" href="https://www.scaler.com/" target="_blank" class="btn-catalogue">
+              Official Program Brochure &amp; Syllabus &rarr;
+            </a>
+          </div>
+
+          <div class="curriculum-module-list" id="curriculum-modules-container">
+            <!-- Populated dynamically by JS -->
+          </div>
+
+          <!-- HIRING PARTNER NETWORK -->
+          <div style="background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:12px; box-shadow:var(--shadow-3); margin-top:12px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--color-text-inverse); margin-bottom:8px;">
+              Top Companies Hiring for this Specialization
+            </div>
+            <div id="mkt-companies-list" style="display:flex; flex-wrap:wrap; gap:6px;">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: INBOUND MASTERCLASS VS SCALER FULL PROGRAM -->
+        <div class="intel-tab-pane" id="tab-pane-comparison">
+          <div style="margin-bottom:12px;">
+            <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);">
+              Inbound Masterclass / Short Course vs Scaler Comprehensive Program
+            </div>
+            <div style="font-size:11px; color:var(--color-text-inverse);">
+              Dimension-by-dimension guide for handling candidates inquiring about short free webinars or self-paced tutorials.
+            </div>
+          </div>
+
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th class="comp-dim-col">Evaluation Dimension</th>
+                <th class="comp-inbound-col">Inbound Masterclass / Short Course</th>
+                <th class="comp-scaler-col">Scaler Comprehensive Program</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-tbody">
+              <!-- Populated dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TAB 3: COUNSELOR CALL SCRIPT -->
+        <div class="intel-tab-pane" id="tab-pane-script">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);">
+                High-Conversion Spoken Dialogue Script
+              </div>
+              <div style="font-size:11px; color:var(--color-text-inverse);">
+                Personalized for this candidate's background, experience level, and touchpoint.
+              </div>
+            </div>
+            <button class="btn-sm" onclick="copyCallScript()" style="font-weight:700;">
+              Copy Full Call Script
+            </button>
+          </div>
+
+          <div class="script-dialogue-block">
+            <div class="script-step-title">1. Opening &amp; Career Milestone Discovery</div>
+            <div class="script-text" id="modal-call-opening">-</div>
+          </div>
+          <div class="script-dialogue-block">
+            <div class="script-step-title">2. Program &amp; Track Leveling Value Pitch</div>
+            <div class="script-text" id="modal-program-pitch">-</div>
+          </div>
+          <div class="script-dialogue-block">
+            <div class="script-step-title">3. Inbound Inquiry Bridge &amp; Rebuttal</div>
+            <div class="script-text" id="modal-inbound-handling">-</div>
+          </div>
+          <div class="script-dialogue-block">
+            <div class="script-step-title">4. Academic Time Commitment (Retention Safeguard)</div>
+            <div class="script-text" id="modal-commitment-setting">-</div>
+          </div>
+        </div>
+
       </div>
 
       <!-- MODAL FOOTER -->
       <div class="modal-footer">
+        <button class="btn-sm" onclick="copyCallScript()" style="font-weight:700; display:flex; align-items:center; gap:5px;">
+          <span>&#128222;</span> Copy Spoken Pitch
+        </button>
         <button class="btn-primary" onclick="closeModal()">Close</button>
       </div>
+
+
 
   </div>
   </div>
@@ -1242,6 +1558,70 @@
         }
       }
 
+      // Market Intelligence & Catalog Links
+      const mkt = prim.market_intelligence || lead.market_intelligence || {};
+      const primCatUrl = prim.catalogue_url || mkt.catalogue_url || 'https://www.scaler.com/academy/';
+      const fallCatUrl = fall.catalogue_url || 'https://www.scaler.com/data-science-course/';
+
+      // Set catalogue anchor links
+      const elPrimCat = document.getElementById('modal-primary-catalogue');
+      if (elPrimCat) elPrimCat.href = primCatUrl;
+      const elFallCat = document.getElementById('modal-fallback-catalogue');
+      if (elFallCat) elFallCat.href = fallCatUrl;
+      const elTabCat = document.getElementById('modal-tab-catalogue-link');
+      if (elTabCat) elTabCat.href = primCatUrl;
+      const elCurrCat = document.getElementById('modal-curriculum-catalogue-link');
+      if (elCurrCat) elCurrCat.href = primCatUrl;
+
+      // Hiring Companies
+      const elCompList = document.getElementById('mkt-companies-list');
+      if (elCompList) {
+        const comps = mkt.top_hiring_companies || ['Amazon', 'Microsoft', 'Google', 'PayPal', 'Razorpay', 'Swiggy', 'Walmart', 'PhonePe'];
+        elCompList.innerHTML = comps.map(c => `<span class="company-pill">${c}</span>`).join('');
+      }
+
+      // Curriculum Modules Tab
+      const elCurrContainer = document.getElementById('curriculum-modules-container');
+      const elCurrTitle = document.getElementById('curriculum-prog-title');
+      if (elCurrTitle) elCurrTitle.innerText = `${prim.catalog_code}: ${prim.program} (${prim.track})`;
+
+      if (elCurrContainer) {
+        const modules = prim.curriculum_modules || mkt.curriculum_modules || [];
+        if (modules.length > 0) {
+          elCurrContainer.innerHTML = modules.map(m => `
+            <div class="curriculum-module-card">
+              <div class="curriculum-phase-title">
+                <span>${m.phase}</span>
+                <span class="curriculum-duration-tag">${m.duration}</span>
+              </div>
+              <div class="curriculum-topics">
+                <b>Core Topics:</b> ${m.topics}
+              </div>
+              <div class="curriculum-deliverable">
+                <b>Production Deliverable / Capstone:</b> ${m.deliverable}
+              </div>
+            </div>
+          `).join('');
+        } else {
+          elCurrContainer.innerHTML = `<div style="padding:15px; color:var(--color-text-inverse);">Curriculum details available in official brochure.</div>`;
+        }
+      }
+
+      // Comparison Matrix Tab
+      const elCompTbody = document.getElementById('comparison-tbody');
+      if (elCompTbody) {
+        const compMatrix = mkt.comparison_matrix || [];
+        if (compMatrix.length > 0) {
+          elCompTbody.innerHTML = compMatrix.map(row => `
+            <tr>
+              <td class="comp-dim-col">${row.dimension}</td>
+              <td class="comp-inbound-col">${row.inbound_course}</td>
+              <td class="comp-scaler-col">${row.scaler_program}</td>
+            </tr>
+          `).join('');
+        }
+      }
+
       // Spoken Sales Dialogue Scripts (if present)
       if (document.getElementById('modal-call-opening')) {
         document.getElementById('modal-call-opening').innerText = s.call_opening || '-';
@@ -1250,8 +1630,28 @@
         document.getElementById('modal-commitment-setting').innerText = s.commitment_setting || '-';
       }
 
+      // Default to curriculum tab when opening
+      switchIntelTab('curriculum');
+
       document.getElementById('lead-modal').classList.add('active');
     }
+
+    function switchIntelTab(tabKey) {
+      const tabs = ['curriculum', 'comparison', 'script'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const pane = document.getElementById(`tab-pane-${t}`);
+        if (btn) {
+          if (t === tabKey) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+        if (pane) {
+          if (t === tabKey) pane.classList.add('active');
+          else pane.classList.remove('active');
+        }
+      });
+    }
+
 
     function renderFactorBars(containerId, bk) {
       const container = document.getElementById(containerId);

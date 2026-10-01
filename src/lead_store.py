@@ -91,7 +91,14 @@ def save_evaluated_lead(eval_res: Dict[str, Any], source: str = "CRM_WEBHOOK") -
         p.get('company_type', ''),
         p.get('previous_org', ''),
         source,
-        json.dumps(eval_res)
+        json.dumps({
+            'lead_id': lead_id,
+            'person': p,
+            'primary': {k: v for k, v in eval_res.get('primary', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
+            'fallback': {k: v for k, v in eval_res.get('fallback', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
+            'sales_script': eval_res.get('sales_script', {}),
+            'touchpoints': eval_res.get('touchpoints', {})
+        })
     ))
     conn.commit()
     conn.close()
@@ -111,6 +118,15 @@ def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_
         phone = re.sub(r'\D', '', str(p.get('phone', '')))
         education = p.get('education', '')
         education_level = p.get('education_level', 'GRAD_UNKNOWN')
+        # Compact JSON to prevent massive database bloat
+        r_clean = {
+            'lead_id': lead_id,
+            'person': p,
+            'primary': {k: v for k, v in r.get('primary', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
+            'fallback': {k: v for k, v in r.get('fallback', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
+            'sales_script': r.get('sales_script', {}),
+            'touchpoints': r.get('touchpoints', {})
+        }
         batch.append((
             lead_id,
             email,
@@ -124,7 +140,7 @@ def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_
             p.get('company_type', ''),
             p.get('previous_org', ''),
             source,
-            json.dumps(r)
+            json.dumps(r_clean)
         ))
         
     cursor.executemany("""

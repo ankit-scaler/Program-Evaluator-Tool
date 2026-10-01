@@ -1098,6 +1098,42 @@
     let activeLeadData = null;
     let currentPage = 1;
     const PAGE_SIZE = 50;
+    let curriculumCatalog = {};
+
+    async function loadCurriculumCatalog() {
+      try {
+        const res = await fetch('/api/curriculum-catalog');
+        const data = await res.json();
+        if (data.status === 'success' && data.catalog) {
+          curriculumCatalog = data.catalog;
+        }
+      } catch (e) {
+        console.warn('Preload curriculum catalog warning:', e);
+      }
+    }
+    loadCurriculumCatalog();
+
+    function resolveCurriculumModules(progName, trackName) {
+      const p = (progName || '').toLowerCase();
+      const t = (trackName || '').toLowerCase();
+
+      if (p.includes('academy') || p.includes('software')) {
+        if (t.includes('beginner') || t.includes('foundation')) return curriculumCatalog['P1_ACADEMY_BEGINNER'] || [];
+        if (t.includes('advanced') || t.includes('system design') || t.includes('architecture') || t.includes('scalability')) return curriculumCatalog['P1_ACADEMY_ADVANCED'] || [];
+        return curriculumCatalog['P1_ACADEMY_INTERMEDIATE'] || [];
+      } else if (p.includes('dsml') || p.includes('data science')) {
+        if (t.includes('beginner') || t.includes('foundation') || t.includes('python')) return curriculumCatalog['P2_DSML_BEGINNER'] || [];
+        return curriculumCatalog['P2_DSML_INTERMEDIATE'] || [];
+      } else if (p.includes('fde') || p.includes('forward deployed')) {
+        return curriculumCatalog['P3_FDE'] || [];
+      } else if (p.includes('agentic') || p.includes('aiml') || p.includes('machine learning')) {
+        if (t.includes('beginner') || t.includes('foundation') || t.includes('math prep')) return curriculumCatalog['P4_AIML_BEGINNER'] || [];
+        return curriculumCatalog['P4_AIML_ADVANCED'] || [];
+      } else if (p.includes('devops') || p.includes('cloud') || p.includes('platform')) {
+        return curriculumCatalog['P5_DEVOPS'] || [];
+      }
+      return [];
+    }
 
     async function handleFileChosen(event) {
       const file = event.target.files[0];
@@ -1114,11 +1150,17 @@
         const data = await res.json();
         if (data.status === 'success' && data.leads && data.leads.length > 0) {
           allLeads = data.leads;
+          if (data.curriculum_catalog) {
+            curriculumCatalog = data.curriculum_catalog;
+          }
           document.getElementById('dropzone-status-title').innerText = `Evaluated: ${file.name}`;
-          document.getElementById('dropzone-status-sub').innerText = `Successfully evaluated ${data.total} leads. Use filters below to inspect.`;
+          const countNotice = (data.total && data.total > data.leads.length)
+            ? `Successfully evaluated all ${data.total} leads (${data.leads.length} loaded in active memory). Use filters below to inspect.`
+            : `Successfully evaluated ${data.total || data.leads.length} leads. Use filters below to inspect.`;
+          document.getElementById('dropzone-status-sub').innerText = countNotice;
           
-          document.getElementById('stat-total').innerText = data.total;
-          document.getElementById('table-total-count').innerText = data.total;
+          document.getElementById('stat-total').innerText = data.total || data.leads.length;
+          document.getElementById('table-total-count').innerText = data.total || data.leads.length;
 
           currentPage = 1;
           applyFilters();
@@ -1354,7 +1396,10 @@
       }
 
       if (elCurrContainer) {
-        const modules = target.curriculum_modules || (target.market_intelligence && target.market_intelligence.curriculum_modules) || [];
+        let modules = target.curriculum_modules || (target.market_intelligence && target.market_intelligence.curriculum_modules) || [];
+        if (!modules || modules.length === 0) {
+          modules = resolveCurriculumModules(target.program, target.track);
+        }
         if (modules.length > 0) {
           elCurrContainer.innerHTML = modules.map(m => {
             const segTag = m.segment ? `<span style="font-size:10.5px; font-weight:700; color:var(--scaler-red); background:#ffe4e6; border:1px solid #fecdd3; border-radius:4px; padding:2px 8px; margin-right:6px; display:inline-block; margin-bottom:4px;">${m.segment}</span>` : '';

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from typing import Optional
 from .batch_processor import process_leads_dataframe
 from .evaluator import evaluate_lead_profile
+from .market_intelligence import get_all_curricula_catalog
 from .lead_store import (
     init_db, save_evaluated_lead, bulk_save_evaluated_leads,
     find_lead_by_query, get_recent_leads
@@ -44,6 +45,15 @@ def health_check():
         "status": "healthy",
         "service": "scaler-program-evaluator",
         "version": "1.0.0"
+    }
+
+
+@app.get("/api/curriculum-catalog")
+async def get_curriculum_catalog_endpoint():
+    """Returns the complete official Scaler curriculum track modules catalog."""
+    return {
+        "status": "success",
+        "catalog": get_all_curricula_catalog()
     }
 
 @app.get("/scaler_logo.png")
@@ -124,20 +134,43 @@ async def upload_csv(file: UploadFile = File(...)):
         
         evaluated_all, CACHED_DF = process_leads_dataframe(df)
         
-        # Persist all leads into SQLite for permanent fast search
-        bulk_save_evaluated_leads(evaluated_all, source=f"CSV: {file.filename}")
+        # Build high-performance compact records (removes 1.2 GB of duplicated module text from row payloads)
+        compact_records = []
+        for r in evaluated_all:
+            c = {
+                'lead_id': r.get('lead_id'),
+                'person': r.get('person'),
+                'primary': {k: v for k, v in r.get('primary', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
+                'fallback': {k: v for k, v in r.get('fallback', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
+                'sales_script': r.get('sales_script'),
+                'touchpoints': r.get('touchpoints')
+            }
+            compact_records.append(c)
         
-        # Memory protection: Cap in-memory UI cache to 25,000
-        CACHED_LEADS = evaluated_all[:25000]
+        # Fast bulk save into SQLite database
+        try:
+            bulk_save_evaluated_leads(compact_records, source=f"CSV: {file.filename}")
+        except Exception as db_err:
+            print(f"Warning during SQLite persistence: {db_err}")
         
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-        CACHED_DF.to_csv(EXPORT_CSV_PATH, index=False)
+        CACHED_LEADS = compact_records
+        
+        try:
+            os.makedirs(OUTPUT_DIR, exist_ok=True)
+            CACHED_DF.to_csv(EXPORT_CSV_PATH, index=False)
+        except Exception as csv_err:
+            print(f"Warning exporting master CSV: {csv_err}")
+        
+        # Return compact leads (capped at 10,000 for instant sub-second browser rendering)
+        ui_leads = compact_records[:10000]
         
         return {
             "status": "success",
             "filename": file.filename,
             "total": len(evaluated_all),
-            "leads": CACHED_LEADS
+            "displayed": len(ui_leads),
+            "leads": ui_leads,
+            "curriculum_catalog": get_all_curricula_catalog()
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to process CSV: {str(e)}")

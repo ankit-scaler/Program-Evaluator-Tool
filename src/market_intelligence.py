@@ -1376,3 +1376,17 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
         'curriculum_modules': p_data.get('curriculum_modules', []),
         'track_label': str(track_name) if track_name else 'Standard Track'
     }
+
+def get_all_curricula_catalog():
+    return {
+        'P1_ACADEMY_BEGINNER': P1_ACADEMY_BEGINNER_MODULES,
+        'P1_ACADEMY_INTERMEDIATE': P1_ACADEMY_INTERMEDIATE_MODULES,
+        'P1_ACADEMY_ADVANCED': P1_ACADEMY_ADVANCED_MODULES,
+        'P2_DSML_BEGINNER': P2_DSML_BEGINNER_MODULES,
+        'P2_DSML_INTERMEDIATE': P2_DSML_INTERMEDIATE_MODULES,
+        'P3_FDE': P3_FDE_MODULES,
+        'P4_AIML_BEGINNER': P4_AIML_BEGINNER_MODULES,
+        'P4_AIML_ADVANCED': P4_AIML_ADVANCED_MODULES,
+        'P5_DEVOPS': P5_DEVOPS_MODULES
+    }
+

@@ -253,6 +253,166 @@
       color: var(--color-text-inverse);
     }
 
+    /* LIVE EVALUATION PROGRESS & 5-STAGE STEPPER */
+    .eval-progress-container {
+      margin-top: 16px;
+      padding: 16px 20px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-xs);
+      display: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      animation: fadeIn 0.25s ease;
+    }
+
+    .eval-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .eval-progress-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eval-pulse-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--scaler-blue);
+      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+      animation: pulseBlue 1.4s infinite;
+      display: inline-block;
+    }
+
+    .eval-pulse-dot.success {
+      background: var(--accent-green);
+      box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7);
+      animation: pulseGreen 1.4s infinite;
+    }
+
+    @keyframes pulseBlue {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 7px rgba(37, 99, 235, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+    }
+
+    @keyframes pulseGreen {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 7px rgba(5, 150, 105, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+    }
+
+    .eval-progress-pct {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--scaler-blue);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .eval-progress-pct.success {
+      color: var(--accent-green);
+    }
+
+    .eval-progress-bar-bg {
+      height: 8px;
+      background: #f1f5f9;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      border: 1px solid #e2e8f0;
+      position: relative;
+    }
+
+    .eval-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #059669 100%);
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+    }
+
+    .eval-stages-stepper {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .eval-stage-item {
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .eval-stage-item.pending {
+      opacity: 0.55;
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    .eval-stage-item.active {
+      opacity: 1;
+      border-color: #93c5fd;
+      background: #eff6ff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .eval-stage-item.completed {
+      opacity: 1;
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .eval-stage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+    }
+
+    .eval-stage-item.active .eval-stage-badge {
+      color: #1d4ed8;
+    }
+
+    .eval-stage-item.completed .eval-stage-badge {
+      color: #15803d;
+    }
+
+    .eval-stage-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+
+    .eval-stage-desc {
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.25;
+    }
+
+    @media (max-width: 900px) {
+      .eval-stages-stepper {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* FILTERS SECTION */
     .filters-card {
       background: var(--color-surface-muted);
@@ -825,6 +985,49 @@
         <div class="dropzone-title" id="dropzone-status-title">Choose or Drag & Drop Leads CSV File</div>
         <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience, Organization, Inbound Program). Evaluates automatically upon upload.</div>
       </div>
+
+      <!-- LIVE EVALUATION PROGRESS & STAGES STEPPER -->
+      <div id="eval-progress-container" class="eval-progress-container">
+        <div class="eval-progress-header">
+          <div class="eval-progress-title">
+            <span id="eval-pulse" class="eval-pulse-dot"></span>
+            <span id="eval-status-label">Evaluating Inbound Leads...</span>
+          </div>
+          <div class="eval-progress-pct" id="eval-progress-pct">0%</div>
+        </div>
+
+        <div class="eval-progress-bar-bg">
+          <div class="eval-progress-fill" id="eval-progress-fill"></div>
+        </div>
+
+        <div class="eval-stages-stepper">
+          <div class="eval-stage-item" id="stage-1">
+            <div class="eval-stage-badge"><span id="stage-icon-1">⏳</span> Stage 1</div>
+            <div class="eval-stage-title">Ingest Schema</div>
+            <div class="eval-stage-desc" id="stage-desc-1">Parsing candidate touchpoints</div>
+          </div>
+          <div class="eval-stage-item" id="stage-2">
+            <div class="eval-stage-badge"><span id="stage-icon-2">⏳</span> Stage 2</div>
+            <div class="eval-stage-title">Prerequisite Gates</div>
+            <div class="eval-stage-desc" id="stage-desc-2">Degree & YOE track leveling</div>
+          </div>
+          <div class="eval-stage-item" id="stage-3">
+            <div class="eval-stage-badge"><span id="stage-icon-3">⏳</span> Stage 3</div>
+            <div class="eval-stage-title">Funnel Matrix</div>
+            <div class="eval-stage-desc" id="stage-desc-3">13,180 empirical retention records</div>
+          </div>
+          <div class="eval-stage-item" id="stage-4">
+            <div class="eval-stage-badge"><span id="stage-icon-4">⏳</span> Stage 4</div>
+            <div class="eval-stage-title">Curriculum Match</div>
+            <div class="eval-stage-desc" id="stage-desc-4">Tailoring syllabus & sales pitch</div>
+          </div>
+          <div class="eval-stage-item" id="stage-5">
+            <div class="eval-stage-badge"><span id="stage-icon-5">⏳</span> Stage 5</div>
+            <div class="eval-stage-title">Live Recommend</div>
+            <div class="eval-stage-desc" id="stage-desc-5">Generating dossiers & live desk</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- FILTERS BAR -->
@@ -1135,6 +1338,49 @@
       return [];
     }
 
+    function setEvalStage(stageNum, state, descOverride) {
+      const el = document.getElementById(`stage-${stageNum}`);
+      const icon = document.getElementById(`stage-icon-${stageNum}`);
+      if (!el) return;
+      el.classList.remove('pending', 'active', 'completed');
+      el.classList.add(state);
+      if (icon) {
+        if (state === 'completed') {
+          icon.innerText = '✅';
+        } else if (state === 'active') {
+          icon.innerText = '⚡';
+        } else {
+          icon.innerText = '⏳';
+        }
+      }
+      if (descOverride) {
+        const descEl = document.getElementById(`stage-desc-${stageNum}`);
+        if (descEl) descEl.innerText = descOverride;
+      }
+    }
+
+    function setEvalProgress(pct, statusText) {
+      const fill = document.getElementById('eval-progress-fill');
+      const pctEl = document.getElementById('eval-progress-pct');
+      const label = document.getElementById('eval-status-label');
+      if (fill) fill.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+      if (pctEl) pctEl.innerText = `${Math.round(pct)}%`;
+      if (statusText && label) label.innerText = statusText;
+    }
+
+    function resetEvaluationStepper() {
+      const container = document.getElementById('eval-progress-container');
+      const pulse = document.getElementById('eval-pulse');
+      const pctEl = document.getElementById('eval-progress-pct');
+      if (container) container.style.display = 'block';
+      if (pulse) pulse.classList.remove('success');
+      if (pctEl) pctEl.classList.remove('success');
+      for (let i = 1; i <= 5; i++) {
+        setEvalStage(i, 'pending');
+      }
+      setEvalProgress(4, 'Reading file & initiating evaluation pipeline...');
+    }
+
     async function handleFileChosen(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1142,36 +1388,100 @@
       const formData = new FormData();
       formData.append('file', file);
 
-      document.getElementById('dropzone-status-title').innerText = `Evaluating ${file.name}...`;
-      document.getElementById('dropzone-status-sub').innerText = 'Running multi-matrix scoring, retention calculations, and touchpoints ingestion...';
+      resetEvaluationStepper();
+      document.getElementById('dropzone-status-title').innerText = `Evaluating: ${file.name}`;
+      document.getElementById('dropzone-status-sub').innerText = 'Processing candidate academic background, multi-matrix retention scores, and curriculum outlines...';
+
+      let currentPct = 6;
+      const startTime = Date.now();
+
+      // Simulated progressive advancement through the 5 real evaluation stages
+      const progressTimer = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000; // seconds
+
+        if (elapsed < 1.2) {
+          currentPct = Math.min(20, 6 + elapsed * 12);
+          setEvalStage(1, 'active', 'Reading CSV records & parsing schema');
+          setEvalProgress(currentPct, `Stage 1: Ingesting schema for ${file.name}...`);
+        } else if (elapsed < 3.5) {
+          setEvalStage(1, 'completed');
+          setEvalStage(2, 'active', 'Applying degree & YOE track gates');
+          currentPct = Math.min(42, 20 + (elapsed - 1.2) * 10);
+          setEvalProgress(currentPct, 'Stage 2: Evaluating academic prerequisites & track leveling...');
+        } else if (elapsed < 7.5) {
+          setEvalStage(1, 'completed');
+          setEvalStage(2, 'completed');
+          setEvalStage(3, 'active', 'Cross-referencing 13,180 empirical retention records');
+          currentPct = Math.min(68, 42 + (elapsed - 3.5) * 6.5);
+          setEvalProgress(currentPct, 'Stage 3: Benchmarking cohort retention & confidence scoring...');
+        } else if (elapsed < 14) {
+          setEvalStage(1, 'completed');
+          setEvalStage(2, 'completed');
+          setEvalStage(3, 'completed');
+          setEvalStage(4, 'active', 'Synthesizing track modules & objection talk-track');
+          currentPct = Math.min(88, 68 + (elapsed - 7.5) * 3);
+          setEvalProgress(currentPct, 'Stage 4: Matching tailored curriculum modules & sales scripts...');
+        } else {
+          setEvalStage(1, 'completed');
+          setEvalStage(2, 'completed');
+          setEvalStage(3, 'completed');
+          setEvalStage(4, 'completed');
+          setEvalStage(5, 'active', 'Committing dossiers to live desk database');
+          currentPct = Math.min(96, 88 + (elapsed - 14) * 0.4);
+          setEvalProgress(currentPct, 'Stage 5: Finalizing candidate evaluation dossiers...');
+        }
+      }, 250);
 
       try {
         const res = await fetch('/api/upload-csv', { method: 'POST', body: formData });
         const data = await res.json();
+        clearInterval(progressTimer);
+
         if (data.status === 'success' && data.leads && data.leads.length > 0) {
           allLeads = data.leads;
           if (data.curriculum_catalog) {
             curriculumCatalog = data.curriculum_catalog;
           }
+
+          // Complete all 5 stages with celebration
+          for (let i = 1; i <= 5; i++) {
+            setEvalStage(i, 'completed');
+          }
+          setEvalProgress(100, `Evaluation Complete: ${(data.total || data.leads.length).toLocaleString()} Leads Successfully Loaded & Ready for Live Recommendation!`);
+          
+          const pulse = document.getElementById('eval-pulse');
+          const pctEl = document.getElementById('eval-progress-pct');
+          if (pulse) pulse.classList.add('success');
+          if (pctEl) pctEl.classList.add('success');
+
           document.getElementById('dropzone-status-title').innerText = `Evaluated: ${file.name}`;
           const countNotice = (data.total && data.total > data.leads.length)
-            ? `Successfully evaluated all ${data.total} leads (${data.leads.length} loaded in active memory). Use filters below to inspect.`
-            : `Successfully evaluated ${data.total || data.leads.length} leads. Use filters below to inspect.`;
+            ? `Successfully loaded ${data.total.toLocaleString()} leads (${data.leads.length.toLocaleString()} active in memory). Live recommendations ready below.`
+            : `Successfully evaluated ${data.total || data.leads.length} leads. Live recommendations ready below.`;
           document.getElementById('dropzone-status-sub').innerText = countNotice;
           
-          document.getElementById('stat-total').innerText = data.total || data.leads.length;
-          document.getElementById('table-total-count').innerText = data.total || data.leads.length;
+          document.getElementById('stat-total').innerText = (data.total || data.leads.length).toLocaleString();
+          document.getElementById('table-total-count').innerText = (data.total || data.leads.length).toLocaleString();
 
           currentPage = 1;
           applyFilters();
 
-          // Auto open modal for first lead
-          activeLeadData = allLeads[0];
-          openModalWithLead(allLeads[0]);
+          // Smoothly pop open first lead recommendation dossier
+          setTimeout(() => {
+            if (allLeads && allLeads.length > 0) {
+              activeLeadData = allLeads[0];
+              openModalWithLead(allLeads[0]);
+            }
+          }, 600);
+
         } else {
+          clearInterval(progressTimer);
+          setEvalProgress(0, 'Upload or evaluation error');
           alert('Upload failed: ' + (data.detail || 'Could not parse leads'));
         }
       } catch (err) {
+        clearInterval(progressTimer);
+        setEvalProgress(0, 'Server error during evaluation');
         console.error(err);
         alert('Server error while evaluating CSV.');
       }

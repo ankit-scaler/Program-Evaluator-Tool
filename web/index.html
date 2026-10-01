@@ -1166,70 +1166,11 @@
 
         </div>
 
-        <!-- SPOKEN SALES CALL SCRIPTS (LINEAR SEQUENTIAL FLOW) -->
-        <div class="scripts-container">
-          <div class="scripts-header">
-            <span>Sales Call Script</span>
-            <button class="btn-sm" onclick="copyCallScript()">Copy Full Call Script</button>
-          </div>
-
-          <div class="scripts-timeline">
-            <!-- STEP 1 -->
-            <div class="script-step-card">
-              <div class="script-step-num">1</div>
-              <div class="script-step-body">
-                <div class="script-step-top">
-                  <span class="script-step-title">Opening & Career Goal Discovery</span>
-                  <span class="script-step-badge badge-blue">Stage 1: Discovery</span>
-                </div>
-                <div class="script-quote-box" id="modal-call-opening">-</div>
-              </div>
-            </div>
-
-            <!-- STEP 2 -->
-            <div class="script-step-card">
-              <div class="script-step-num">2</div>
-              <div class="script-step-body">
-                <div class="script-step-top">
-                  <span class="script-step-title">Recommended Program & Track Value Pitch</span>
-                  <span class="script-step-badge badge-green">Stage 2: Core Value Pitch</span>
-                </div>
-                <div class="script-quote-box" id="modal-program-pitch" style="border-left-color: #059669;">-</div>
-              </div>
-            </div>
-
-            <!-- STEP 3 -->
-            <div class="script-step-card">
-              <div class="script-step-num">3</div>
-              <div class="script-step-body">
-                <div class="script-step-top">
-                  <span class="script-step-title">Course Alignment & Objection Rebuttal</span>
-                  <span class="script-step-badge badge-amber">Stage 3: Handling Objections</span>
-                </div>
-                <div class="script-quote-box" id="modal-inbound-handling" style="border-left-color: #d97706;">-</div>
-              </div>
-            </div>
-
-            <!-- STEP 4 -->
-            <div class="script-step-card step-warning">
-              <div class="script-step-num">4</div>
-              <div class="script-step-body">
-                <div class="script-step-top">
-                  <span class="script-step-title">Pacing & Time Commitment Reality Setting</span>
-                  <span class="script-step-badge badge-rose">Stage 4: Retention Gate (Reduces Refunds)</span>
-                </div>
-                <div class="script-quote-box" id="modal-commitment-setting">-</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <!-- MODAL FOOTER -->
       <div class="modal-footer">
-        <button class="btn-sm" onclick="closeModal()">Close</button>
-        <button class="btn-primary" onclick="copyCallScript()">Copy Call Script</button>
+        <button class="btn-primary" onclick="closeModal()">Close</button>
       </div>
 
   </div>
@@ -1519,11 +1460,13 @@
         }
       }
 
-      // Spoken Sales Dialogue Scripts
-      document.getElementById('modal-call-opening').innerText = s.call_opening || '-';
-      document.getElementById('modal-program-pitch').innerText = s.program_pitch || '-';
-      document.getElementById('modal-inbound-handling').innerText = s.inbound_handling || '-';
-      document.getElementById('modal-commitment-setting').innerText = s.commitment_setting || '-';
+      // Spoken Sales Dialogue Scripts (if present)
+      if (document.getElementById('modal-call-opening')) {
+        document.getElementById('modal-call-opening').innerText = s.call_opening || '-';
+        document.getElementById('modal-program-pitch').innerText = s.program_pitch || '-';
+        document.getElementById('modal-inbound-handling').innerText = s.inbound_handling || '-';
+        document.getElementById('modal-commitment-setting').innerText = s.commitment_setting || '-';
+      }
 
       document.getElementById('lead-modal').classList.add('active');
     }

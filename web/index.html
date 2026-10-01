@@ -1097,44 +1097,42 @@
 
     .strategic-faq-selector {
       display: flex;
-      gap: 14px;
+      gap: var(--space-4);
       align-items: center;
       flex-wrap: wrap;
     }
 
-    .faq-prog-btn {
+    .faq-prog-btn, .filter-tab {
       font-family: var(--font-family-stack);
-      font-size: 18px;
-      font-weight: 800;
-      padding: 13px 28px;
-      border-radius: 10px;
-      border: 2.5px solid #94a3b8;
-      background: #ffffff;
-      color: #0f172a;
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--radius-xs);
+      border: 1px solid var(--color-surface-raised);
+      background: #f8fafc;
+      color: #475569;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      letter-spacing: -0.25px;
-      line-height: 1.25;
+      gap: 6px;
+      transition: all var(--motion-duration-fast);
+      box-shadow: none;
+      line-height: 1.4;
+      text-decoration: none;
     }
 
-    .faq-prog-btn:hover {
+    .faq-prog-btn:hover, .filter-tab:hover {
       background: #eff6ff;
       color: var(--scaler-blue);
-      border-color: #3b82f6;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.20);
+      border-color: #bfdbfe;
     }
 
-    .faq-prog-btn.active {
-      background: #1e3a8a;
+    .faq-prog-btn.active, .filter-tab.active {
+      background: var(--scaler-blue);
       color: #ffffff;
-      border-color: #1e3a8a;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(30, 58, 138, 0.40);
+      border-color: var(--scaler-blue);
+      font-weight: 700;
+      box-shadow: 0 1px 4px rgba(30, 58, 138, 0.25);
     }
 
     .faq-accordion-list {
@@ -1570,10 +1568,10 @@
                 Taught by senior engineering leaders from Google, Meta, Amazon, and Microsoft.
               </div>
             </div>
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-              <button id="btn-curr-primary" class="filter-tab active" onclick="switchCurriculumTab('primary')" style="font-size:15px; font-weight:700; padding:10px 20px; border-radius:8px;">★ Primary Track Modules</button>
-              <button id="btn-curr-fallback" class="filter-tab" onclick="switchCurriculumTab('fallback')" style="font-size:15px; font-weight:700; padding:10px 20px; border-radius:8px;">Fallback Track Modules</button>
-              <a id="modal-curriculum-catalogue-link" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue" style="font-size:13px; padding:9px 16px;">
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button id="btn-curr-primary" class="filter-tab active" onclick="switchCurriculumTab('primary')">★ Primary Track Modules</button>
+              <button id="btn-curr-fallback" class="filter-tab" onclick="switchCurriculumTab('fallback')">Fallback Track Modules</button>
+              <a id="modal-curriculum-catalogue-link" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue">
                 Official Program Brochure &amp; Syllabus &rarr;
               </a>
             </div>

@@ -652,50 +652,6 @@
       border-left: 3px solid var(--scaler-blue);
     }
 
-    /* INTELLIGENCE TABS & MARKET MODULES */
-    .intel-nav-tabs {
-      display: flex;
-      gap: var(--space-4);
-      border-bottom: 1px solid var(--color-surface-raised);
-      margin-bottom: var(--space-7);
-      margin-top: var(--space-7);
-    }
-
-    .intel-tab-btn {
-      background: none;
-      border: none;
-      font-family: var(--font-family-stack);
-      font-size: var(--font-size-xs);
-      font-weight: 600;
-      color: var(--color-text-inverse);
-      padding: var(--space-4) var(--space-6);
-      cursor: pointer;
-      position: relative;
-      transition: color var(--motion-duration-fast);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border-bottom: 2px solid transparent;
-    }
-
-    .intel-tab-btn:hover {
-      color: var(--color-text-tertiary);
-    }
-
-    .intel-tab-btn.active {
-      color: var(--scaler-blue);
-      font-weight: 700;
-      border-bottom-color: var(--scaler-blue);
-    }
-
-    .intel-tab-pane {
-      display: none;
-    }
-
-    .intel-tab-pane.active {
-      display: block;
-    }
-
 
     /* CURRICULUM MODULE LIST */
     .curriculum-module-list {
@@ -749,58 +705,6 @@
       border-radius: var(--radius-xs);
     }
 
-    /* COMPARISON MATRIX TABLE */
-    .comp-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: var(--font-size-xs);
-      background: var(--color-surface-muted);
-      border: 1px solid var(--color-surface-raised);
-      border-radius: var(--radius-xs);
-      overflow: hidden;
-      margin-bottom: var(--space-7);
-    }
-
-    .comp-table th {
-      background: #f8fafc;
-      padding: var(--space-5) var(--space-6);
-      text-align: left;
-      font-weight: 700;
-      color: var(--color-text-tertiary);
-      border-bottom: 1px solid var(--color-surface-raised);
-    }
-
-    .comp-table td {
-      padding: var(--space-5) var(--space-6);
-      border-bottom: 1px solid var(--color-surface-raised);
-      vertical-align: top;
-      color: var(--color-text-primary);
-    }
-
-    .comp-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .comp-dim-col {
-      font-weight: 700;
-      color: var(--color-text-tertiary);
-      width: 22%;
-    }
-
-    .comp-inbound-col {
-      color: #64748b;
-      width: 39%;
-      background: #fdfdfe;
-    }
-
-    .comp-scaler-col {
-      color: #0f172a;
-      font-weight: 600;
-      width: 39%;
-      background: #f0fdf4;
-      border-left: 1px solid #dcfce7;
-    }
-
     .btn-catalogue {
       display: inline-flex;
       align-items: center;
@@ -834,30 +738,7 @@
       padding: 3px 8px;
     }
 
-    .script-dialogue-block {
-      background: #fafbfc;
-      border: 1px solid var(--color-surface-raised);
-      border-radius: var(--radius-xs);
-      padding: var(--space-5) var(--space-6);
-      margin-bottom: var(--space-5);
-    }
-
-    .script-step-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--scaler-blue);
-      margin-bottom: var(--space-2);
-    }
-
-    .script-text {
-      font-size: var(--font-size-xs);
-      color: var(--color-text-tertiary);
-      line-height: var(--font-line-height-base);
-      font-style: italic;
-    }
-
+    .modal-footer {
       padding: var(--space-6) 24px;
       border-top: 1px solid var(--color-surface-raised);
       background: var(--color-surface-muted);
@@ -1164,21 +1045,8 @@
 
         </div>
 
-        <!-- TAB NAVIGATION -->
-        <div class="intel-nav-tabs">
-          <button class="intel-tab-btn active" id="tab-btn-curriculum" onclick="switchIntelTab('curriculum')">
-            <span>&#128218;</span> Complete Curriculum &amp; Modules
-          </button>
-          <button class="intel-tab-btn" id="tab-btn-comparison" onclick="switchIntelTab('comparison')">
-            <span>&#9878;</span> Inbound Masterclass vs Scaler
-          </button>
-          <button class="intel-tab-btn" id="tab-btn-script" onclick="switchIntelTab('script')">
-            <span>&#128222;</span> Counselor Call Script
-          </button>
-        </div>
-
-        <!-- TAB 1: COMPLETE CURRICULUM & MODULES (DEFAULT ACTIVE) -->
-        <div class="intel-tab-pane active" id="tab-pane-curriculum">
+        <!-- COMPLETE CURRICULUM & PRODUCTION MILESTONES -->
+        <div style="margin-top:var(--space-7);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div>
               <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);" id="curriculum-prog-title">
@@ -1208,72 +1076,10 @@
           </div>
         </div>
 
-        <!-- TAB 2: INBOUND MASTERCLASS VS SCALER FULL PROGRAM -->
-        <div class="intel-tab-pane" id="tab-pane-comparison">
-          <div style="margin-bottom:12px;">
-            <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);">
-              Inbound Masterclass / Short Course vs Scaler Comprehensive Program
-            </div>
-            <div style="font-size:11px; color:var(--color-text-inverse);">
-              Dimension-by-dimension guide for handling candidates inquiring about short free webinars or self-paced tutorials.
-            </div>
-          </div>
-
-          <table class="comp-table">
-            <thead>
-              <tr>
-                <th class="comp-dim-col">Evaluation Dimension</th>
-                <th class="comp-inbound-col">Inbound Masterclass / Short Course</th>
-                <th class="comp-scaler-col">Scaler Comprehensive Program</th>
-              </tr>
-            </thead>
-            <tbody id="comparison-tbody">
-              <!-- Populated dynamically by JS -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- TAB 3: COUNSELOR CALL SCRIPT -->
-        <div class="intel-tab-pane" id="tab-pane-script">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <div>
-              <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);">
-                High-Conversion Spoken Dialogue Script
-              </div>
-              <div style="font-size:11px; color:var(--color-text-inverse);">
-                Personalized for this candidate's background, experience level, and touchpoint.
-              </div>
-            </div>
-            <button class="btn-sm" onclick="copyCallScript()" style="font-weight:700;">
-              Copy Full Call Script
-            </button>
-          </div>
-
-          <div class="script-dialogue-block">
-            <div class="script-step-title">1. Opening &amp; Career Milestone Discovery</div>
-            <div class="script-text" id="modal-call-opening">-</div>
-          </div>
-          <div class="script-dialogue-block">
-            <div class="script-step-title">2. Program &amp; Track Leveling Value Pitch</div>
-            <div class="script-text" id="modal-program-pitch">-</div>
-          </div>
-          <div class="script-dialogue-block">
-            <div class="script-step-title">3. Inbound Inquiry Bridge &amp; Rebuttal</div>
-            <div class="script-text" id="modal-inbound-handling">-</div>
-          </div>
-          <div class="script-dialogue-block">
-            <div class="script-step-title">4. Academic Time Commitment (Retention Safeguard)</div>
-            <div class="script-text" id="modal-commitment-setting">-</div>
-          </div>
-        </div>
-
       </div>
 
       <!-- MODAL FOOTER -->
       <div class="modal-footer">
-        <button class="btn-sm" onclick="copyCallScript()" style="font-weight:700; display:flex; align-items:center; gap:5px;">
-          <span>&#128222;</span> Copy Spoken Pitch
-        </button>
         <button class="btn-primary" onclick="closeModal()">Close</button>
       </div>
 
@@ -1607,50 +1413,9 @@
         }
       }
 
-      // Comparison Matrix Tab
-      const elCompTbody = document.getElementById('comparison-tbody');
-      if (elCompTbody) {
-        const compMatrix = mkt.comparison_matrix || [];
-        if (compMatrix.length > 0) {
-          elCompTbody.innerHTML = compMatrix.map(row => `
-            <tr>
-              <td class="comp-dim-col">${row.dimension}</td>
-              <td class="comp-inbound-col">${row.inbound_course}</td>
-              <td class="comp-scaler-col">${row.scaler_program}</td>
-            </tr>
-          `).join('');
-        }
-      }
-
-      // Spoken Sales Dialogue Scripts (if present)
-      if (document.getElementById('modal-call-opening')) {
-        document.getElementById('modal-call-opening').innerText = s.call_opening || '-';
-        document.getElementById('modal-program-pitch').innerText = s.program_pitch || '-';
-        document.getElementById('modal-inbound-handling').innerText = s.inbound_handling || '-';
-        document.getElementById('modal-commitment-setting').innerText = s.commitment_setting || '-';
-      }
-
-      // Default to curriculum tab when opening
-      switchIntelTab('curriculum');
-
       document.getElementById('lead-modal').classList.add('active');
     }
 
-    function switchIntelTab(tabKey) {
-      const tabs = ['curriculum', 'comparison', 'script'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tab-btn-${t}`);
-        const pane = document.getElementById(`tab-pane-${t}`);
-        if (btn) {
-          if (t === tabKey) btn.classList.add('active');
-          else btn.classList.remove('active');
-        }
-        if (pane) {
-          if (t === tabKey) pane.classList.add('active');
-          else pane.classList.remove('active');
-        }
-      });
-    }
 
 
     function renderFactorBars(containerId, bk) {
@@ -1688,19 +1453,6 @@
       if (event.target.id === 'lead-modal') {
         closeModal();
       }
-    }
-
-    function copyCallScript() {
-      if (!activeLeadData) return;
-      const s = activeLeadData.sales_script || {};
-      const p = activeLeadData.person;
-      const text = `SALES CALL SCRIPT: ${p.name} (${p.role})\n\n` +
-        `1. OPENING & DISCOVERY:\n${s.call_opening}\n\n` +
-        `2. PROGRAM & TRACK VALUE PITCH:\n${s.program_pitch}\n\n` +
-        `3. INBOUND HANDLING & REBUTTAL:\n${s.inbound_handling}\n\n` +
-        `4. TIME COMMITMENT SETTING:\n${s.commitment_setting}`;
-      navigator.clipboard.writeText(text);
-      alert('Call script copied to clipboard.');
     }
 
     async function executeCrmLookup() {

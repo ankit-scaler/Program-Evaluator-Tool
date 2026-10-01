@@ -151,35 +151,6 @@ PROGRAM_CATALOG_DATA = {
     }
 }
 
-# Inbound Short Course / Free Masterclass vs Scaler Comprehensive Program Comparison
-COMPARISON_MATRIX = [
-    {
-        'dimension': 'Curriculum Depth & Rigour',
-        'inbound_course': '1–2 hours surface theory / slide walkthrough with toy examples',
-        'scaler_program': '9–18 months comprehensive production engineering with 300+ real problem patterns'
-    },
-    {
-        'dimension': 'Feedback & Code Evaluation',
-        'inbound_course': 'Zero individual feedback; broadcast monologue with no line-by-line code review',
-        'scaler_program': 'Weekly live 1:1 code reviews by senior engineers using production rubrics'
-    },
-    {
-        'dimension': 'Mentorship & Accountability',
-        'inbound_course': 'None (self-paced videos with high drop-off and no personal milestone tracking)',
-        'scaler_program': 'Dedicated 1:1 mentorship from active MAANG/Tier-1 tech leads throughout the program'
-    },
-    {
-        'dimension': 'Portfolio & Project Standard',
-        'inbound_course': 'Basic tutorial clones run locally without tests or deployments',
-        'scaler_program': 'Real distributed microservices, cloud pipelines & scalable apps deployed live on cloud'
-    },
-    {
-        'dimension': 'Career & Industry Network',
-        'inbound_course': 'Self-guided cold applications through public job boards with high ATS drop-off',
-        'scaler_program': 'Direct referral access to 1,200+ partner tech companies with dedicated career counseling'
-    }
-]
-
 def resolve_program_code(prog_val):
     if not prog_val:
         return 'P1_ACADEMY'
@@ -198,8 +169,7 @@ def resolve_program_code(prog_val):
 
 def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
     """
-    Returns official catalogue URLs, curriculum modules, and masterclass comparison matrix
-    WITHOUT any placement metrics.
+    Returns official catalogue URLs and curriculum modules.
     """
     if any(k in str(arg1).upper() for k in ['P1', 'P2', 'P3', 'P4', 'P5', 'ACADEMY', 'DSML', 'DATA SCIENCE', 'DEVOPS', 'FDE', 'AGENTIC', 'PROGRAM']):
         p_code = resolve_program_code(arg1)
@@ -214,6 +184,6 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
         'program_name': p_data['program_name'],
         'catalogue_url': p_data['catalogue_url'],
         'top_hiring_companies': p_data.get('top_hiring_companies', []),
-        'curriculum_modules': p_data.get('curriculum_modules', []),
-        'comparison_matrix': COMPARISON_MATRIX
+        'curriculum_modules': p_data.get('curriculum_modules', [])
     }
+

@@ -345,14 +345,15 @@
     }
 
     .eval-stage-item {
-      padding: 10px 12px;
+      padding: 10px 14px;
       border-radius: 6px;
       border: 1px solid #e2e8f0;
       background: #f8fafc;
       transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
+      justify-content: center;
     }
 
     .eval-stage-item.pending {
@@ -378,11 +379,11 @@
     .eval-stage-badge {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       color: #64748b;
     }
 
@@ -395,15 +396,9 @@
     }
 
     .eval-stage-title {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       color: #0f172a;
-      line-height: 1.25;
-    }
-
-    .eval-stage-desc {
-      font-size: 11px;
-      color: #64748b;
       line-height: 1.25;
     }
 
@@ -1004,27 +999,22 @@
           <div class="eval-stage-item" id="stage-1">
             <div class="eval-stage-badge"><span id="stage-icon-1">⏳</span> Stage 1</div>
             <div class="eval-stage-title">Ingest Schema</div>
-            <div class="eval-stage-desc" id="stage-desc-1">Parsing candidate touchpoints</div>
           </div>
           <div class="eval-stage-item" id="stage-2">
             <div class="eval-stage-badge"><span id="stage-icon-2">⏳</span> Stage 2</div>
             <div class="eval-stage-title">Prerequisite Gates</div>
-            <div class="eval-stage-desc" id="stage-desc-2">Degree & YOE track leveling</div>
           </div>
           <div class="eval-stage-item" id="stage-3">
             <div class="eval-stage-badge"><span id="stage-icon-3">⏳</span> Stage 3</div>
             <div class="eval-stage-title">Funnel Matrix</div>
-            <div class="eval-stage-desc" id="stage-desc-3">13,180 empirical retention records</div>
           </div>
           <div class="eval-stage-item" id="stage-4">
             <div class="eval-stage-badge"><span id="stage-icon-4">⏳</span> Stage 4</div>
             <div class="eval-stage-title">Curriculum Match</div>
-            <div class="eval-stage-desc" id="stage-desc-4">Tailoring syllabus & sales pitch</div>
           </div>
           <div class="eval-stage-item" id="stage-5">
             <div class="eval-stage-badge"><span id="stage-icon-5">⏳</span> Stage 5</div>
             <div class="eval-stage-title">Live Recommend</div>
-            <div class="eval-stage-desc" id="stage-desc-5">Generating dossiers & live desk</div>
           </div>
         </div>
       </div>
@@ -1338,7 +1328,7 @@
       return [];
     }
 
-    function setEvalStage(stageNum, state, descOverride) {
+    function setEvalStage(stageNum, state) {
       const el = document.getElementById(`stage-${stageNum}`);
       const icon = document.getElementById(`stage-icon-${stageNum}`);
       if (!el) return;
@@ -1352,10 +1342,6 @@
         } else {
           icon.innerText = '⏳';
         }
-      }
-      if (descOverride) {
-        const descEl = document.getElementById(`stage-desc-${stageNum}`);
-        if (descEl) descEl.innerText = descOverride;
       }
     }
 
@@ -1401,24 +1387,24 @@
 
         if (elapsed < 1.2) {
           currentPct = Math.min(20, 6 + elapsed * 12);
-          setEvalStage(1, 'active', 'Reading CSV records & parsing schema');
+          setEvalStage(1, 'active');
           setEvalProgress(currentPct, `Stage 1: Ingesting schema for ${file.name}...`);
         } else if (elapsed < 3.5) {
           setEvalStage(1, 'completed');
-          setEvalStage(2, 'active', 'Applying degree & YOE track gates');
+          setEvalStage(2, 'active');
           currentPct = Math.min(42, 20 + (elapsed - 1.2) * 10);
           setEvalProgress(currentPct, 'Stage 2: Evaluating academic prerequisites & track leveling...');
         } else if (elapsed < 7.5) {
           setEvalStage(1, 'completed');
           setEvalStage(2, 'completed');
-          setEvalStage(3, 'active', 'Cross-referencing 13,180 empirical retention records');
+          setEvalStage(3, 'active');
           currentPct = Math.min(68, 42 + (elapsed - 3.5) * 6.5);
           setEvalProgress(currentPct, 'Stage 3: Benchmarking cohort retention & confidence scoring...');
         } else if (elapsed < 14) {
           setEvalStage(1, 'completed');
           setEvalStage(2, 'completed');
           setEvalStage(3, 'completed');
-          setEvalStage(4, 'active', 'Synthesizing track modules & objection talk-track');
+          setEvalStage(4, 'active');
           currentPct = Math.min(88, 68 + (elapsed - 7.5) * 3);
           setEvalProgress(currentPct, 'Stage 4: Matching tailored curriculum modules & sales scripts...');
         } else {
@@ -1426,7 +1412,7 @@
           setEvalStage(2, 'completed');
           setEvalStage(3, 'completed');
           setEvalStage(4, 'completed');
-          setEvalStage(5, 'active', 'Committing dossiers to live desk database');
+          setEvalStage(5, 'active');
           currentPct = Math.min(96, 88 + (elapsed - 14) * 0.4);
           setEvalProgress(currentPct, 'Stage 5: Finalizing candidate evaluation dossiers...');
         }

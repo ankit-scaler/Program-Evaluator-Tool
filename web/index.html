@@ -1448,18 +1448,14 @@
             <div class="strategic-faq-header">
               <div>
                 <div class="strategic-faq-title">
-                  <span>💡 Strategic Career Advisory &amp; Real-World Program Q&amp;A</span>
+                  <span>💡 Strategic Career Advisory: <span id="faq-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
                 </div>
                 <div class="strategic-faq-sub">
-                  Counseling playbook: Grounded real-world answers on career trajectory, compensation benchmarks, interview bars, and curriculum architecture.
+                  Counseling playbook: Grounded real-world answers on career trajectory, compensation benchmarks, interview bars, and curriculum architecture for recommended programs.
                 </div>
               </div>
               <div class="strategic-faq-selector" id="faq-program-selector">
-                <button class="faq-prog-btn" id="faq-btn-P1_ACADEMY" onclick="switchFaqProgram('P1_ACADEMY')">P1: Academy</button>
-                <button class="faq-prog-btn" id="faq-btn-P2_DSML" onclick="switchFaqProgram('P2_DSML')">P2: DSML</button>
-                <button class="faq-prog-btn" id="faq-btn-P3_FDE" onclick="switchFaqProgram('P3_FDE')">P3: FDE</button>
-                <button class="faq-prog-btn" id="faq-btn-P4_AIML" onclick="switchFaqProgram('P4_AIML')">P4: AI/ML &amp; Agents</button>
-                <button class="faq-prog-btn" id="faq-btn-P5_DEVOPS" onclick="switchFaqProgram('P5_DEVOPS')">P5: DevOps &amp; Cloud</button>
+                <!-- Dynamically populated with ONLY the candidate's recommended programs (Primary & Fallback) -->
               </div>
             </div>
 
@@ -1670,18 +1666,49 @@
       return 'P1_ACADEMY';
     }
 
+    function populateRecommendedFaqSelector(lead, activeTab) {
+      const selector = document.getElementById('faq-program-selector');
+      if (!selector) return;
+      if (!lead) {
+        selector.innerHTML = '';
+        return;
+      }
+
+      const prim = lead.primary || {};
+      const fall = lead.fallback || {};
+
+      const primKey = resolveFaqProgramKey(prim.program || prim.catalog_code);
+      const fallKey = resolveFaqProgramKey(fall.program || fall.catalog_code);
+
+      const primName = (prim.program || prim.catalog_code || 'Primary Program').split('(')[0].trim();
+      const fallName = (fall.program || fall.catalog_code || 'Fallback Program').split('(')[0].trim();
+
+      let html = `
+        <button class="faq-prog-btn ${activeTab === 'primary' ? 'active' : ''}" id="faq-pill-primary" onclick="switchCurriculumTab('primary')">
+          ★ Primary: ${primName}
+        </button>
+      `;
+
+      if (fallKey && fallKey !== primKey) {
+        html += `
+          <button class="faq-prog-btn ${activeTab === 'fallback' ? 'active' : ''}" id="faq-pill-fallback" onclick="switchCurriculumTab('fallback')">
+            Fallback: ${fallName}
+          </button>
+        `;
+      }
+
+      selector.innerHTML = html;
+    }
+
     function switchFaqProgram(progKey) {
       if (!PROGRAM_STRATEGIC_FAQS[progKey]) progKey = 'P1_ACADEMY';
       activeFaqProgramKey = progKey;
 
-      // Update selector buttons
-      ['P1_ACADEMY', 'P2_DSML', 'P3_FDE', 'P4_AIML', 'P5_DEVOPS'].forEach(k => {
-        const btn = document.getElementById(`faq-btn-${k}`);
-        if (btn) {
-          if (k === progKey) btn.classList.add('active');
-          else btn.classList.remove('active');
-        }
-      });
+      const progTitleEl = document.getElementById('faq-active-program-name');
+      const progData = PROGRAM_STRATEGIC_FAQS[progKey];
+      if (progTitleEl && progData) {
+        progTitleEl.innerText = progData.name.split(':')[1] ? progData.name.split(':')[1].trim() : progData.name;
+      }
 
       renderStrategicFaqs(progKey);
     }
@@ -2103,9 +2130,10 @@
       const target = which === 'primary' ? currentModalLead.primary : currentModalLead.fallback;
       if (!target) return;
 
-      // Synchronize Strategic FAQ section to target program
+      // Synchronize Strategic FAQ section to target recommended program only
       const faqKey = resolveFaqProgramKey(target.program || target.catalog_code);
       switchFaqProgram(faqKey);
+      populateRecommendedFaqSelector(currentModalLead, which);
 
       const elCurrContainer = document.getElementById('curriculum-modules-container');
       const elCurrTitle = document.getElementById('curriculum-prog-title');

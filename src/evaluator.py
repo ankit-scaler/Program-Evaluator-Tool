@@ -220,8 +220,8 @@ def generate_curriculum_grounded_why(
     is_primary=True, base_rationale="", persona=""
 ):
     """
-    Synthesizes a concise, curriculum-grounded explanation for 'Why This Program'.
-    Covers: career gap analysis, curriculum highlights, and retention evidence.
+    Synthesizes a concise, curriculum-grounded explanation for 'Why This Program' / 'Why Fallback'.
+    Grounds the reason directly in the candidate's current role and experience level.
     """
     p_lower = str(program_name).lower()
     t_lower = str(track_name).lower()
@@ -251,7 +251,12 @@ def generate_curriculum_grounded_why(
     _is_fresher = any(k in role_lower for k in ['fresher', 'student', 'intern', 'college student', 'final year']) or \
                   any(k in str(raw_exp).lower() for k in ['fresher', 'entry', 'no exp']) or \
                   bool(re.search(r'^\s*0(\.0+)?\s*(yr|year|y|exp|month)?s?\s*$', str(raw_exp).lower()))
-    
+
+    _is_qa = any(k in role_lower for k in ['qa', 'test', 'sdet', 'quality'])
+    _is_data = any(k in role_lower for k in ['data', 'analyst', 'analytics', 'bi', 'business intelligence', 'tableau', 'power bi'])
+    _is_sde = any(k in role_lower for k in ['sde', 'software', 'developer', 'frontend', 'backend', 'full stack', 'programmer', 'web developer'])
+    _is_devops = any(k in role_lower for k in ['devops', 'cloud', 'sysadmin', 'system admin', 'infrastructure', 'sre', 'support', 'network', 'it support'])
+
     # Extract top module phases
     module_names = []
     if modules and isinstance(modules, list):
@@ -261,13 +266,29 @@ def generate_curriculum_grounded_why(
                 module_names.append(p)
     module_text = ", ".join(f"<i>{h}</i>" for h in module_names[:3]) if module_names else "core engineering and production milestones"
 
-    # Background context (concise, 1 sentence)
-    if _is_fresher:
-        bg = f"As a <b>{raw_role}</b> entering the tech industry for the first time"
-    elif _is_non_tech:
-        bg = f"As a <b>{raw_role}</b> ({raw_exp}) transitioning into tech with no prior coding background"
+    # Context prefix based on primary vs fallback and candidate role
+    if is_primary:
+        if _is_fresher:
+            bg = f"As a <b>{raw_role}</b> entering the tech industry for the first time"
+        elif _is_non_tech:
+            bg = f"As a <b>{raw_role}</b> ({raw_exp}) transitioning into tech with no prior coding background"
+        else:
+            bg = f"As a <b>{raw_role}</b> with {raw_exp}"
     else:
-        bg = f"As a <b>{raw_role}</b> with {raw_exp}"
+        if _is_fresher:
+            bg = f"As a <b>{raw_role}</b>, as an alternative high-growth pathway"
+        elif _is_non_tech:
+            bg = f"As a <b>{raw_role}</b> ({raw_exp}) seeking an alternative entry track into tech"
+        elif _is_qa:
+            bg = f"As a <b>{raw_role}</b> with {raw_exp} seeking an alternative technical pivot"
+        elif _is_data:
+            bg = f"As a <b>{raw_role}</b> with {raw_exp} expanding your technical scope"
+        elif _is_sde:
+            bg = f"As a <b>{raw_role}</b> with {raw_exp} exploring an alternative specialization"
+        elif _is_devops:
+            bg = f"As a <b>{raw_role}</b> with {raw_exp} expanding your engineering skillset"
+        else:
+            bg = f"As a <b>{raw_role}</b> with {raw_exp}, as an alternative career pathway"
 
     # =========================================================================
     # 1. Scaler Academy (Program 1)
@@ -303,12 +324,24 @@ def generate_curriculum_grounded_why(
                 "<i>Advanced DSA (Divide & Conquer, Trees, Heaps, Graphs, Dynamic Programming)</i>, and <i>Low-Level Object-Oriented Design (LLD)</i>, "
                 "with an elective bridge into <i>Distributed High-Level System Design</i>."
             )
-            career_desc = (
-                f"{bg}, you already know how to code - but most engineers fail product company interviews due to lack of "
-                "systematic algorithmic optimization (time complexity, space trade-offs, edge-case reasoning). "
-                "This Intermediate Track focuses 100% on FAANG interview patterns: sliding window, DP, graph traversal, and OOP design. "
-                "Scaler's live sessions with Google/Meta instructors plus 500+ curated problems compress 12+ months of self-study into a focused sprint."
-            )
+            if _is_qa:
+                career_desc = (
+                    f"{bg}, transitioning into backend SDE allows you to leverage your testing and scripting background while mastering "
+                    "core algorithmic optimization, data structures, and object-oriented low-level design. Scaler's live problem-solving sessions "
+                    "and 1:1 mentorship bridge the exact gap needed to clear Tier-1 software engineer hiring rounds."
+                )
+            elif _is_data or _is_devops:
+                career_desc = (
+                    f"{bg}, strengthening core algorithms, data structures, and system design unlocks backend engineering roles "
+                    "and provides the coding foundation required to transition into senior technical tracks."
+                )
+            else:
+                career_desc = (
+                    f"{bg}, you already know how to code - but most engineers fail product company interviews due to lack of "
+                    "systematic algorithmic optimization (time complexity, space trade-offs, edge-case reasoning). "
+                    "This Intermediate Track focuses 100% on FAANG interview patterns: sliding window, DP, graph traversal, and OOP design. "
+                    "Scaler's live sessions with Google/Meta instructors plus 500+ curated problems compress 12+ months of self-study into a focused sprint."
+                )
             historical_desc = (
                 f"Supported by an empirical <b>{retention_rate}% completion rate</b> across {cohort_size}+ working technical professionals. "
                 "Maximizes interview-readiness within 12 months while respecting full-time working hours."
@@ -346,12 +379,15 @@ def generate_curriculum_grounded_why(
                     "Python with AI coding assistants and supervised machine learning. "
                     "Scaler's structured mentorship, doubt-resolution sessions, and career coaching ensure you build job-ready analytics skills."
                 )
+            elif _is_data:
+                career_desc = (
+                    f"{bg}, you already have reporting exposure; this track solidifies your foundational analytics, Python automation, "
+                    "and product metrics to prepare you for machine learning workflows. Scaler provides capstone projects with real industry datasets."
+                )
             else:
                 career_desc = (
-                    f"{bg}, you likely work with data already but lack the structured toolkit (SQL, Python, statistical modeling) "
-                    "that separates a reporting role from a high-paying Data Scientist position. This Beginner Track bridges that gap "
-                    "from Excel and SQL to Python and ML models. Scaler provides capstone projects with real datasets, "
-                    "1:1 mentorship from data scientists at top companies, and mock case study interview preparation."
+                    f"{bg}, this program bridges the gap from raw technical skills to data-driven business modeling, starting with "
+                    "SQL analytics and progressing through Python and machine learning algorithms. Scaler provides 1:1 mentorship from data scientists at top companies."
                 )
             historical_desc = (
                 f"Proven by a <b>{retention_rate}% completion rate</b> across {cohort_size}+ learners. "
@@ -362,12 +398,22 @@ def generate_curriculum_grounded_why(
                 "Dives directly into <i>Advanced Analytics with Python & Pandas</i>, <i>Statistics & Experimentation for AI (A/B Testing Frameworks)</i>, "
                 "<i>Supervised & Unsupervised Machine Learning</i>, <i>Deep Learning & Neural Networks</i>, and <i>Production MLOps on AWS</i>."
             )
-            career_desc = (
-                f"{bg}, the career ceiling for descriptive reporting is well-documented. The highest-paying data roles "
-                "(ML Engineer, Senior Data Scientist) require predictive modeling, deep learning, and production MLOps. "
-                "This Core ML Track takes you directly into the applied ML pipeline - from feature engineering to model deployment. "
-                "Scaler provides Kaggle-style competitions, mentorship from production ML engineers, and ML-specific interview prep."
-            )
+            if _is_data:
+                career_desc = (
+                    f"{bg}, the career ceiling for descriptive reporting is well-documented. Transitioning from SQL dashboards into "
+                    "predictive modeling, deep learning, and AWS MLOps allows you to command senior Data Scientist and ML Engineer salaries. "
+                    "Scaler provides Kaggle-style competitions, mentorship from production ML engineers, and ML-specific interview prep."
+                )
+            elif _is_sde or _is_qa:
+                career_desc = (
+                    f"{bg}, pivoting into Machine Learning builds upon your programming background by adding statistical experimentation, "
+                    "deep neural networks, and production MLOps deployment on AWS. Scaler connects you directly with practicing ML engineers."
+                )
+            else:
+                career_desc = (
+                    f"{bg}, the highest-paying data roles (ML Engineer, Senior Data Scientist) require predictive modeling, deep learning, and production MLOps. "
+                    "This Core ML Track takes you directly into the applied ML pipeline - from feature engineering to model deployment."
+                )
             historical_desc = (
                 f"Validated by an audited <b>{retention_rate}% completion rate</b> across quantitative cohorts. "
                 "Analysts transitioning through predictive modeling experience rapid career acceleration into senior ML titles."
@@ -385,8 +431,7 @@ def generate_curriculum_grounded_why(
         if _is_fresher or _is_non_tech:
             career_desc = (
                 f"{bg}, the FDE program trains you to deploy enterprise AI solutions end-to-end through project-driven learning. "
-                "It assumes foundational programming competency, which is why it is recommended after completing coding fundamentals. "
-                "FDE roles command a 2.5x compensation premium due to high demand for engineers who can build AI systems and work with clients."
+                "It assumes foundational programming competency, which is why it is recommended as a high-upside follow-on track after coding fundamentals."
             )
         else:
             career_desc = (
@@ -433,12 +478,23 @@ def generate_curriculum_grounded_why(
                 "<i>MLOps on AWS SageMaker</i>, <i>Agentic Design Patterns & LangGraph Multi-Agent Orchestration</i>, "
                 "<i>Advanced Cognitive Architectures (GraphRAG & Multimodal AI)</i>, and <i>PEFT/LoRA Fine-Tuning served via vLLM</i>."
             )
-            career_desc = (
-                f"{bg}, even experienced engineers struggle to keep up with LLM fine-tuning and agentic orchestration. "
-                "This Advanced Track takes you directly into frontier AI: PEFT/LoRA fine-tuning, LangGraph multi-agent orchestration, "
-                "GraphRAG, and production model serving via vLLM. Scaler's instructors are practicing AI engineers, "
-                "and every module includes hands-on deployment on AWS SageMaker - not just Jupyter notebook experiments."
-            )
+            if _is_sde:
+                career_desc = (
+                    f"{bg}, upgrading your backend engineering skills to frontier AI (LangGraph multi-agent systems, GraphRAG, PEFT/LoRA fine-tuning, and vLLM deployment) "
+                    "positions you for high-paying AI Engineer and Applied GenAI roles. Scaler provides hands-on AWS SageMaker infrastructure for live deployments."
+                )
+            elif _is_data:
+                career_desc = (
+                    f"{bg}, expanding from traditional analytics and ML into Agentic AI, GraphRAG, and LLM fine-tuning elevates your profile "
+                    "to frontier AI engineering roles with multi-agent orchestration."
+                )
+            else:
+                career_desc = (
+                    f"{bg}, even experienced engineers struggle to keep up with LLM fine-tuning and agentic orchestration. "
+                    "This Advanced Track takes you directly into frontier AI: PEFT/LoRA fine-tuning, LangGraph multi-agent orchestration, "
+                    "GraphRAG, and production model serving via vLLM. Scaler's instructors are practicing AI engineers, "
+                    "and every module includes hands-on deployment on AWS SageMaker - not just Jupyter notebook experiments."
+                )
             historical_desc = (
                 f"Backed by an empirical <b>{retention_rate}% completion rate</b> across technical cohorts. "
                 "Software developers thrive when immersed directly in modern generative AI architectures and scalable LLMOps."
@@ -454,12 +510,25 @@ def generate_curriculum_grounded_why(
             "<i>DevOps Tools 2 (GitHub Actions CI/CD, ArgoCD GitOps, Ansible)</i>, and <i>AWS 1 & 2 (EKS, VPC, CloudFormation, Terraform IaC)</i>, "
             "with specialized electives in <i>MLOps & AI Observability</i>."
         )
-        if _is_fresher or _is_non_tech:
+        if _is_sde:
             career_desc = (
-                f"{bg}, DevOps & Cloud Engineering is one of the most accessible entry points into tech because it focuses on "
-                "tools and processes rather than competitive algorithmic problem-solving. This program teaches Linux, Docker, Kubernetes, "
-                "and AWS from scratch - skills in massive demand commanding premium salaries. "
-                "Scaler's hands-on curriculum has you building real infrastructure from Day 1."
+                f"{bg}, expanding into Cloud & DevOps complements your development background with Docker, Kubernetes, CI/CD automation, "
+                "and Terraform IaC. Platform and SRE engineers with strong coding roots are among the most sought-after profiles, commanding a 30-50% compensation premium."
+            )
+        elif _is_qa:
+            career_desc = (
+                f"{bg}, moving into DevOps & Cloud Engineering directly capitalizes on your testing and automation foundation, "
+                "transitioning your career into high-impact CI/CD pipelines, container orchestration, and cloud infrastructure management."
+            )
+        elif _is_devops:
+            career_desc = (
+                f"{bg}, modernizing your infrastructure skillset with Kubernetes clustering, Terraform GitOps, and AWS cloud architecture "
+                "elevates you into senior Platform Engineer and SRE roles."
+            )
+        elif _is_fresher or _is_non_tech:
+            career_desc = (
+                f"{bg}, DevOps & Cloud Engineering is an accessible entry point into tech because it focuses on practical tools, automation scripts, "
+                "and cloud infrastructure rather than abstract algorithmic competitions. Scaler teaches Linux, Docker, and AWS step-by-step with hands-on labs."
             )
         else:
             career_desc = (

@@ -319,11 +319,25 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
     is_career_break = any(k in raw_role.lower() for k in ['career break', 'break', 'sabbatical', 'gap', 'gap year', 'returning', 'homemaker', 'restart'])
     is_student = (exp_bracket == 'EXP_0_1') or any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
-    is_non_tech = is_career_break or (edu_level == 'GRAD_NON_CS' and is_student) or (persona in ['NON_TECH', 'Non-Tech / Operations']) or any(k in raw_role.lower() for k in ['non-tech', 'operations', 'sales', 'civil', 'mechanical', 'bpo', 'support', 'customer', 'logistics', 'non coder', 'student', 'learner', 'intern'])
-    is_qa = persona in ['QA_SDET', 'QA / SDET / Testing'] or any(k in raw_role.lower() for k in ['test', 'qa', 'sdet', 'automation'])
-    is_data = persona in ['DATA_ANALYST', 'Data & Analytics'] or any(k in raw_role.lower() for k in ['data', 'analyst', 'analytics', 'bi '])
-    is_systems = persona in ['SYSTEMS_ENG', 'Systems & Embedded Engineering'] or any(k in raw_role.lower() for k in ['system', 'embedded', 'linux', 'hardware'])
-    is_senior = (not is_student) and (
+    is_non_tech = (
+        is_career_break or 
+        (edu_level == 'GRAD_NON_CS' and is_student) or 
+        (persona in ['NON_TECH', 'Non-Tech / Operations']) or 
+        any(k in raw_role.lower() for k in [
+            'hr', 'human resource', 'recruiter', 'talent', 'staffing', 'people partner', 'people ops', 'hrbp',
+            'marketing', 'seo', 'growth', 'content', 'copywriter', 'branding', 'digital marketing',
+            'sales', 'business development', 'bde', 'bda', 'account executive', 'inside sales', 'telecaller',
+            'finance', 'accounting', 'accountant', 'auditor', 'taxation', 'banking', 'insurance',
+            'operations', 'admin', 'administration', 'consultant', 'legal', 'lawyer', 'procurement', 'logistics', 'supply chain',
+            'bpo', 'kpo', 'customer', 'support', 'call center',
+            'mechanical', 'civil', 'chemical', 'electrical', 'biotech',
+            'non-tech', 'non tech', 'non coder', 'non-coder', 'student', 'learner', 'intern', 'fresher'
+        ])
+    )
+    is_qa = (not is_non_tech) and (persona in ['QA_SDET', 'QA / SDET / Testing'] or any(k in raw_role.lower() for k in ['test', 'qa', 'sdet', 'automation']))
+    is_data = (not is_non_tech) and (persona in ['DATA_ANALYST', 'Data & Analytics'] or any(k in raw_role.lower() for k in ['data', 'analyst', 'analytics', 'bi ']))
+    is_systems = (not is_non_tech) and (persona in ['SYSTEMS_ENG', 'Systems & Embedded Engineering'] or any(k in raw_role.lower() for k in ['system', 'embedded', 'linux', 'hardware']))
+    is_senior = (not is_student) and (not is_non_tech) and (
         exp_bracket in ['EXP_5_PLUS', '5-8 years', '8+ years', '5+ yrs (Senior / Lead)'] or 
         any(k in raw_role.lower() for k in ['lead', 'senior', 'manager', 'leadership', 'director', 'founder', 'architect', 'vp'])
     )
@@ -335,52 +349,66 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     # SCENARIO 1: NON-TECH / ZERO-CODE (Strict Catalog Gate)
     # =========================================================================
     if is_non_tech:
-        primary['program'] = 'Software & AI Engineering (Scaler Academy)'
-        primary['catalog_code'] = 'Program 1'
-        primary['track'] = 'Beginner Track (Foundations of Programming & Problem Solving)'
-        primary['fit_tier'] = 'Best Fit (Foundational Bridge)'
-        if is_career_break:
+        # If candidate enquired about DSML, respect their intent: DSML Beginner Track is the #1 natural business transition!
+        if inbound_cat == 'P2_DSML':
+            primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
+            primary['catalog_code'] = 'Program 2'
+            primary['track'] = 'Beginner Track (Data Analytics, Python & Business ML)'
+            primary['fit_tier'] = 'Best Fit (Applied Business Analytics)'
             primary['why'] = (
-                f"For candidates returning to the industry after a career break, Scaler Academy's Beginner Track "
-                "provides a structured, supportive ramp-up covering syntax, modern developer tooling, and algorithmic logic from ground zero."
+                f"With your background as a {raw_role}, Data Science & Analytics offers the smoothest, "
+                "highest-retention path into tech. Rather than wrestling with abstract software architecture, "
+                "this track leverages your business domain experience into People/Business Analytics, SQL dashboards, "
+                "and applied Predictive Machine Learning from ground zero."
             )
-        elif edu_level == 'GRAD_NON_CS':
-            primary['why'] = (
-                f"With a non-computer science degree ({raw_edu}), the Beginner Track ensures you build systematic "
-                "problem-solving and coding foundations before tackling advanced data structures and system design."
-            )
-        else:
-            primary['why'] = (
-                f"As a {raw_role} without professional coding exposure, Scaler Academy's Beginner Track "
-                "starts from ground zero (syntax, logic, loops, conditional branching). "
-                "It builds the prerequisite programming foundation before advancing to algorithms."
-            )
-        primary['guardrail'] = "Strict Negative Filter: Blocked from Intermediate/Advanced tracks to prevent Day 14 pacing dropout."
+            primary['guardrail'] = "Catalog Fit: Non-tech professional routed to DSML Beginner Track to build data fundamentals."
 
-        if inbound_cat in ['P4_AIML_AGENTIC', 'P3_FDE']:
-            fallback['program'] = 'AI & Machine Learning with Agentic AI'
-            fallback['catalog_code'] = 'Program 4'
-            fallback['track'] = 'Beginner Track (Applied AI Foundation with Math Prep)'
-            fallback['fit_tier'] = 'High Risk / Conditional Fallback'
+            fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
+            fallback['catalog_code'] = 'Program 1'
+            fallback['track'] = 'Beginner Track (Foundations of Programming & Problem Solving)'
+            fallback['fit_tier'] = 'Alternative Core Software Path'
             fallback['why'] = (
-                f"You enquired about AI, but Catalog Rule 6 strictly mandates coding aptitude. "
-                "Non-tech learners face a 25.8% drop-off in advanced AI modules unless preceded by intensive programming prep."
-            )
-        elif inbound_cat == 'P2_DSML':
-            fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
-            fallback['catalog_code'] = 'Program 2'
-            fallback['track'] = 'Beginner Track (Data Analytics & Excel/SQL Foundation)'
-            fallback['fit_tier'] = 'Alternative Business Analytics'
-            fallback['why'] = (
-                "If you prefer analyzing business numbers and dashboards over software coding, "
-                "DSML provides an applied analytics entry barrier with lower initial coding intensity."
+                "If you wish to pivot into core application software engineering rather than data analytics, "
+                "Scaler Academy's Beginner Track teaches programming syntax, logic building, and problem solving from scratch."
             )
         else:
-            fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
-            fallback['catalog_code'] = 'Program 2'
-            fallback['track'] = 'Beginner Track (Data Analytics Foundation)'
-            fallback['fit_tier'] = 'Alternative Analytics Path'
-            fallback['why'] = "Provides an alternative route into tech through business intelligence, SQL, and data reporting."
+            primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+            primary['catalog_code'] = 'Program 1'
+            primary['track'] = 'Beginner Track (Foundations of Programming & Problem Solving)'
+            primary['fit_tier'] = 'Best Fit (Foundational Bridge)'
+            if is_career_break:
+                primary['why'] = (
+                    f"For candidates returning to the industry after a career break, Scaler Academy's Beginner Track "
+                    "provides a structured, supportive ramp-up covering syntax, modern developer tooling, and algorithmic logic from ground zero."
+                )
+            elif edu_level == 'GRAD_NON_CS':
+                primary['why'] = (
+                    f"With a non-computer science degree ({raw_edu}), the Beginner Track ensures you build systematic "
+                    "problem-solving and coding foundations before tackling advanced data structures and system design."
+                )
+            else:
+                primary['why'] = (
+                    f"As a {raw_role} without professional coding exposure, Scaler Academy's Beginner Track "
+                    "starts from ground zero (syntax, logic, loops, conditional branching). "
+                    "It builds the prerequisite programming foundation before advancing to algorithms."
+                )
+            primary['guardrail'] = "Strict Negative Filter: Blocked from Intermediate/Advanced tracks to prevent Day 14 pacing dropout."
+
+            if inbound_cat in ['P4_AIML_AGENTIC', 'P3_FDE']:
+                fallback['program'] = 'AI & Machine Learning with Agentic AI'
+                fallback['catalog_code'] = 'Program 4'
+                fallback['track'] = 'Beginner Track (Applied AI Foundation with Math Prep)'
+                fallback['fit_tier'] = 'High Risk / Conditional Fallback'
+                fallback['why'] = (
+                    f"You enquired about AI, but Catalog Rule 6 strictly mandates coding aptitude. "
+                    "Non-tech learners face a 25.8% drop-off in advanced AI modules unless preceded by intensive programming prep."
+                )
+            else:
+                fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                fallback['catalog_code'] = 'Program 2'
+                fallback['track'] = 'Beginner Track (Data Analytics Foundation)'
+                fallback['fit_tier'] = 'Alternative Analytics Path'
+                fallback['why'] = "Provides an alternative route into tech through business intelligence, SQL, and data reporting."
 
     # =========================================================================
     # SCENARIO 2: DATA & ANALYTICS ROLES (Data Analyst, BI, SQL Dev)
@@ -766,17 +794,24 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     )
 
     # 3. Handling Inbound Curiosity / Alternative Course Objection
-    if inbound_prog_raw and inbound_prog_raw.lower() not in primary['program'].lower():
+    inbound_is_same = (
+        (inbound_cat == 'P1_ACADEMY' and 'academy' in primary['program'].lower()) or
+        (inbound_cat == 'P2_DSML' and 'dsml' in primary['program'].lower()) or
+        (inbound_cat == 'P3_FDE' and 'fde' in primary['program'].lower()) or
+        (inbound_cat == 'P4_AIML_AGENTIC' and 'agentic' in primary['program'].lower()) or
+        (inbound_cat == 'P5_DEVOPS_CLOUD' and 'devops' in primary['program'].lower())
+    )
+    if inbound_is_same:
+        inbound_handling = (
+            f"\"Your interest in {primary['program']} is spot on. It directly aligns with your career transition goals, "
+            f"and our {primary['track']} gives you a structured, step-by-step foundation without a steep learning cliff.\""
+        )
+    else:
         inbound_handling = (
             f"\"I also noted your interest in {inbound_prog_raw}. That's an incredible domain, but to be completely honest with you, "
             f"our historical graduation data shows that starting with {primary['program']} gives you a much stronger technical foundation "
             f"({primary['retention_rate']}% completion rate). Once you lock down these engineering fundamentals, transitioning into "
             f"{fallback['program']} becomes vastly easier and faster.\""
-        )
-    else:
-        inbound_handling = (
-            f"\"Your interest in {primary['program']} is spot on. It directly matches your daily experience as a {raw_role}, "
-            "meaning you can immediately apply the concepts from day one without facing a steep learning cliff.\""
         )
 
     # 4. Expectation & Commitment Setting (Retention Safeguard)

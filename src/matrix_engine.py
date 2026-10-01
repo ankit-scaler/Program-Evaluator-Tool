@@ -32,7 +32,16 @@ def canonical_prog_key(prog_str):
 
 def canonical_persona_key(persona_str):
     s = str(persona_str).lower()
-    if any(k in s for k in ['student', 'learner', 'intern', 'fresher', 'non coder', 'non-coder', 'non-tech', 'non tech', 'operations', 'sales', 'civil', 'mechanical', 'bpo', 'customer']):
+    if any(k in s for k in [
+        'hr', 'human resource', 'recruiter', 'talent', 'staffing', 'people partner', 'people ops', 'hrbp',
+        'marketing', 'seo', 'growth', 'content', 'copywriter', 'branding', 'digital marketing',
+        'sales', 'business development', 'bde', 'bda', 'account executive', 'inside sales', 'telecaller',
+        'finance', 'accounting', 'accountant', 'auditor', 'taxation', 'banking', 'insurance',
+        'operations', 'admin', 'administration', 'consultant', 'legal', 'lawyer', 'procurement', 'logistics', 'supply chain',
+        'bpo', 'kpo', 'customer', 'support', 'call center',
+        'mechanical', 'civil', 'chemical', 'electrical', 'biotech',
+        'student', 'learner', 'intern', 'fresher', 'non coder', 'non-coder', 'non-tech', 'non tech'
+    ]):
         return 'NON_TECH'
     elif any(k in s for k in ['test', 'qa', 'sdet', 'automation']):
         return 'QA_SDET'

@@ -4,7 +4,13 @@ import re
 import pandas as pd
 import numpy as np
 
+try:
+    from .matrix_engine import canonical_persona_key, CANONICAL_PERSONA_NAMES
+except ImportError:
+    from matrix_engine import canonical_persona_key, CANONICAL_PERSONA_NAMES
+
 DATA_SOURCE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Data_Source', 'Copy of Refunds Funnel - Raw.csv')
+
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output')
 MATRIX_JSON_PATH = os.path.join(OUTPUT_DIR, 'retention_matrix.json')
 MATRIX_CSV_PATH = os.path.join(OUTPUT_DIR, 'empirical_persona_matrix.csv')
@@ -51,28 +57,12 @@ def parse_work_experience(val):
 
 def parse_canonical_persona(raw_persona, raw_role, raw_exact=''):
     """
-    Consolidates diverse raw columns into 7 canonical Scaler personas.
+    Consolidates diverse raw columns into canonical Scaler personas using the global encyclopedic taxonomy.
     """
-    combined = f"{str(raw_persona)} {str(raw_role)} {str(raw_exact)}".lower()
-    
-    if any(k in combined for k in ['non-tech', 'non tech', 'operations', 'sales', 'mechanical', 'civil', 'bpo', 'customer support', 'teller', 'logistics']):
-        return 'Non-Tech / Career Switcher'
-    elif any(k in combined for k in ['test', 'qa', 'sdet', 'automation', 'manual testing', 'quality analyst']):
-        return 'QA / SDET / Testing'
-    elif any(k in combined for k in ['data scientist', 'data analyst', 'business analyst', 'product analyst', 'bi developer', 'analytics', 'tableau', 'power bi']):
-        return 'Data & Analytics'
-    elif any(k in combined for k in ['devops', 'sre', 'site reliability', 'cloud architect', 'kubernetes', 'infrastructure', 'platform engineer']):
-        return 'DevOps & Cloud Platform'
-    elif any(k in combined for k in ['system engineer', 'embedded', 'hardware', 'firmware', 'systems engineer', 'linux admin', 'network engineer']):
-        return 'Systems & Embedded Engineering'
-    elif any(k in combined for k in ['management', 'manager', 'director', 'lead', 'leadership', 'vp']):
-        return 'Engineering Leadership / Management'
-    elif any(k in combined for k in ['frontend', 'ui/ux', 'web developer', 'react', 'angular']):
-        return 'Frontend Engineering'
-    elif any(k in combined for k in ['backend', 'fullstack', 'full-stack', 'software developer', 'sde', 'swe', 'java developer', 'python developer', 'c++']):
-        return 'Software Engineering (Backend/FullStack)'
-    else:
-        return 'General IT Services / Maintenance'
+    combined = f"{str(raw_persona)} {str(raw_role)} {str(raw_exact)}".strip()
+    key = canonical_persona_key(combined)
+    return CANONICAL_PERSONA_NAMES.get(key, 'Non-Tech / Career Switcher')
+
 
 def parse_canonical_program(prog_val):
     """

@@ -1,7 +1,11 @@
 import os
 import json
 import re
-from .matrix_engine import get_cohort_stats, normalize_persona, normalize_experience, normalize_program
+from .matrix_engine import (
+    get_cohort_stats, normalize_persona, normalize_experience, normalize_program,
+    classify_world_domain, get_canonical_persona_name
+)
+
 from .market_intelligence import get_market_intelligence
 
 # ==============================================================================
@@ -406,9 +410,12 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     
     # Normalized taxonomy & education
     persona = normalize_persona('', raw_role)
+    persona_name = get_canonical_persona_name(persona)
+    role_domain = classify_world_domain(raw_role)
     exp_bracket = normalize_experience(raw_exp)
     edu_level = classify_education(raw_edu)
     inbound_str = str(inbound_prog_raw).lower()
+
     
     # =========================================================================
     # ACADEMIC ELIGIBILITY GATE: BELOW GRADUATION (10th/12th/Diploma)
@@ -472,11 +479,12 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         return {
             'person': {
                 'name': name, 'email': email, 'phone': phone, 'role': raw_role,
+                'role_domain': role_domain,
                 'company_type': company_type, 'previous_org': prev_org, 'previous_org_year': prev_year,
                 'experience': raw_exp, 'enquired_program': inbound_prog_raw,
                 'education': raw_edu, 'education_level': edu_level,
                 'sat_score': raw_sat_score, 'sat_status': raw_sat_status,
-                'normalized_persona': persona, 'normalized_experience': exp_bracket
+                'normalized_persona': persona_name, 'persona_key': persona, 'normalized_experience': exp_bracket
             },
             'primary': prim,
             'fallback': fall,
@@ -500,18 +508,26 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     is_non_tech = (
         is_career_break or 
         (edu_level == 'GRAD_NON_CS' and is_student) or 
-        (persona in ['NON_TECH', 'Non-Tech / Operations']) or 
+        (persona in ['NON_TECH', 'Non-Tech / Operations', 'Non-Tech / Career Switcher']) or 
         any(k in raw_role.lower() for k in [
             'hr', 'human resource', 'recruiter', 'talent', 'staffing', 'people partner', 'people ops', 'hrbp',
             'marketing', 'seo', 'growth', 'content', 'copywriter', 'branding', 'digital marketing',
             'sales', 'business development', 'bde', 'bda', 'account executive', 'inside sales', 'telecaller',
             'finance', 'accounting', 'accountant', 'auditor', 'taxation', 'banking', 'insurance',
-            'operations', 'admin', 'administration', 'consultant', 'legal', 'lawyer', 'procurement', 'logistics', 'supply chain',
+            'operations', 'admin', 'administration', 'consultant', 'legal', 'lawyer', 'advocate', 'procurement', 'logistics', 'supply chain',
             'bpo', 'kpo', 'customer', 'support', 'call center',
             'mechanical', 'civil', 'chemical', 'electrical', 'biotech',
+            'nurse', 'nursing', 'doctor', 'hospital', 'physician', 'dentist', 'pharmacist', 'chemist', 'paramedic', 'physiotherapist',
+            'security guard', 'security officer', 'guard', 'watchman', 'police', 'constable', 'army', 'military', 'defense',
+            'teacher', 'school teacher', 'professor', 'lecturer', 'tutor', 'faculty', 'educator',
+            'chef', 'cook', 'waiter', 'bartender', 'hotel', 'hospitality', 'cabin crew', 'air hostess',
+            'electrician', 'plumber', 'carpenter', 'welder', 'mechanic',
+            'driver', 'chauffeur', 'delivery', 'pilot', 'warehouse',
+            'cashier', 'store associate', 'retail', 'shopkeeper',
             'non-tech', 'non tech', 'non coder', 'non-coder', 'student', 'learner', 'intern', 'fresher'
         ])
     )
+
     is_qa = (not is_non_tech) and (persona in ['QA_SDET', 'QA / SDET / Testing'] or any(k in raw_role.lower() for k in ['test', 'qa', 'sdet', 'automation']))
     is_data = (not is_non_tech) and (persona in ['DATA_ANALYST', 'Data & Analytics'] or any(k in raw_role.lower() for k in ['data', 'analyst', 'analytics', 'bi ']))
     is_systems = (not is_non_tech) and (persona in ['SYSTEMS_ENG', 'Systems & Embedded Engineering'] or any(k in raw_role.lower() for k in ['system', 'embedded', 'linux', 'hardware']))
@@ -1040,6 +1056,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             'email': email,
             'phone': phone,
             'role': raw_role,
+            'role_domain': role_domain,
             'company_type': company_type,
             'previous_org': prev_org,
             'previous_org_year': prev_year,
@@ -1049,9 +1066,11 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             'education_level': edu_level,
             'sat_score': raw_sat_score,
             'sat_status': raw_sat_status,
-            'normalized_persona': persona,
+            'normalized_persona': persona_name,
+            'persona_key': persona,
             'normalized_experience': exp_bracket
         },
+
         'primary': primary,
         'fallback': fallback,
         'sales_script': sales_script,

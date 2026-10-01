@@ -1368,12 +1368,26 @@
 
         <select id="filter-persona" class="filter-select" onchange="applyFilters()">
           <option value="ALL">All Role Personas</option>
-          <option value="Non-Tech">Non-Tech / Operations</option>
-          <option value="QA">QA / Testing</option>
+          <option value="Non-Tech">Non-Tech / Career Switcher</option>
+          <option value="Healthcare">Healthcare & Medical</option>
+          <option value="Security">Security & Protective</option>
+          <option value="Education">Education & Teaching</option>
+          <option value="Hospitality">Hospitality & Food Services</option>
+          <option value="Trades">Trades & Construction</option>
+          <option value="Logistics">Logistics & Transportation</option>
+          <option value="Retail">Retail & Customer Service</option>
+          <option value="HR">HR & People Operations</option>
+          <option value="Sales">Sales & Marketing</option>
+          <option value="Finance">Finance & Accounting</option>
+          <option value="Legal">Legal & Public Administration</option>
+          <option value="Traditional Engineering">Traditional Engineering (Non-CS)</option>
+          <option value="QA">QA / SDET / Testing</option>
           <option value="Data">Data & Analytics</option>
+          <option value="DevOps">DevOps & Cloud Platform</option>
           <option value="Systems">Systems & Embedded</option>
           <option value="Software">Software Engineering</option>
         </select>
+
 
         <select id="filter-retention" class="filter-select" onchange="applyFilters()">
           <option value="ALL">All Retention Levels</option>
@@ -2344,11 +2358,16 @@
 
         // Persona filter
         if (persona !== 'ALL') {
-          if (!p.normalized_persona.toLowerCase().includes(persona.toLowerCase()) &&
-              !p.role.toLowerCase().includes(persona.toLowerCase())) {
+          const persNorm = (p.normalized_persona || '').toLowerCase().replace(/_/g, '-');
+          const persKey = (p.persona_key || '').toLowerCase().replace(/_/g, '-');
+          const persDomain = (p.role_domain || '').toLowerCase().replace(/_/g, '-');
+          const roleStr = (p.role || '').toLowerCase();
+          const target = persona.toLowerCase().replace(/_/g, '-');
+          if (!persNorm.includes(target) && !persKey.includes(target) && !persDomain.includes(target) && !roleStr.includes(target)) {
             return false;
           }
         }
+
 
         // Retention filter
         if (ret !== 'ALL') {
@@ -2422,9 +2441,11 @@
             <b>${p.name}</b><br>
             <span style="font-size:11px; color:var(--text-muted);">${p.email}</span>
             ${p.education_level === 'BELOW_GRAD' ? '<br><span style="display:inline-block; font-size:9.5px; font-weight:700; color:#dc2626; background:#fee2e2; border:1px solid #fecaca; padding:1px 5px; border-radius:3px; margin-top:2px;">Ineligible (Below Grad)</span>' : ''}
+          <td>
+            <b>${p.role}</b>
+            ${p.role_domain ? `<br><span style="display:inline-block; font-size:9.5px; font-weight:600; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:1px 5px; border-radius:3px; margin-top:2px;">${p.role_domain}</span>` : ''}
           </td>
-          <td>${p.role}</td>
-          <td>${p.previous_org}</td>
+
           <td>${p.experience}</td>
           <td>
             <div style="font-size:11.5px; font-weight:600; color:var(--text-heading); max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${tp.event_name || ''}">
@@ -2597,7 +2618,8 @@
       document.getElementById('modal-id').innerText = lead.lead_id;
 
       // Profile strip
-      document.getElementById('modal-role').innerText = p.role;
+      document.getElementById('modal-role').innerHTML = `${p.role}${p.role_domain ? ` <span style="font-size:10px; font-weight:600; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:1px 6px; border-radius:3px; margin-left:4px;">${p.role_domain}</span>` : ''}`;
+
       document.getElementById('modal-org').innerText = p.previous_org;
       document.getElementById('modal-exp').innerText = p.experience;
       document.getElementById('modal-edu').innerText = p.education || 'Graduated / Degree';

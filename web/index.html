@@ -1183,7 +1183,6 @@
                   <div class="rec-badge-pill pill-primary">Primary Recommendation</div>
                   <div id="modal-primary-confidence" style="font-size:11px; font-weight:700; color:#15803d; background:#dcfce7; border:1px solid #bbf7d0; border-radius:4px; padding:2px 8px;">High Confidence (85%)</div>
                 </div>
-                <div id="modal-primary-duration" style="font-size:11px; font-weight:700; color:#0369a1; background:#e0f2fe; border:1px solid #7dd3fc; border-radius:4px; padding:2px 8px;">Duration: -</div>
               </div>
               <div class="rec-program-name" id="modal-primary-prog">-</div>
               <div class="rec-track-name" id="modal-primary-track">-</div>
@@ -1200,42 +1199,6 @@
                 <div class="stat-num-box" style="background:#f0fdf4; border-color:#bbf7d0;">
                   <div class="stat-number" style="color:#15803d; font-size:15px; font-weight:800;" id="modal-primary-sat">-</div>
                   <div class="stat-subtext" style="color:#166534; font-weight:700;">Diagnostic SAT Score</div>
-                </div>
-              </div>
-
-              <!-- STATISTICAL VISUALIZATIONS & CHARTS -->
-              <div class="stat-graphs-section">
-                <!-- 1. RETENTION VS REFUND DISTRIBUTION BAR -->
-                <div class="graph-block">
-                  <div class="graph-header-line">
-                    <span class="graph-title-label">Cohort Retention vs Refund Risk</span>
-                    <span class="graph-benchmark-badge" id="modal-primary-benchmark-label">Target: 80%</span>
-                  </div>
-                  <div class="retention-meter-track">
-                    <div id="modal-primary-meter-ret" class="meter-bar-fill ret-fill" style="width: 78%;">
-                      <span id="modal-primary-meter-ret-label">78%</span>
-                    </div>
-                    <div id="modal-primary-meter-ref" class="meter-bar-fill ref-fill" style="width: 22%;">
-                      <span id="modal-primary-meter-ref-label">22%</span>
-                    </div>
-                    <div class="meter-target-line" title="80% Scaler High-Retention Target"></div>
-                  </div>
-                  <div class="meter-legend-row">
-                    <span class="legend-item"><span class="legend-dot dot-green"></span> Retained Learners</span>
-                    <span class="legend-item"><span class="legend-dot dot-red"></span> Cohort Drop / Refund</span>
-                    <span class="legend-item" style="color:#0369a1;"><span class="legend-dot dot-blue"></span> Benchmark (80%)</span>
-                  </div>
-                </div>
-
-                <!-- 2. EMPIRICAL CONFIDENCE BREAKDOWN 4-PILLAR MINI BARS -->
-                <div class="graph-block" style="margin-top: 10px;">
-                  <div class="graph-header-line">
-                    <span class="graph-title-label">Confidence & Fit Decomposition</span>
-                    <span style="font-size: 10px; font-weight: 700; color: var(--text-muted);" id="modal-primary-factor-total">Total: 85%</span>
-                  </div>
-                  <div class="factor-bars-grid" id="modal-primary-factors">
-                    <!-- Dynamic factor bars populated via JS -->
-                  </div>
                 </div>
               </div>
 
@@ -1257,7 +1220,6 @@
                   <div class="rec-badge-pill pill-fallback">Fallback / Next Program</div>
                   <div id="modal-fallback-confidence" style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:4px; padding:2px 8px;">Mid Confidence (65%)</div>
                 </div>
-                <div id="modal-fallback-duration" style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:4px; padding:2px 8px;">Duration: -</div>
               </div>
               <div class="rec-program-name" id="modal-fallback-prog">-</div>
               <div class="rec-track-name" id="modal-fallback-track">-</div>
@@ -1274,42 +1236,6 @@
                 <div class="stat-num-box" style="background:#f8fafc; border-color:#e2e8f0;">
                   <div class="stat-number" style="color:#475569; font-size:14px; font-weight:700;" id="modal-fallback-sat">Required</div>
                   <div class="stat-subtext" style="color:#64748b;">Diagnostic Gate</div>
-                </div>
-              </div>
-
-              <!-- STATISTICAL VISUALIZATIONS & CHARTS -->
-              <div class="stat-graphs-section">
-                <!-- 1. RETENTION VS REFUND DISTRIBUTION BAR -->
-                <div class="graph-block">
-                  <div class="graph-header-line">
-                    <span class="graph-title-label">Cohort Retention vs Refund Risk</span>
-                    <span class="graph-benchmark-badge" id="modal-fallback-benchmark-label">Target: 80%</span>
-                  </div>
-                  <div class="retention-meter-track">
-                    <div id="modal-fallback-meter-ret" class="meter-bar-fill ret-fill" style="width: 75%;">
-                      <span id="modal-fallback-meter-ret-label">75%</span>
-                    </div>
-                    <div id="modal-fallback-meter-ref" class="meter-bar-fill ref-fill" style="width: 25%;">
-                      <span id="modal-fallback-meter-ref-label">25%</span>
-                    </div>
-                    <div class="meter-target-line" title="80% Scaler High-Retention Target"></div>
-                  </div>
-                  <div class="meter-legend-row">
-                    <span class="legend-item"><span class="legend-dot dot-green"></span> Retained Learners</span>
-                    <span class="legend-item"><span class="legend-dot dot-red"></span> Cohort Drop / Refund</span>
-                    <span class="legend-item" style="color:#0369a1;"><span class="legend-dot dot-blue"></span> Benchmark (80%)</span>
-                  </div>
-                </div>
-
-                <!-- 2. EMPIRICAL CONFIDENCE BREAKDOWN 4-PILLAR MINI BARS -->
-                <div class="graph-block" style="margin-top: 10px;">
-                  <div class="graph-header-line">
-                    <span class="graph-title-label">Confidence & Fit Decomposition</span>
-                    <span style="font-size: 10px; font-weight: 700; color: var(--text-muted);" id="modal-fallback-factor-total">Total: 65%</span>
-                  </div>
-                  <div class="factor-bars-grid" id="modal-fallback-factors">
-                    <!-- Dynamic factor bars populated via JS -->
-                  </div>
                 </div>
               </div>
 
@@ -1635,7 +1561,6 @@
       const primTitle = prim.catalog_code ? `${prim.catalog_code}: ${prim.program}` : prim.program;
       document.getElementById('modal-primary-prog').innerText = primTitle;
       document.getElementById('modal-primary-track').innerText = `Track: ${prim.track}`;
-      document.getElementById('modal-primary-duration').innerText = `Duration: ${prim.duration || '12 Months'}`;
       document.getElementById('modal-primary-retention').innerText = prim.retention_rate + '%';
       document.getElementById('modal-primary-refund').innerText = prim.refund_rate + '%';
       const satScoreText = tp.sat_score || tp.sat_status || 'SAT Pending';
@@ -1643,7 +1568,7 @@
       document.getElementById('modal-primary-why').innerHTML = `<b>Why This Program:</b> ${prim.why}`;
       document.getElementById('modal-primary-guardrail').innerText = `Leveling Rule: ${prim.guardrail}`;
 
-      // Primary Confidence Badge & Factor Bars
+      // Primary Confidence Badge
       const primConfTier = prim.confidence_tier || 'Mid';
       const primConfScore = prim.confidence_score !== undefined ? prim.confidence_score : 75;
       const elPrimConf = document.getElementById('modal-primary-confidence');
@@ -1659,40 +1584,10 @@
         }
       }
 
-      // 1. Primary Retention Meter Graph
-      const primRet = Math.min(100, Math.max(0, prim.retention_rate || 0));
-      const primRef = Math.min(100, Math.max(0, prim.refund_rate || (100 - primRet)));
-      const elPrimMeterRet = document.getElementById('modal-primary-meter-ret');
-      const elPrimMeterRef = document.getElementById('modal-primary-meter-ref');
-      if (elPrimMeterRet) {
-        elPrimMeterRet.style.width = `${primRet}%`;
-        const lbl = document.getElementById('modal-primary-meter-ret-label');
-        if (lbl) lbl.innerText = primRet >= 12 ? `${primRet}%` : '';
-      }
-      if (elPrimMeterRef) {
-        elPrimMeterRef.style.width = `${primRef}%`;
-        const lbl = document.getElementById('modal-primary-meter-ref-label');
-        if (lbl) lbl.innerText = primRef >= 12 ? `${primRef}%` : '';
-      }
-
-      // 2. Primary Confidence Breakdown Bars
-      const primBk = prim.confidence_breakdown || {
-        cohort_pts: prim.cohort_size >= 30 ? 35 : (prim.cohort_size >= 10 ? 25 : 12),
-        cohort_max: 35, cohort_desc: `Cohort N=${prim.cohort_size}`,
-        ret_pts: prim.retention_rate >= 80 ? 25 : (prim.retention_rate >= 75 ? 18 : 10),
-        ret_max: 25, ret_desc: `Retention ${prim.retention_rate}%`,
-        intent_pts: 25, intent_max: 25, intent_desc: 'Inbound Match',
-        apt_pts: 15, apt_max: 15, apt_desc: 'Academic Foundation'
-      };
-      const elPrimFactorTotal = document.getElementById('modal-primary-factor-total');
-      if (elPrimFactorTotal) elPrimFactorTotal.innerText = `Score: ${primConfScore}%`;
-      renderFactorBars('modal-primary-factors', primBk);
-
       // Fallback
       const fallTitle = fall.catalog_code ? `${fall.catalog_code}: ${fall.program}` : fall.program;
       document.getElementById('modal-fallback-prog').innerText = fallTitle;
       document.getElementById('modal-fallback-track').innerText = `Track: ${fall.track}`;
-      document.getElementById('modal-fallback-duration').innerText = `Duration: ${fall.duration || '12 Months'}`;
       document.getElementById('modal-fallback-retention').innerText = fall.retention_rate + '%';
       document.getElementById('modal-fallback-refund').innerText = fall.refund_rate + '%';
       document.getElementById('modal-fallback-sat').innerText = satScoreText.includes('Passed') ? 'Qualified' : (satScoreText.includes('Attempted') ? 'Pending' : 'Required');
@@ -1713,35 +1608,6 @@
           elFallConf.style.color = '#b91c1c'; elFallConf.style.background = '#fee2e2'; elFallConf.style.borderColor = '#fca5a5';
         }
       }
-
-      // 3. Fallback Retention Meter Graph
-      const fallRet = Math.min(100, Math.max(0, fall.retention_rate || 0));
-      const fallRef = Math.min(100, Math.max(0, fall.refund_rate || (100 - fallRet)));
-      const elFallMeterRet = document.getElementById('modal-fallback-meter-ret');
-      const elFallMeterRef = document.getElementById('modal-fallback-meter-ref');
-      if (elFallMeterRet) {
-        elFallMeterRet.style.width = `${fallRet}%`;
-        const lbl = document.getElementById('modal-fallback-meter-ret-label');
-        if (lbl) lbl.innerText = fallRet >= 12 ? `${fallRet}%` : '';
-      }
-      if (elFallMeterRef) {
-        elFallMeterRef.style.width = `${fallRef}%`;
-        const lbl = document.getElementById('modal-fallback-meter-ref-label');
-        if (lbl) lbl.innerText = fallRef >= 12 ? `${fallRef}%` : '';
-      }
-
-      // 4. Fallback Confidence Breakdown Bars
-      const fallBk = fall.confidence_breakdown || {
-        cohort_pts: fall.cohort_size >= 30 ? 35 : (fall.cohort_size >= 10 ? 25 : 12),
-        cohort_max: 35, cohort_desc: `Cohort N=${fall.cohort_size}`,
-        ret_pts: fall.retention_rate >= 80 ? 25 : (fall.retention_rate >= 75 ? 18 : 10),
-        ret_max: 25, ret_desc: `Retention ${fall.retention_rate}%`,
-        intent_pts: 15, intent_max: 25, intent_desc: 'Alternative Alignment',
-        apt_pts: 10, apt_max: 15, apt_desc: 'Prerequisite Check'
-      };
-      const elFallFactorTotal = document.getElementById('modal-fallback-factor-total');
-      if (elFallFactorTotal) elFallFactorTotal.innerText = `Score: ${fallConfScore}%`;
-      renderFactorBars('modal-fallback-factors', fallBk);
 
       // Spoken Sales Dialogue Scripts
       document.getElementById('modal-call-opening').innerText = s.call_opening || '-';

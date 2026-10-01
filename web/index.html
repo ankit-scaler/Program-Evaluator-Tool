@@ -1056,9 +1056,13 @@
                 Taught by senior engineering leaders from Google, Meta, Amazon, and Microsoft.
               </div>
             </div>
-            <a id="modal-curriculum-catalogue-link" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue">
-              Official Program Brochure &amp; Syllabus &rarr;
-            </a>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button id="btn-curr-primary" class="filter-tab active" onclick="switchCurriculumTab('primary')" style="font-size:11px; padding:4px 10px;">Primary Track Modules</button>
+              <button id="btn-curr-fallback" class="filter-tab" onclick="switchCurriculumTab('fallback')" style="font-size:11px; padding:4px 10px;">Fallback Track Modules</button>
+              <a id="modal-curriculum-catalogue-link" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue">
+                Official Program Brochure &amp; Syllabus &rarr;
+              </a>
+            </div>
           </div>
 
           <div class="curriculum-module-list" id="curriculum-modules-container">
@@ -1310,7 +1314,85 @@
       return 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291';
     }
 
+    let currentModalLead = null;
+    let currentCurriculumTab = 'primary';
+
+    function switchCurriculumTab(which) {
+      currentCurriculumTab = which;
+      const btnPrim = document.getElementById('btn-curr-primary');
+      const btnFall = document.getElementById('btn-curr-fallback');
+      if (btnPrim && btnFall) {
+        if (which === 'primary') {
+          btnPrim.classList.add('active');
+          btnFall.classList.remove('active');
+        } else {
+          btnFall.classList.add('active');
+          btnPrim.classList.remove('active');
+        }
+      }
+
+      if (!currentModalLead) return;
+      const target = which === 'primary' ? currentModalLead.primary : currentModalLead.fallback;
+      if (!target) return;
+
+      const elCurrContainer = document.getElementById('curriculum-modules-container');
+      const elCurrTitle = document.getElementById('curriculum-prog-title');
+      const elCurrSub = document.getElementById('curriculum-prog-sub');
+      const elCurrCat = document.getElementById('modal-curriculum-catalogue-link');
+
+      const catUrl = target.catalogue_url || resolveOfficialProgramUrl(target.program || target.catalog_code);
+      if (elCurrCat) elCurrCat.href = catUrl;
+
+      if (elCurrTitle) {
+        const catPrefix = target.catalog_code ? `${target.catalog_code}: ` : '';
+        elCurrTitle.innerText = `${catPrefix}${target.program} — ${target.track}`;
+      }
+      if (elCurrSub) {
+        elCurrSub.innerText = which === 'primary' 
+          ? `Primary Recommendation Track Outline & Deep Dive (Learner Tailored)`
+          : `Alternative / Fallback Recommendation Track Outline & Deep Dive`;
+      }
+
+      if (elCurrContainer) {
+        const modules = target.curriculum_modules || (target.market_intelligence && target.market_intelligence.curriculum_modules) || [];
+        if (modules.length > 0) {
+          elCurrContainer.innerHTML = modules.map(m => {
+            const segTag = m.segment ? `<span style="font-size:10.5px; font-weight:700; color:var(--scaler-red); background:#ffe4e6; border:1px solid #fecdd3; border-radius:4px; padding:2px 8px; margin-right:6px; display:inline-block; margin-bottom:4px;">${m.segment}</span>` : '';
+            
+            let typeStyle = 'background:#e0e7ff; color:#3730a3; border:1px solid #c7d2fe;';
+            if (m.type === 'Specialisation') {
+              typeStyle = 'background:#fae8ff; color:#86198f; border:1px solid #f5d0fe;';
+            } else if (m.type === 'Elective') {
+              typeStyle = 'background:#fef3c7; color:#92400e; border:1px solid #fde68a;';
+            }
+            const typeTag = m.type ? `<span style="font-size:10.5px; font-weight:700; ${typeStyle} border-radius:4px; padding:2px 8px; margin-right:6px; display:inline-block; margin-bottom:4px;">${m.type}</span>` : '';
+
+            return `
+              <div class="curriculum-module-card">
+                <div class="curriculum-phase-title">
+                  <div style="display:flex; flex-wrap:wrap; align-items:center; gap:4px;">
+                    ${segTag}${typeTag}
+                    <span style="font-weight:700; color:var(--color-text-tertiary);">${m.phase}</span>
+                  </div>
+                  <span class="curriculum-duration-tag">${m.duration}</span>
+                </div>
+                <div class="curriculum-topics" style="margin-top:6px;">
+                  <b>Core Topics &amp; Deep Dive:</b> ${m.topics}
+                </div>
+                <div class="curriculum-deliverable">
+                  <b>Production Deliverable / Capstone:</b> ${m.deliverable}
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          elCurrContainer.innerHTML = `<div style="padding:15px; color:var(--color-text-inverse);">Curriculum details available in official brochure.</div>`;
+        }
+      }
+    }
+
     function openModalWithLead(lead) {
+      currentModalLead = lead;
       const p = lead.person;
       const prim = lead.primary;
       const fall = lead.fallback;
@@ -1399,32 +1481,8 @@
         elCompList.innerHTML = comps.map(c => `<span class="company-pill">${c}</span>`).join('');
       }
 
-      // Curriculum Modules Tab
-      const elCurrContainer = document.getElementById('curriculum-modules-container');
-      const elCurrTitle = document.getElementById('curriculum-prog-title');
-      if (elCurrTitle) elCurrTitle.innerText = `${prim.catalog_code}: ${prim.program} (${prim.track})`;
-
-      if (elCurrContainer) {
-        const modules = prim.curriculum_modules || mkt.curriculum_modules || [];
-        if (modules.length > 0) {
-          elCurrContainer.innerHTML = modules.map(m => `
-            <div class="curriculum-module-card">
-              <div class="curriculum-phase-title">
-                <span>${m.phase}</span>
-                <span class="curriculum-duration-tag">${m.duration}</span>
-              </div>
-              <div class="curriculum-topics">
-                <b>Core Topics:</b> ${m.topics}
-              </div>
-              <div class="curriculum-deliverable">
-                <b>Production Deliverable / Capstone:</b> ${m.deliverable}
-              </div>
-            </div>
-          `).join('');
-        } else {
-          elCurrContainer.innerHTML = `<div style="padding:15px; color:var(--color-text-inverse);">Curriculum details available in official brochure.</div>`;
-        }
-      }
+      // Render Curriculum for Recommended Track
+      switchCurriculumTab('primary');
 
       document.getElementById('lead-modal').classList.add('active');
     }

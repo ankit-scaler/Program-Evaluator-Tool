@@ -278,7 +278,9 @@ def canonical_persona_key(persona_str):
         has_explicit_tech = any(t in s for t in [
             'software engineer', 'software developer', 'backend developer', 'frontend developer',
             'full stack', 'fullstack', 'data analyst', 'data scientist', 'devops engineer',
-            'cloud engineer', 'qa engineer', 'sdet', 'systems engineer', 'programmer', 'sde', 'swe'
+            'cloud engineer', 'qa engineer', 'sdet', 'systems engineer', 'programmer', 'sde', 'swe',
+            'ml engineer', 'machine learning', 'ai engineer', 'cyber security', 'security engineer',
+            'security analyst', 'network engineer', 'cloud architect', 'devops', 'sre'
         ])
         if not has_explicit_tech:
             return 'NON_TECH'
@@ -290,20 +292,33 @@ def canonical_persona_key(persona_str):
     if any(k in s for k in ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance']):
         return 'QA_SDET'
 
-    # Data Science & Analytics
-    if any(k in s for k in ['data scientist', 'data analyst', 'data engineer', 'analytics', 'bi ', 'business intelligence', 'power bi', 'tableau', 'machine learning', 'ai engineer']):
+    # Data Science & Machine Learning / Analytics
+    if any(k in s for k in [
+        'data scientist', 'data analyst', 'data engineer', 'analytics', 'bi ', 'business intelligence',
+        'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'nlp',
+        'computer vision', 'deep learning', 'applied scientist', 'analytics engineer'
+    ]):
         return 'DATA_ANALYST'
 
-    # DevOps & Cloud Platform
-    if any(k in s for k in ['devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer', 'terraform', 'sysadmin', 'system administrator']):
+    # DevOps, Cloud, Security & Infrastructure Platform
+    if any(k in s for k in [
+        'devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer',
+        'terraform', 'sysadmin', 'system administrator', 'security', 'cyber security', 'infosec',
+        'soc analyst', 'penetration test', 'network engineer', 'cloud architect', 'systems engineer',
+        'site reliability', 'it infrastructure'
+    ]):
         return 'DEVOPS_CLOUD'
 
     # Systems & Embedded Engineering
-    if any(k in s for k in ['embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel']) or ('system' in s and 'support' not in s and 'admin' not in s):
+    if any(k in s for k in ['embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver']):
         return 'SYSTEMS_ENG'
 
-    # Engineering Leadership / Management
-    if any(k in s for k in ['management', 'manager', 'leadership', 'director', 'founder', 'vp', 'architect', 'head of', 'cto']) or ('lead' in s and 'sdet' not in s and 'generation' not in s):
+    # Technical Engineering Leadership
+    if any(k in s for k in [
+        'engineering manager', 'tech lead', 'technical lead', 'software manager', 'development manager',
+        'technical architect', 'solutions architect', 'enterprise architect', 'cto', 'vp of engineering',
+        'director of engineering', 'chief technology officer'
+    ]):
         return 'LEADERSHIP'
 
     # Frontend Engineering

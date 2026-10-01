@@ -720,46 +720,50 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         inbound_cat = 'P1_ACADEMY'
 
     is_career_break = any(k in raw_role.lower() for k in ['career break', 'break', 'sabbatical', 'gap', 'gap year', 'returning', 'homemaker', 'restart'])
-    is_student = (exp_bracket == 'EXP_0_1') or any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
+    is_student = (exp_bracket == 'EXP_0_1') or any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college student', 'final year'])
+    
     is_non_tech = (
         is_career_break or 
-        (edu_level == 'GRAD_NON_CS' and is_student) or 
-        (persona in ['NON_TECH', 'Non-Tech / Operations', 'Non-Tech / Career Switcher']) or 
+        (persona in ['NON_TECH', 'Non-Tech / Operations', 'Non-Tech / Career Switcher'])
+    )
+
+    # Technical Persona Flags (Strictly for candidates who are NOT non-tech)
+    is_devops_infra = (not is_non_tech) and (
+        persona in ['DEVOPS_CLOUD', 'DevOps & Cloud Platform', 'SYSTEMS_ENG', 'Systems & Embedded Engineering'] or
         any(k in raw_role.lower() for k in [
-            'hr', 'human resource', 'recruiter', 'talent', 'staffing', 'people partner', 'people ops', 'hrbp',
-            'marketing', 'seo', 'growth', 'content', 'copywriter', 'branding', 'digital marketing',
-            'sales', 'business development', 'bde', 'bda', 'account executive', 'inside sales', 'telecaller',
-            'finance', 'accounting', 'accountant', 'auditor', 'taxation', 'banking', 'insurance',
-            'operations', 'admin', 'administration', 'consultant', 'legal', 'lawyer', 'advocate', 'procurement', 'logistics', 'supply chain',
-            'bpo', 'kpo', 'customer', 'support', 'call center',
-            'mechanical', 'civil', 'chemical', 'electrical', 'biotech',
-            'nurse', 'nursing', 'doctor', 'hospital', 'physician', 'dentist', 'pharmacist', 'chemist', 'paramedic', 'physiotherapist',
-            'security guard', 'security officer', 'guard', 'watchman', 'police', 'constable', 'army', 'military', 'defense',
-            'teacher', 'school teacher', 'professor', 'lecturer', 'tutor', 'faculty', 'educator',
-            'chef', 'cook', 'waiter', 'bartender', 'hotel', 'hospitality', 'cabin crew', 'air hostess',
-            'electrician', 'plumber', 'carpenter', 'welder', 'mechanic',
-            'driver', 'chauffeur', 'delivery', 'pilot', 'warehouse',
-            'cashier', 'store associate', 'retail', 'shopkeeper',
-            'non-tech', 'non tech', 'non coder', 'non-coder', 'student', 'learner', 'intern', 'fresher'
+            'devops', 'cloud', 'sre', 'platform', 'infrastructure', 'sysadmin', 'system admin',
+            'systems engineer', 'security', 'cyber security', 'infosec', 'soc analyst',
+            'penetration test', 'network engineer', 'embedded', 'firmware', 'hardware'
         ])
     )
 
-    is_qa = (not is_non_tech) and (persona in ['QA_SDET', 'QA / SDET / Testing'] or any(k in raw_role.lower() for k in ['test', 'qa', 'sdet', 'automation']))
-    is_data = (not is_non_tech) and (persona in ['DATA_ANALYST', 'Data & Analytics'] or any(k in raw_role.lower() for k in ['data', 'analyst', 'analytics', 'bi ']))
-    is_systems = (not is_non_tech) and (persona in ['SYSTEMS_ENG', 'Systems & Embedded Engineering'] or any(k in raw_role.lower() for k in ['system', 'embedded', 'linux', 'hardware']))
+    is_data = (not is_non_tech) and (not is_devops_infra) and (
+        persona in ['DATA_ANALYST', 'Data & Analytics'] or
+        any(k in raw_role.lower() for k in [
+            'data', 'analyst', 'analytics', 'bi ', 'tableau', 'power bi', 'sql developer',
+            'machine learning', 'ml engineer', 'mle', 'ai engineer', 'nlp', 'computer vision',
+            'deep learning', 'applied scientist', 'analytics engineer'
+        ])
+    )
+
+    is_qa = (not is_non_tech) and (not is_devops_infra) and (not is_data) and (
+        persona in ['QA_SDET', 'QA / SDET / Testing'] or
+        any(k in raw_role.lower() for k in ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance'])
+    )
+
     is_senior = (not is_student) and (not is_non_tech) and (
         exp_bracket in ['EXP_5_PLUS', '5-8 years', '8+ years', '5+ yrs (Senior / Lead)'] or 
-        any(k in raw_role.lower() for k in ['lead', 'senior', 'manager', 'leadership', 'director', 'founder', 'architect', 'vp'])
+        any(k in raw_role.lower() for k in ['lead', 'senior', 'tech lead', 'architect', 'principal', 'staff', 'engineering manager', 'cto', 'director'])
     )
 
     primary = {}
     fallback = {}
 
     # =========================================================================
-    # SCENARIO 1: NON-TECH / ZERO-CODE (Strict Catalog Gate)
+    # SCENARIO 1: NON-TECH / ZERO-CODE (Strict Catalog Gate - ONLY Beginner Tracks!)
     # =========================================================================
     if is_non_tech:
-        # If candidate enquired about DSML, respect their intent: DSML Beginner Track is the #1 natural business transition!
+        # Non-tech candidates MUST ONLY be routed to Beginner Foundation tracks regardless of years of experience
         if inbound_cat == 'P2_DSML':
             primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
             primary['catalog_code'] = 'Program 2'
@@ -804,76 +808,133 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 )
             primary['guardrail'] = "Strict Negative Filter: Blocked from Intermediate/Advanced tracks to prevent Day 14 pacing dropout."
 
-            if inbound_cat in ['P4_AIML_AGENTIC', 'P3_FDE']:
-                fallback['program'] = 'AI & Machine Learning with Agentic AI'
-                fallback['catalog_code'] = 'Program 4'
-                fallback['track'] = 'Beginner Track (AI & Machine Learning Foundations)'
-                fallback['fit_tier'] = 'High Risk / Conditional Fallback'
-                fallback['why'] = (
-                    f"You enquired about AI, but Catalog Rule 6 strictly mandates coding aptitude. "
-                    "Non-tech learners face a 25.8% drop-off in advanced AI modules unless preceded by intensive programming prep."
-                )
-            else:
-                fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
-                fallback['catalog_code'] = 'Program 2'
-                fallback['track'] = 'Beginner Track (Data Analytics Foundation)'
-                fallback['fit_tier'] = 'Alternative Analytics Path'
-                fallback['why'] = "Provides an alternative route into tech through business intelligence, SQL, and data reporting."
-
-    # =========================================================================
-    # SCENARIO 2: DATA & ANALYTICS ROLES (Data Analyst, BI, SQL Dev)
-    # =========================================================================
-    elif is_data:
-        if inbound_cat == 'P4_AIML_AGENTIC':
-            primary['program'] = 'AI & Machine Learning with Agentic AI'
-            primary['catalog_code'] = 'Program 4'
-            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
-            primary['fit_tier'] = 'Best Fit (Advanced AI Modeling)'
-            primary['why'] = (
-                f"Your background as a {raw_role} gives you data intuition. Program 4 elevates you into "
-                "deep learning, neural networks, PyTorch, and building multi-agent autonomous AI systems."
-            )
-            primary['guardrail'] = "Catalog Tie-Breaker: Routed to Program 4 due to explicit intent to build/deploy AI models."
-            
             fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
             fallback['catalog_code'] = 'Program 2'
-            fallback['track'] = 'Core Analytics & Predictive Modeling Track'
-            fallback['fit_tier'] = 'Alternative Analytics Specialization'
-            fallback['why'] = "A safer, high-retention path focusing on predictive analytics, statistical hypothesis testing, and business ML."
-        elif inbound_cat == 'P1_ACADEMY':
-            primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
-            primary['catalog_code'] = 'Program 2'
-            primary['track'] = 'Core Analytics & Machine Learning Track'
-            primary['fit_tier'] = 'Best Fit (Domain Native)'
-            primary['why'] = (
-                f"Your background as a {raw_role} directly leverages SQL and business data into predictive machine learning."
-            )
-            primary['guardrail'] = "Catalog Rule: Native fit in Program 2; Academy offered as bridge for software pivot."
+            fallback['track'] = 'Beginner Track (Data Analytics Foundation)'
+            fallback['fit_tier'] = 'Alternative Analytics Path'
+            fallback['why'] = "Provides an alternative route into tech through business intelligence, SQL, and data reporting."
 
-            fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
-            fallback['catalog_code'] = 'Program 1'
-            fallback['track'] = 'Data Engineering & Backend Systems Track'
-            fallback['fit_tier'] = 'Inbound Software Career Pivot'
-            fallback['why'] = (
-                "Since you enquired about Academy, this track bridges your SQL foundation into large-scale Data Engineering, "
-                "distributed pipelines (Spark/Kafka), and backend API architecture."
+    # =========================================================================
+    # SCENARIO 2: DEVOPS, CLOUD, SYSTEMS, INFRASTRUCTURE & SECURITY
+    # =========================================================================
+    elif is_devops_infra:
+        if is_senior:
+            track_level = 'Site Reliability Engineering (SRE), Kubernetes & Cloud Architecture Track'
+            fit_tier = 'Best Fit (Senior Cloud & Infrastructure Leadership)'
+            why_text = (
+                f"With {raw_exp} as a {raw_role}, your infrastructure instincts are mature. "
+                "This track focuses on advanced Kubernetes clustering, multi-cloud Terraform GitOps, "
+                "chaos engineering, and enterprise platform security to lead SRE and Cloud Platform teams."
             )
+            fallback_prog = 'Software & AI Engineering (Scaler Academy)'
+            fallback_code = 'Program 1'
+            fallback_track = 'Advanced Track (High-Level System Design & Scalability)'
+            fallback_tier = 'Alternative Distributed Systems Architecture Track'
+            fallback_why = "For senior infrastructure leads who want deep mastery of distributed microservices and database sharding."
+        elif is_student:
+            track_level = 'Cloud Infrastructure & Linux Systems Foundations Track'
+            fit_tier = 'Best Fit (Cloud Foundations & Linux Administration)'
+            why_text = (
+                f"As a {raw_role} starting in cloud and security, this track builds Linux scripting, "
+                "Docker containerization, and AWS core networking foundations from scratch."
+            )
+            fallback_prog = 'Software & AI Engineering (Scaler Academy)'
+            fallback_code = 'Program 1'
+            fallback_track = 'Beginner Track (Foundations of Programming & Problem Solving)'
+            fallback_tier = 'Alternative Software Engineering Path'
+            fallback_why = "Builds foundational coding and problem-solving skills for software development."
         else:
-            primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
-            primary['catalog_code'] = 'Program 2'
-            primary['track'] = 'Core Analytics & Machine Learning Track'
-            primary['fit_tier'] = 'Best Fit (Domain Native)'
-            primary['why'] = f"Directly accelerates your experience as a {raw_role} into statistical modeling and enterprise ML."
-            primary['guardrail'] = "High retention cohort; verified quantitative aptitude."
+            track_level = 'CI/CD Automation, Docker, Kubernetes & AWS Infrastructure Track'
+            fit_tier = 'Best Fit (Cloud Platform & CI/CD Engineering)'
+            why_text = (
+                f"Your background as a {raw_role} with {raw_exp} provides direct synergy with modern cloud engineering. "
+                "This program formalizes your skills with Docker containers, multi-node Kubernetes orchestration, "
+                "automated CI/CD pipelines, and Terraform infrastructure as code."
+            )
+            fallback_prog = 'Software & AI Engineering (Scaler Academy)'
+            fallback_code = 'Program 1'
+            fallback_track = 'Intermediate Track (Backend SDE Transition)'
+            fallback_tier = 'Alternative Core Backend Path'
+            fallback_why = "If you prefer transitioning into core backend application development, Academy focuses on DSA and LLD."
+
+        primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
+        primary['catalog_code'] = 'Program 5'
+        primary['track'] = track_level
+        primary['fit_tier'] = fit_tier
+        primary['why'] = why_text
+        primary['guardrail'] = "Direct Domain Match: Systems, security, and cloud professionals routed to Program 5."
+
+        fallback['program'] = fallback_prog
+        fallback['catalog_code'] = fallback_code
+        fallback['track'] = fallback_track
+        fallback['fit_tier'] = fallback_tier
+        fallback['why'] = fallback_why
+
+    # =========================================================================
+    # SCENARIO 3: DATA SCIENCE, MACHINE LEARNING & AI ROLES
+    # =========================================================================
+    elif is_data:
+        is_ml_engineer = any(k in raw_role.lower() for k in ['ml engineer', 'machine learning', 'ai engineer', 'deep learning', 'nlp', 'computer vision', 'data scientist', 'applied scientist'])
+        
+        if inbound_cat == 'P3_FDE' and not is_student:
+            primary['program'] = 'AI Forward Deployed Engineer (FDE)'
+            primary['catalog_code'] = 'Program 3'
+            primary['track'] = 'Enterprise AI Integration & Production RAG Track'
+            primary['fit_tier'] = 'Best Fit (Enterprise AI Deployment)'
+            primary['why'] = (
+                f"As a {raw_role} with {raw_exp}, Program 3 trains you to deploy frontier AI systems live "
+                "inside enterprise infrastructure, mastering PySpark pipelines, production RAG, and LangGraph multi-agent orchestration."
+            )
+            primary['guardrail'] = "Verified technical data/ML foundation satisfies FDE prerequisite."
 
             fallback['program'] = 'AI & Machine Learning with Agentic AI'
             fallback['catalog_code'] = 'Program 4'
             fallback['track'] = 'Advanced Track (Agentic AI & LLMOps)'
-            fallback['fit_tier'] = 'Advanced Next-Gen AI Pivot'
-            fallback['why'] = "Alternative path to specialize in frontier LLM engineering and agentic workflows."
+            fallback['fit_tier'] = 'Alternative Frontier AI Track'
+            fallback['why'] = "Focuses on deep model fine-tuning and agentic design patterns."
+
+        elif inbound_cat == 'P4_AIML_AGENTIC' or is_ml_engineer:
+            primary['program'] = 'AI & Machine Learning with Agentic AI'
+            primary['catalog_code'] = 'Program 4'
+            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)' if not is_student else 'Beginner Track (AI & Machine Learning Foundations)'
+            primary['fit_tier'] = 'Best Fit (Advanced AI Modeling & Agentic Systems)'
+            primary['why'] = (
+                f"With your background as a {raw_role}, Program 4 takes you directly into "
+                "PyTorch deep learning, transformer architectures, vector embeddings, PEFT/LoRA fine-tuning, and multi-agent LangGraph workflows."
+            )
+            primary['guardrail'] = "High retention quantitative cohort; calibrated for ML & AI career acceleration."
+
+            fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+            fallback['catalog_code'] = 'Program 2'
+            fallback['track'] = 'Core Analytics & Machine Learning Track'
+            fallback['fit_tier'] = 'Alternative Core ML Track'
+            fallback['why'] = "Alternative path focusing on enterprise statistical modeling and production MLOps on AWS."
+
+        else:
+            if is_student:
+                track_level = 'Beginner Track (Data Analytics, Python & Business ML)'
+                fit_tier = 'Best Fit (Analytics & Python Foundations)'
+                why_text = f"As a {raw_role}, this track establishes core SQL, Python data manipulation, and introductory machine learning."
+            else:
+                track_level = 'Core Analytics & Machine Learning Track'
+                fit_tier = 'Best Fit (Applied Machine Learning & Advanced Analytics)'
+                why_text = f"Accelerates your experience as a {raw_role} with {raw_exp} into statistical modeling, predictive algorithms, and AWS MLOps."
+
+            primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
+            primary['catalog_code'] = 'Program 2'
+            primary['track'] = track_level
+            primary['fit_tier'] = fit_tier
+            primary['why'] = why_text
+            primary['guardrail'] = "Domain Native Fit: Verified data/analytics background."
+
+            fallback['program'] = 'AI & Machine Learning with Agentic AI'
+            fallback['catalog_code'] = 'Program 4'
+            fallback['track'] = 'Advanced Track (Agentic AI & LLMOps)' if not is_student else 'Beginner Track (AI & Machine Learning Foundations)'
+            fallback['fit_tier'] = 'Alternative Frontier AI Path'
+            fallback['why'] = "Specializes in modern generative AI architectures, LangGraph agentic workflows, and LLMOps."
 
     # =========================================================================
-    # SCENARIO 3: QA / TEST AUTOMATION / SDET
+    # SCENARIO 4: QA / TEST AUTOMATION / SDET
     # =========================================================================
     elif is_qa:
         if inbound_cat == 'P5_DEVOPS_CLOUD':
@@ -905,65 +966,12 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
             fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
             fallback['catalog_code'] = 'Program 5'
-            fallback['track'] = 'Cloud Platform & Infrastructure Track'
+            fallback['track'] = 'CI/CD Automation & Cloud Infrastructure Track'
             fallback['fit_tier'] = 'Alternative Infrastructure Path'
             fallback['why'] = "A fast-track alternative that leverages your testing automation into cloud engineering."
 
     # =========================================================================
-    # SCENARIO 4: SYSTEMS & EMBEDDED / HARDWARE / IT INFRASTRUCTURE
-    # =========================================================================
-    elif is_systems:
-        if inbound_cat == 'P5_DEVOPS_CLOUD':
-            primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
-            primary['catalog_code'] = 'Program 5'
-            primary['track'] = 'Cloud Architecture & Linux Systems Track'
-            primary['fit_tier'] = 'Best Fit (Direct OS/Hardware Synergy)'
-            primary['why'] = (
-                f"Your experience as a {raw_role} provides OS, networking, and memory fundamentals. "
-                "DevOps modernizes this into cloud infrastructure, Terraform, and Kubernetes cluster operations."
-            )
-            primary['guardrail'] = "Catalog Rule: Strong historical retention cohort in Program 5."
-
-            fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
-            fallback['catalog_code'] = 'Program 1'
-            fallback['track'] = 'Intermediate Track (Core Software Engineering)'
-            fallback['fit_tier'] = 'Alternative Product SDE'
-            fallback['why'] = "If you want to pivot into application software, Academy teaches modern Java/C++ backend microservices."
-        elif inbound_cat == 'P3_FDE' and not is_non_tech:
-            primary['program'] = 'AI Forward Deployed Engineer (FDE)'
-            primary['catalog_code'] = 'Program 3'
-            primary['track'] = 'Enterprise AI Integration & Client Systems Track'
-            primary['fit_tier'] = 'Best Fit (Enterprise Systems Depth)'
-            primary['why'] = (
-                f"Your low-level systems background fits Program 3's focus on deploying AI solutions live "
-                "inside enterprise environments, PySpark pipelines, and multi-agent enterprise infrastructure."
-            )
-            primary['guardrail'] = "Requires verified systems/backend foundation; passes prerequisite gate."
-
-            fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
-            fallback['catalog_code'] = 'Program 5'
-            fallback['track'] = 'Cloud Platform Track'
-            fallback['fit_tier'] = 'Alternative Infrastructure Track'
-            fallback['why'] = "Infrastructure alternative focusing on Kubernetes and platform scalability."
-        else:
-            primary['program'] = 'Software & AI Engineering (Scaler Academy)'
-            primary['catalog_code'] = 'Program 1'
-            primary['track'] = 'Intermediate Track (Java/C++ with DSA Core)'
-            primary['fit_tier'] = 'Best Fit (Product Company Bridge)'
-            primary['why'] = (
-                f"Engineers working as {raw_role} excel in Academy's Intermediate Track, "
-                "which bridges the gap between enterprise maintenance and Tier-1 product algorithmic standards."
-            )
-            primary['guardrail'] = "Calibrated for 2-5 YOE service engineers."
-
-            fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
-            fallback['catalog_code'] = 'Program 5'
-            fallback['track'] = 'Cloud Platform & Linux Track'
-            fallback['fit_tier'] = 'Alternative Systems Path'
-            fallback['why'] = "Builds upon your OS and infrastructure background without requiring competitive algorithmic design."
-
-    # =========================================================================
-    # SCENARIO 5: SOFTWARE ENGINEERS / DEVELOPERS (SDE / SWE)
+    # SCENARIO 5: SOFTWARE ENGINEERS / DEVELOPERS (SDE / SWE / Tech Leads)
     # =========================================================================
     else:
         if inbound_cat == 'P3_FDE':
@@ -1167,30 +1175,31 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     else:
         lead_first_name = name.split()[0]
     
-    # 1. Opening Dialogue
+    # 1. Opening Dialogue (Grammatically correct article and domain context)
+    article = "an" if raw_role[0].lower() in ['a', 'e', 'i', 'o', 'u'] else "a"
     if is_student:
         call_opening = (
-            f"\"Hi {lead_first_name}, I saw that you're currently {raw_role} ({raw_exp}). "
+            f"\"Hi {lead_first_name}, I saw that you're currently a {raw_role} ({raw_exp}). "
             "Many candidates at this stage want to build ironclad fundamentals in programming and algorithmic problem solving "
             "so they stand out in product company recruitment. What is the main career milestone you're aiming for?\""
         )
     elif is_non_tech:
         call_opening = (
-            f"\"Hi {lead_first_name}, I saw that you're currently working in {raw_role} with {raw_exp} of experience. "
+            f"\"Hi {lead_first_name}, I saw that you're currently working as {article} {raw_role} with {raw_exp} of experience. "
             "A lot of professionals reaching out to us from non-technical backgrounds are looking to make a structured, "
             "long-term transition into tech, but are worried about coding prerequisites. "
             "What has been the main trigger behind your plan to upskill right now?\""
         )
     elif is_senior:
         call_opening = (
-            f"\"Hi {lead_first_name}, I noticed you've been working as a {raw_role} with {raw_exp} of experience. "
+            f"\"Hi {lead_first_name}, I noticed you've been working as {article} {raw_role} with {raw_exp} of experience. "
             "At your seniority, most engineers aren't looking for basic tutorials - they're looking to master large-scale "
             "system architecture, high-level design, and lead engineering teams at top product companies. "
             "Is that the primary transition you're targeting?\""
         )
     else:
         call_opening = (
-            f"\"Hi {lead_first_name}, I saw you're currently working as a {raw_role} with {raw_exp} of experience. "
+            f"\"Hi {lead_first_name}, I saw you're currently working as {article} {raw_role} with {raw_exp} of experience. "
             "Many engineers at this career stage feel ready to move beyond routine project tasks and crack top-tier product SDE roles. "
             "What specific career milestone are you aiming to hit over the next 6 to 12 months?\""
         )
@@ -1217,11 +1226,15 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             f"and our {primary['track']} gives you a structured, step-by-step foundation without a steep learning cliff.\""
         )
     else:
+        if primary.get('retention_rate', 0) >= fallback.get('retention_rate', 0):
+            ret_comparison = f"backed by an audited {primary['retention_rate']}% completion rate"
+        else:
+            ret_comparison = f"offering a structured {primary['retention_rate']}% completion rate specifically calibrated for your background"
+
         inbound_handling = (
-            f"\"I also noted your interest in {inbound_prog_raw}. That's an incredible domain, but to be completely honest with you, "
-            f"our historical graduation data shows that starting with {primary['program']} gives you a much stronger technical foundation "
-            f"({primary['retention_rate']}% completion rate). Once you lock down these engineering fundamentals, transitioning into "
-            f"{fallback['program']} becomes vastly easier and faster.\""
+            f"\"I also noted your interest in {inbound_prog_raw}. That is an incredible domain, but based on your current background as a {raw_role}, "
+            f"starting with {primary['program']} ({primary['track']}) provides the strongest career foundation ({ret_comparison}). "
+            f"Once you establish these core technical capabilities, transitioning into specialized tracks like {fallback['program']} becomes vastly easier and faster.\""
         )
 
     # 4. Expectation & Commitment Setting (Retention Safeguard)

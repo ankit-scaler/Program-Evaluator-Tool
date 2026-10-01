@@ -928,6 +928,139 @@
       background: var(--color-surface-base);
     }
 
+    /* SCALER VS OTHER MARKET PROGRAMS COMPARISON SECTION */
+    .market-comparison-section {
+      margin-top: 16px;
+      background: var(--color-surface-muted);
+      border: 1px solid var(--color-surface-raised);
+      border-radius: var(--radius-xs);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-3);
+    }
+
+    .market-comp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .market-comp-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--color-text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .market-comp-sub {
+      font-size: 11px;
+      color: var(--color-text-inverse);
+      margin-top: 2px;
+    }
+
+    .market-comp-table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .market-comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .market-comp-table th {
+      padding: 10px 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+    }
+
+    .market-comp-table th.col-dim {
+      background: #f8fafc;
+      color: #475569;
+      width: 22%;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .market-comp-table th.col-scaler {
+      background: #eff6ff;
+      color: #1e3a8a;
+      width: 41%;
+      border-bottom: 2px solid #3b82f6;
+    }
+
+    .market-comp-table th.col-market {
+      background: #fef2f2;
+      color: #991b1b;
+      width: 37%;
+      border-bottom: 2px solid #f87171;
+    }
+
+    .market-comp-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+      line-height: 1.45;
+    }
+
+    .market-comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .market-comp-table td.dim-cell {
+      font-weight: 700;
+      color: #1e293b;
+      background: #fafafa;
+      border-right: 1px solid #f1f5f9;
+    }
+
+    .market-comp-table td.scaler-cell {
+      background: #fcfdff;
+      color: #0f172a;
+      border-right: 1px solid #f1f5f9;
+    }
+
+    .market-comp-table td.market-cell {
+      background: #fffafa;
+      color: #475569;
+    }
+
+    .comp-badge-scaler {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      background: #dcfce7;
+      color: #166534;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+
+    .comp-badge-market {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+
     /* STRATEGIC CAREER ADVISORY & FAQ SECTION */
     .strategic-faq-section {
       margin-top: 16px;
@@ -1284,12 +1417,13 @@
               <th>Recommended Program</th>
               <th>Retention & Confidence</th>
               <th>Fallback Program</th>
+              <th>Scaler vs Market Advantage</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="leads-tbody">
             <tr>
-              <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 36px;">
+              <td colspan="11" style="text-align: center; color: var(--text-muted); padding: 36px;">
                 No CSV uploaded yet. Please choose or drop a leads CSV file above to evaluate.
               </td>
             </tr>
@@ -1459,6 +1593,35 @@
             </div>
           </div>
 
+          <!-- SCALER VS OTHER MARKET PROGRAMS COMPARISON SECTION -->
+          <div class="market-comparison-section" id="modal-market-comparison-section">
+            <div class="market-comp-header">
+              <div>
+                <div class="market-comp-title">
+                  <span>⚖️ Scaler vs Other Market Programs: <span id="comp-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
+                </div>
+                <div class="market-comp-sub">
+                  Side-by-side architectural and pedagogical breakdown comparing this Scaler program against typical market alternatives (pre-recorded MOOCs, generic bootcamps, and executive diplomas).
+                </div>
+              </div>
+            </div>
+
+            <div class="market-comp-table-wrapper">
+              <table class="market-comp-table">
+                <thead>
+                  <tr>
+                    <th class="col-dim">Evaluation Dimension</th>
+                    <th class="col-scaler" id="comp-th-scaler">✨ Scaler Advantage (Recommended Program)</th>
+                    <th class="col-market">⚠️ Typical Market Alternatives (MOOCs / Bootcamps)</th>
+                  </tr>
+                </thead>
+                <tbody id="market-comp-tbody">
+                  <!-- Populated dynamically by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- STRATEGIC CAREER ADVISORY & REAL-WORLD PROGRAM Q&A -->
           <div class="strategic-faq-section" id="modal-strategic-faq-section">
             <div class="strategic-faq-header">
@@ -1501,6 +1664,175 @@
     let currentPage = 1;
     const PAGE_SIZE = 50;
     let curriculumCatalog = {};
+
+    /* SCALER VS OTHER MARKET PROGRAMS COMPARATIVE INTELLIGENCE */
+    const MARKET_PROGRAM_COMPARISONS = {
+      'P1_ACADEMY': {
+        name: 'Scaler Academy: Software & AI Engineering',
+        shortScaler: 'Live MAANG System Design & 15-min TA doubt resolution',
+        shortMarket: 'Pre-recorded videos, toy CRUD apps & zero architecture review',
+        keyDiff: '900+ hiring partners & 1:1 senior mentors vs self-apply job boards',
+        dimensions: [
+          {
+            dim: 'Instruction & Pedagogy',
+            scaler: '100% live interactive masterclasses taught by senior tech leads & principal architects from Google, Meta, Amazon, and Microsoft.',
+            market: '80–90% pre-recorded video playlists or junior freelance instructors reading generic slide decks without production battle-scars.'
+          },
+          {
+            dim: 'Curriculum & Engineering Scale',
+            scaler: 'Low-Level Design (LLD) & High-Level System Design (HLD) engineered for 10M+ DAU scale, distributed caching, sharding, and microservices.',
+            market: 'Basic surface-level CRUD applications (To-Do lists, simple clones) with zero concurrency, load testing, or architectural depth.'
+          },
+          {
+            dim: 'Doubt Resolution Speed',
+            scaler: 'Live 1:1 Teaching Assistants resolving compiler, algorithmic, and architecture issues within 15 minutes, 7 days a week.',
+            market: 'Unmonitored community forums, Discord/Slack threads, or email tickets taking 24–72 hours, stalling learning momentum.'
+          },
+          {
+            dim: '1:1 Mentorship & Mock Interviews',
+            scaler: 'Bi-weekly 1:1 sessions with MAANG senior engineers for tailored resume audits, portfolio reviews, and intensive mock interview marathons.',
+            market: 'Zero 1:1 mentorship, or generic resume parser templates with no domain-specific engineering feedback.'
+          },
+          {
+            dim: 'Placement & Career Ecosystem',
+            scaler: 'Dedicated career placement cell with direct referrals into 900+ vetted hiring partners and exclusive recruitment drives.',
+            market: 'Unassisted job applications; links to public job boards with no employer endorsement or internal referral leverage.'
+          }
+        ]
+      },
+      'P2_DSML': {
+        name: 'Scaler Data Science & Machine Learning',
+        shortScaler: 'Live production ML pipelines on real cloud compute & PySpark',
+        shortMarket: 'Toy Colab notebooks (Iris/Titanic) with academic theory only',
+        keyDiff: 'End-to-end MLOps deployment vs unapplied scikit-learn scripts',
+        dimensions: [
+          {
+            dim: 'Instruction & Real-World ML',
+            scaler: 'Live industry training by ML leads and Kaggle grandmasters from Uber, Swiggy, and Walmart Labs deploying live production models.',
+            market: 'Academic faculty teaching theoretical statistics and mathematical proofs with zero real enterprise deployment experience.'
+          },
+          {
+            dim: 'Datasets & Cloud Infrastructure',
+            scaler: 'Dirty, high-velocity big-data pipelines using PySpark, Docker, Airflow, and real AWS/GCP GPU clusters with millions of rows.',
+            market: 'Small, pre-cleaned toy datasets (Iris, Titanic, Boston Housing) executed locally on basic Google Colab without production scale.'
+          },
+          {
+            dim: 'Doubt Resolution Speed',
+            scaler: '15-minute live 1:1 TA support debugging complex CUDA/PyTorch memory errors, model convergence, and data pipelines.',
+            market: 'Learners spend days stuck on environment setup, Docker CUDA drivers, or package dependency clashes.'
+          },
+          {
+            dim: 'ML System Design & Mocks',
+            scaler: '1:1 ML System Design mock interviews simulating enterprise recommendation engines, search ranking, and fraud detection.',
+            market: 'Multiple-choice quizzes testing syntax recall without architectural defense or scalability rounds.'
+          },
+          {
+            dim: 'Placement & Career Ecosystem',
+            scaler: 'Direct recruitment pipelines to 900+ partner tech companies hiring for Data Scientist and MLOps roles.',
+            market: 'Certificate of completion with no hiring partner commitments or structured interview pipelines.'
+          }
+        ]
+      },
+      'P3_FDE': {
+        name: 'Scaler Forward Deployed Engineering (FDE)',
+        shortScaler: 'Palantir/Databricks-style rapid client POCs & GenAI integration',
+        shortMarket: 'Generic MERN-stack bootcamps with zero enterprise AI integration',
+        keyDiff: 'Client-facing solution architecture vs entry-level junior coding',
+        dimensions: [
+          {
+            dim: 'Role Focus & Commercial Value',
+            scaler: 'Modeled on elite Palantir, Databricks, and AWS FDE practices—rapid prototyping, enterprise API integration, and client architecture.',
+            market: 'Standard full-stack web dev bootcamps teaching isolated frontend/backend code without client business context.'
+          },
+          {
+            dim: 'Modern AI & Systems Glue',
+            scaler: 'Hands-on enterprise Agentic RAG, LLM orchestration, microservices integration, and fast client POC sprint deliverables.',
+            market: 'Dated curriculum focusing purely on monolithic CRUD operations with zero GenAI or enterprise glue systems.'
+          },
+          {
+            dim: 'Doubt & Architectural Guidance',
+            scaler: '1:1 solution architecture critiques by active Forward Deployed Engineers and Staff Solutions Architects.',
+            market: 'Junior teaching assistants unable to evaluate high-level client business requirements or trade-offs.'
+          },
+          {
+            dim: 'Client Defense & Presentation',
+            scaler: 'Mock client defense panels evaluating both code quality and executive stakeholder communication.',
+            market: 'Isolated coding tests with zero client-handling, requirement gathering, or presentation coaching.'
+          },
+          {
+            dim: 'Placement & Compensation',
+            scaler: 'Direct pipeline into top enterprise SaaS firms and global consultancies hiring FDEs at ₹18–₹45 LPA.',
+            market: 'Generic entry-level junior developer roles competing with fresh graduates for ₹4–₹8 LPA.'
+          }
+        ]
+      },
+      'P4_AIML': {
+        name: 'Scaler Agentic AI & Machine Learning',
+        shortScaler: 'Multi-agent frameworks (LangGraph/CrewAI) & local fine-tuning',
+        shortMarket: 'Basic OpenAI API prompt wrappers & outdated prompt engineering',
+        keyDiff: 'Autonomous agentic workflows vs trivial ChatGPT chat bots',
+        dimensions: [
+          {
+            dim: 'AI Frontier & Frameworks',
+            scaler: 'State-of-the-art multi-agent systems (LangGraph, CrewAI, AutoGen), model fine-tuning (LoRA/QLoRA), and self-healing agent loops.',
+            market: 'Surface-level OpenAI API wrapper tutorials and outdated prompt engineering tricks that are rapidly commoditized.'
+          },
+          {
+            dim: 'Production Scale & Vector DBs',
+            scaler: 'Vector databases (Milvus, Pinecone), latency optimization, vLLM inference serving, and enterprise security guardrails.',
+            market: 'Basic Python scripts running locally without latency profiling, eval benchmarks, or security checks.'
+          },
+          {
+            dim: 'Doubt Resolution Speed',
+            scaler: '15-minute live assistance diagnosing token context limits, hallucination mitigation, and agent loop stalls.',
+            market: 'Static forums; no support for fast-moving agentic framework updates or complex open LLM runtime errors.'
+          },
+          {
+            dim: 'Industry Mentors & AI Leads',
+            scaler: '1:1 mentorship from GenAI platform leads and AI researchers who have shipped production agent systems.',
+            market: 'Instructors who started learning GenAI weeks before teaching, lacking production deployment depth.'
+          },
+          {
+            dim: 'Placement & High-Demand Roles',
+            scaler: 'Direct recruitment for high-paying Generative AI Engineer, Agentic AI Architect, and LLMOps positions.',
+            market: 'Generalist "Python developer" roles that do not command the GenAI market premium.'
+          }
+        ]
+      },
+      'P5_DEVOPS': {
+        name: 'Scaler DevOps & Cloud Infrastructure',
+        shortScaler: '100% real AWS multi-region infrastructure & production Kubernetes',
+        shortMarket: 'Simulated web sandboxes, local Docker & multiple-choice tests',
+        keyDiff: 'Live cluster disaster recovery war-rooms & CKA certification alignment',
+        dimensions: [
+          {
+            dim: 'Real Cloud Infrastructure',
+            scaler: '100% real AWS multi-region cloud accounts provisioned via modular Terraform and ArgoCD GitOps; zero artificial limits.',
+            market: 'Local Docker Desktop or vendor-locked simulated consoles that hide production network complexities.'
+          },
+          {
+            dim: 'Toolchain & Kubernetes Depth',
+            scaler: 'Multi-month deep dive into production Kubernetes, Helm, ArgoCD GitOps, Prometheus/Grafana observability, and MLOps electives.',
+            market: 'Brief, superficial overview of Docker commands and basic Jenkins pipelines with no distributed cluster experience.'
+          },
+          {
+            dim: 'Production Incident War-Rooms',
+            scaler: 'Live chaos engineering and incident triage drills where mentors inject cluster outages for real-time recovery.',
+            market: 'Static quizzes and multiple-choice tests; no live troubleshooting under simulated production pressure.'
+          },
+          {
+            dim: '1:1 SRE / Architect Mentorship',
+            scaler: 'Direct coaching from Principal SREs and Cloud Architects at top cloud-native tech companies; aligned with AWS & CKA certifications.',
+            market: 'Generic slides without production architecture review or industry-standard CKA preparation.'
+          },
+          {
+            dim: 'Placement & Compensation',
+            scaler: 'Direct access to 900+ hiring partners hiring for DevOps, SRE, and Platform Engineering roles (₹14–₹50+ LPA).',
+            market: 'Routine system administrator or basic IT support job referrals.'
+          }
+        ]
+      }
+    };
 
     /* STRATEGIC CAREER ADVISORY & PROGRAM Q&A PLAYBOOK (7 REAL-WORLD QUESTIONS PER PROGRAM WITH SCALER SUPPORT) */
     const PROGRAM_STRATEGIC_FAQS = {
@@ -1764,6 +2096,35 @@
           </div>
         `;
       }).join('');
+    }
+
+    function renderMarketComparison(progKey) {
+      const data = MARKET_PROGRAM_COMPARISONS[progKey] || MARKET_PROGRAM_COMPARISONS['P1_ACADEMY'];
+      const titleEl = document.getElementById('comp-active-program-name');
+      const thScalerEl = document.getElementById('comp-th-scaler');
+      const tbody = document.getElementById('market-comp-tbody');
+
+      if (titleEl) {
+        titleEl.innerText = data.name;
+      }
+      if (thScalerEl) {
+        thScalerEl.innerHTML = `✨ Scaler Advantage (${data.name.split(':')[1] ? data.name.split(':')[1].trim() : data.name})`;
+      }
+      if (tbody && data.dimensions) {
+        tbody.innerHTML = data.dimensions.map(d => `
+          <tr>
+            <td class="dim-cell">${d.dim}</td>
+            <td class="scaler-cell">
+              <div class="comp-badge-scaler">✓ Scaler Advantage</div>
+              <div>${d.scaler}</div>
+            </td>
+            <td class="market-cell">
+              <div class="comp-badge-market">⚠️ Market Limitation</div>
+              <div>${d.market}</div>
+            </td>
+          </tr>
+        `).join('');
+      }
     }
 
     async function loadCurriculumCatalog() {
@@ -2035,7 +2396,7 @@
       document.getElementById('btn-next-page').disabled = (currentPage >= totalPages);
 
       if (filteredLeads.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 30px;">No leads matching active filters.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 30px;">No leads matching active filters.</td></tr>`;
         document.getElementById('pagination-info').innerText = 'Showing 0 of 0 leads';
         return;
       }
@@ -2052,6 +2413,9 @@
         const fall = lead.fallback;
         const tp = lead.touchpoints || {};
         const badgeClass = prim.retention_rate >= 80 ? 'tag-green' : (prim.retention_rate >= 75 ? 'tag-amber' : '');
+
+        const progKey = resolveFaqProgramKey(prim.program || prim.catalog_code);
+        const comp = MARKET_PROGRAM_COMPARISONS[progKey] || MARKET_PROGRAM_COMPARISONS['P1_ACADEMY'];
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -2094,6 +2458,21 @@
             <div style="font-size:10.5px; color:var(--text-muted); margin-top:1px;">Track: ${fall.track.split('(')[0]}</div>
             <div style="margin-top:2px;">
               <span style="display:inline-block; font-size:9.5px; font-weight:600; background:#f1f5f9; color:#475569; padding:1px 5px; border-radius:3px;">Duration: ${fall.duration || '12 Months'}</span>
+            </div>
+          </td>
+          <td>
+            <div style="min-width: 200px; max-width: 260px; font-size: 11px; line-height: 1.35;">
+              <div style="font-weight: 700; color: #1e3a8a; display: flex; align-items: flex-start; gap: 4px; margin-bottom: 2px;">
+                <span style="color: #2563eb; flex-shrink: 0;">🚀 Scaler:</span>
+                <span>${comp.shortScaler}</span>
+              </div>
+              <div style="color: #64748b; font-size: 10px; display: flex; align-items: flex-start; gap: 4px; margin-bottom: 3px;">
+                <span style="color: #dc2626; font-weight: 600; flex-shrink: 0;">⚠️ Others:</span>
+                <span>${comp.shortMarket}</span>
+              </div>
+              <span style="display: inline-block; font-size: 9.5px; font-weight: 700; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 1px 6px; border-radius: 3px;">
+                ✓ ${comp.keyDiff}
+              </span>
             </div>
           </td>
           <td><button class="btn-action-view" onclick='viewLeadDetails("${lead.lead_id}")'>View Dossier</button></td>
@@ -2146,9 +2525,10 @@
       const target = which === 'primary' ? currentModalLead.primary : currentModalLead.fallback;
       if (!target) return;
 
-      // Synchronize Strategic FAQ section to target recommended program only
+      // Synchronize Strategic FAQ & Market Comparison section to target recommended program only
       const faqKey = resolveFaqProgramKey(target.program || target.catalog_code);
       switchFaqProgram(faqKey);
+      renderMarketComparison(faqKey);
       populateRecommendedFaqSelector(currentModalLead, which);
 
       const elCurrContainer = document.getElementById('curriculum-modules-container');

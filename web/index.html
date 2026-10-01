@@ -656,24 +656,6 @@
       color: var(--color-text-tertiary);
     }
 
-    .guardrail-box {
-      font-size: 11px;
-      padding: var(--space-4) var(--space-5);
-      border-radius: var(--radius-xs);
-      font-weight: 600;
-    }
-
-    .guardrail-green {
-      background: var(--bg-green-soft);
-      color: var(--accent-green);
-      border: 1px solid var(--border-green);
-    }
-
-    .guardrail-amber {
-      background: var(--bg-amber-soft);
-      color: var(--accent-amber);
-      border: 1px solid var(--border-amber);
-    }
 
 
 
@@ -948,13 +930,9 @@
               <div class="rec-program-name" id="modal-primary-prog">-</div>
               <div class="rec-track-name" id="modal-primary-track">-</div>
 
-              <div class="rec-why-box" id="modal-primary-why">
+              <div class="rec-why-box" id="modal-primary-why" style="margin-bottom:0;">
                 <b>Why This Program:</b> -
               </div>
-            </div>
-
-            <div class="guardrail-box guardrail-green" id="modal-primary-guardrail">
-              -
             </div>
           </div>
 
@@ -970,13 +948,9 @@
               <div class="rec-program-name" id="modal-fallback-prog">-</div>
               <div class="rec-track-name" id="modal-fallback-track">-</div>
 
-              <div class="rec-why-box" style="border-left-color: var(--accent-amber);" id="modal-fallback-why">
+              <div class="rec-why-box" style="border-left-color: var(--accent-amber); margin-bottom:0;" id="modal-fallback-why">
                 <b>Why Fallback:</b> -
               </div>
-            </div>
-
-            <div class="guardrail-box guardrail-amber" id="modal-fallback-guardrail">
-              Offer if learner specifically demands inbound path or seeks alternative tech focus.
             </div>
           </div>
 
@@ -1229,7 +1203,6 @@
       document.getElementById('modal-primary-prog').innerText = primTitle;
       document.getElementById('modal-primary-track').innerText = `Track: ${prim.track}`;
       document.getElementById('modal-primary-why').innerHTML = `<b>Why This Program:</b> ${prim.why}`;
-      document.getElementById('modal-primary-guardrail').innerText = `Leveling Rule: ${prim.guardrail}`;
 
       // Primary Confidence Badge
       const primConfTier = prim.confidence_tier || 'Mid';

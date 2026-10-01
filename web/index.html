@@ -922,6 +922,177 @@
       background: var(--color-surface-base);
     }
 
+    /* STRATEGIC CAREER ADVISORY & FAQ SECTION */
+    .strategic-faq-section {
+      margin-top: 16px;
+      background: var(--color-surface-muted);
+      border: 1px solid var(--color-surface-raised);
+      border-radius: var(--radius-xs);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-3);
+    }
+
+    .strategic-faq-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .strategic-faq-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--color-text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .strategic-faq-sub {
+      font-size: 11px;
+      color: var(--color-text-inverse);
+      margin-top: 2px;
+    }
+
+    .strategic-faq-selector {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .faq-prog-btn {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--color-surface-raised);
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .faq-prog-btn:hover {
+      background: #eff6ff;
+      color: var(--scaler-blue);
+      border-color: #bfdbfe;
+    }
+
+    .faq-prog-btn.active {
+      background: #1e3a8a;
+      color: #ffffff;
+      border-color: #1e3a8a;
+      box-shadow: 0 1px 4px rgba(30, 58, 138, 0.25);
+    }
+
+    .faq-accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .faq-item-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      background: #ffffff;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .faq-item-card:hover {
+      border-color: #cbd5e1;
+    }
+
+    .faq-item-card.open {
+      border-color: #93c5fd;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+    }
+
+    .faq-question-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-family-stack);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .faq-q-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .faq-q-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--scaler-blue);
+      font-size: 10.5px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .faq-toggle-icon {
+      font-size: 11px;
+      color: #64748b;
+      transition: transform 0.2s ease;
+    }
+
+    .faq-item-card.open .faq-toggle-icon {
+      transform: rotate(180deg);
+      color: var(--scaler-blue);
+    }
+
+    .faq-answer-body {
+      display: none;
+      padding: 0 14px 14px 46px;
+      font-size: 12px;
+      color: #334155;
+      line-height: 1.6;
+      border-top: 1px dashed #f1f5f9;
+      padding-top: 10px;
+    }
+
+    .faq-item-card.open .faq-answer-body {
+      display: block;
+    }
+
+    .faq-answer-body ul {
+      margin: 6px 0 6px 18px;
+    }
+
+    .faq-answer-body li {
+      margin-bottom: 4px;
+    }
+
+    .faq-highlight {
+      background: #f0fdf4;
+      border-left: 3px solid #16a34a;
+      padding: 6px 10px;
+      border-radius: 3px;
+      margin: 6px 0;
+      font-size: 11.5px;
+      color: #14532d;
+    }
+
     #file-upload-input {
       display: none;
     }
@@ -1271,6 +1442,32 @@
               <!-- Populated by JS -->
             </div>
           </div>
+
+          <!-- STRATEGIC CAREER ADVISORY & REAL-WORLD PROGRAM Q&A -->
+          <div class="strategic-faq-section" id="modal-strategic-faq-section">
+            <div class="strategic-faq-header">
+              <div>
+                <div class="strategic-faq-title">
+                  <span>💡 Strategic Career Advisory &amp; Real-World Program Q&amp;A</span>
+                </div>
+                <div class="strategic-faq-sub">
+                  Counseling playbook: Grounded real-world answers on career trajectory, compensation benchmarks, interview bars, and curriculum architecture.
+                </div>
+              </div>
+              <div class="strategic-faq-selector" id="faq-program-selector">
+                <button class="faq-prog-btn" id="faq-btn-P1_ACADEMY" onclick="switchFaqProgram('P1_ACADEMY')">P1: Academy</button>
+                <button class="faq-prog-btn" id="faq-btn-P2_DSML" onclick="switchFaqProgram('P2_DSML')">P2: DSML</button>
+                <button class="faq-prog-btn" id="faq-btn-P3_FDE" onclick="switchFaqProgram('P3_FDE')">P3: FDE</button>
+                <button class="faq-prog-btn" id="faq-btn-P4_AIML" onclick="switchFaqProgram('P4_AIML')">P4: AI/ML &amp; Agents</button>
+                <button class="faq-prog-btn" id="faq-btn-P5_DEVOPS" onclick="switchFaqProgram('P5_DEVOPS')">P5: DevOps &amp; Cloud</button>
+              </div>
+            </div>
+
+            <!-- ACCORDION LIST OF 7 QUESTIONS -->
+            <div class="faq-accordion-list" id="faq-accordion-list">
+              <!-- Populated dynamically by JS -->
+            </div>
+          </div>
         </div>
 
       </div>
@@ -1292,6 +1489,239 @@
     let currentPage = 1;
     const PAGE_SIZE = 50;
     let curriculumCatalog = {};
+
+    /* STRATEGIC CAREER ADVISORY & PROGRAM Q&A PLAYBOOK (7 REAL-WORLD QUESTIONS PER PROGRAM) */
+    const PROGRAM_STRATEGIC_FAQS = {
+      'P3_FDE': {
+        name: 'Program 3: Forward Deployed Engineer (FDE)',
+        faqs: [
+          {
+            q: 'Why is FDE a good career, and why now?',
+            a: 'Enterprises are investing tens of millions into modern AI platforms, LLM suites, and specialized data clouds, but <b>over 80% struggle to operationalize them</b> inside fragmented legacy systems. Traditional sales engineers don’t write production code, while backend devs rarely interface directly with customer stakeholders. The <b>Forward Deployed Engineer (FDE)</b> bridges this critical gap—deploying directly to customer environments, writing integration glue code, customizing enterprise RAG pipelines, and solving architectural bottlenecks. FDEs command top-tier compensation because they directly drive enterprise revenue, contract retention, and rapid time-to-value.'
+          },
+          {
+            q: 'Who can become an FDE, where do they start, and how far can they grow?',
+            a: '<ul><li><b>Who Can Join:</b> Software developers, backend engineers, data engineers, technical solutions consultants, and QA/SDET professionals with sound coding logic and customer-facing aptitude.</li><li><b>Where They Start:</b> Associate FDE or Solutions Software Engineer handling API pipelines, client data ingestion, and enterprise proof-of-concepts (PoCs).</li><li><b>Growth Trajectory:</b> Senior FDE &rarr; Lead Solutions Architect &rarr; Head of Forward Deployment / VP of Enterprise AI. FDEs frequently transition into CTO, Head of Product, or Founder roles because they possess the rarest dual advantage: deep systems engineering plus customer commercial acumen.</li></ul>'
+          },
+          {
+            q: 'What do companies test in FDE interviews?',
+            a: 'Top enterprise software platforms (Palantir, Databricks, Snowflake, OpenAI Enterprise partners, ThoughtSpot) evaluate 4 pillars:<ul><li><b>Production Ingestion &amp; APIs:</b> Writing async Python/Java, transforming unstructured customer data, and integrating legacy SQL/CDC pipelines.</li><li><b>Distributed System Design:</b> High availability, rate limiting, and fault-tolerant microservices under Black Friday load spikes.</li><li><b>Applied Enterprise AI:</b> Building and evaluating production RAG pipelines, vector search, tool-calling agents, and hallucination guardrails.</li><li><b>Client-Facing Architectural Scenarios:</b> Live troubleshooting simulations, explaining engineering trade-offs to enterprise CTOs, and scoping ambiguous requirements.</li></ul>'
+          },
+          {
+            q: 'What do learners build, and what skills do they gain?',
+            a: 'Learners build full-stack enterprise production systems on top of <i>Meridian</i> (an enterprise monorepo):<ul><li>High-throughput order processing backend handling simulated Black Friday traffic with Kafka, Redis, and Postgres.</li><li>Enterprise customer support RAG engine with hybrid search, re-ranking, and dynamic context caching.</li><li>Multi-agent orchestration workflows connecting CRM, payment systems, and internal analytics with RBAC security.</li><li>Terraform-automated multi-region AWS cloud infrastructure with Docker, Kubernetes, and automated disaster recovery.</li></ul>'
+          },
+          {
+            q: 'What are our five unique strengths, and how do we compare?',
+            a: '<div class="faq-highlight"><b>Five Core Strengths:</b></div><ol style="margin-left: 20px;"><li><b>Real Enterprise Legacy Codebase (Meridian):</b> You don’t build toy greenfield apps; you solve integration challenges on a complex, living enterprise codebase.</li><li><b>End-to-End Enterprise Lifecycle:</b> Covers data extraction, backend services, frontend layers, production AI agents, and AWS/Kubernetes deployments.</li><li><b>Palantir &amp; Enterprise Practitioner Pedagogy:</b> Curriculum engineered alongside practicing FDEs from leading global enterprise platforms.</li><li><b>Dual-Core Syllabi:</b> 50% distributed systems &amp; cloud reliability + 50% modern generative AI &amp; agentic orchestration.</li><li><b>1:1 Executive Interview Coaching:</b> Live simulation of client escalation drills and enterprise architectural defense panels.</li></ol>'
+          },
+          {
+            q: 'Who is hiring in India, what do they pay, and are global jobs possible?',
+            a: '<ul><li><b>Hiring Companies in India:</b> Palantir, Databricks, Snowflake, Quantiphi, Fractal, Accenture AI, Postman, BrowserStack, Freshworks, and US enterprise SaaS GCCs.</li><li><b>Compensation Range:</b> 1–4 YOE: <b>₹16 – ₹32 LPA</b>; 5–8 YOE: <b>₹35 – ₹65 LPA</b>; Enterprise Leads (8+ YOE): <b>₹70 LPA – ₹1.2 Cr+</b>.</li><li><b>Global &amp; Remote Opportunities:</b> Exceptionally high demand for remote US/Europe enterprise roles ($100k – $180k USD) due to the global scarcity of client-facing production engineers.</li></ul>'
+          },
+          {
+            q: 'Why is the course built this way, and can learners get job-ready sooner?',
+            a: 'The syllabus is sequenced strictly to mirror the real-world enterprise deployment lifecycle: <b>Linux &amp; Ingestion &rarr; Production Backend &rarr; Frontend Client Layer &rarr; Enterprise RAG &rarr; Autonomous Agents &rarr; Cloud &amp; Kubernetes &rarr; Disaster Recovery</b>. Learners achieve job-readiness for backend and integration roles within <b>6–8 months</b>, while the final cloud and multi-agent modules unlock senior ₹35LPA+ architect positions.'
+          }
+        ]
+      },
+      'P1_ACADEMY': {
+        name: 'Program 1: Software & AI Engineering (Scaler Academy)',
+        faqs: [
+          {
+            q: 'Why is Software & AI Engineering a good career, and why now?',
+            a: 'The software engineering bar has fundamentally changed: boilerplate coders are obsolete, while <b>AI-Assisted Software Engineers</b> who master Data Structures, Algorithms, Distributed System Design, and Agentic AI workflows are in record demand. Tech companies—from high-growth unicorns to MAANG—are building distributed, scalable architectures and require engineers who can architect resilient microservices and deliver software 5x faster using AI copilots.'
+          },
+          {
+            q: 'Who can become a Software Engineer, where do they start, and how far can they grow?',
+            a: '<ul><li><b>Who Can Join:</b> Tech and non-tech graduates, service-firm software engineers (TCS, Infosys, Wipro, Cognizant), QA/automation testers, and backend engineers targeting top product companies.</li><li><b>Where They Start:</b> SDE-1 / Software Development Engineer building core application features, database schemas, and microservices.</li><li><b>Growth Path:</b> SDE-1 &rarr; SDE-2 (Autonomous feature owner) &rarr; Senior SDE (Module owner) &rarr; Staff / Principal Engineer &rarr; VP of Engineering / CTO.</li></ul>'
+          },
+          {
+            q: 'What do companies test in Software & AI interviews?',
+            a: 'Product companies (Amazon, Microsoft, Google, Uber, Swiggy, Razorpay) assess 4 fundamental areas:<ul><li><b>Data Structures &amp; Algorithms:</b> Optimization using Trees, Graphs, Dynamic Programming, and Heaps with space-time complexity analysis.</li><li><b>Low-Level Design (LLD):</b> Object-Oriented Design, Clean Code principles, Design Patterns (Factory, Strategy, Observer), and Concurrency.</li><li><b>High-Level System Design (HLD):</b> Scalability, Distributed Caching (Redis), Message Queues (Kafka), Database Sharding, and CAP Theorem trade-offs.</li><li><b>AI-Augmented Development:</b> Effective use of AI coding assistants for test generation, code refactoring, and edge-case testing.</li></ul>'
+          },
+          {
+            q: 'What do learners build, and what skills do they gain?',
+            a: 'Learners build high-scale, production-grade applications:<ul><li>High-concurrency e-commerce order processing engine handling 100k+ requests per second.</li><li>Distributed ride-sharing backend with real-time geospatial tracking and low-latency matching.</li><li>AI-assisted automated code review and test suite generation pipeline.</li><li>Deep mastery of Java/C++/Python, SQL, Redis, Apache Kafka, Docker, and Microservices architecture.</li></ul>'
+          },
+          {
+            q: 'What are our five unique strengths, and how do we compare?',
+            a: '<div class="faq-highlight"><b>Five Core Strengths:</b></div><ol style="margin-left: 20px;"><li><b>MAANG &amp; Product Leader Faculty:</b> Direct instruction from engineering leaders at Google, Amazon, Microsoft, and Uber.</li><li><b>AI-Assisted Engineering Curriculum:</b> First curriculum to integrate DSA and System Design with Agentic AI developer tools.</li><li><b>1:1 Industry Mentorship:</b> Dedicated senior engineer mentors for mock coding interviews and personalized career guidance.</li><li><b>Empirical Track Leveling:</b> Dynamic Beginner, Intermediate, and Advanced tracks tailored to candidate coding aptitude.</li><li><b>900+ Product Hiring Partners:</b> Placement network delivering an average salary hike of 126% with comprehensive career support.</li></ol>'
+          },
+          {
+            q: 'Who is hiring in India, what do they pay, and are global jobs possible?',
+            a: '<ul><li><b>Hiring Companies in India:</b> Google, Microsoft, Amazon, Walmart, Uber, PhonePe, Swiggy, Zomato, Cred, Razorpay, Oracle, and 300+ product startups.</li><li><b>Compensation Range:</b> SDE-1 (0–3 YOE): <b>₹14 – ₹28 LPA</b>; SDE-2 (3–6 YOE): <b>₹28 – ₹55 LPA</b>; Senior/Staff (7+ YOE): <b>₹55 LPA – ₹1 Cr+</b>.</li><li><b>Global Opportunities:</b> High hiring activity for EU, UK, and Singapore relocation, alongside remote US product engineering roles.</li></ul>'
+          },
+          {
+            q: 'Why is the course built this way, and can learners get job-ready sooner?',
+            a: 'The curriculum progresses systematically: <b>Programming Foundations &rarr; Intermediate DSA &rarr; Advanced DSA &rarr; LLD &amp; Databases &rarr; Distributed System Design &rarr; Agentic AI Workflows</b>. Learners achieve interview-readiness for product screening rounds within <b>4–5 months</b> upon finishing DSA, while advanced design modules prepare them for tier-1 SDE-2 compensation bands.'
+          }
+        ]
+      },
+      'P2_DSML': {
+        name: 'Program 2: Data Science & Machine Learning (DSML)',
+        faqs: [
+          {
+            q: 'Why is DSML a good career, and why now?',
+            a: 'Every enterprise is racing to monetize proprietary data and integrate generative AI into business decision-making. Companies need data professionals who can cut through the noise: writing complex analytical queries, running rigorous statistical experiments, and deploying revenue-generating predictive models. Data Science continues to be one of the highest-paid and most intellectually rewarding domains in tech.'
+          },
+          {
+            q: 'Who can become a Data Scientist, where do they start, and how far can they grow?',
+            a: '<ul><li><b>Who Can Join:</b> Software developers, business/data analysts, finance/operations specialists, math/statistics graduates, and domain experts seeking quantitative roles.</li><li><b>Where They Start:</b> Data Analyst or Associate Data Scientist building cohort funnels, executive dashboards, and baseline predictive models.</li><li><b>Growth Path:</b> Data Scientist &rarr; Senior Data Scientist &rarr; Lead ML Scientist &rarr; Head of Analytics / Chief Data Officer (CDO).</li></ul>'
+          },
+          {
+            q: 'What do companies test in DSML interviews?',
+            a: 'Top firms (Flipkart, Swiggy, Target, Fractal, McKinsey, Amazon) test 4 core dimensions:<ul><li><b>Advanced SQL &amp; Query Optimization:</b> Multi-table CTEs, window functions, user cohort retention, and aggregate analytical queries.</li><li><b>Statistical Rigor &amp; Experimentation:</b> A/B testing design, sample size determination, p-values, hypothesis tests, and causal inference.</li><li><b>Applied Machine Learning:</b> Supervised/Unsupervised models, loss functions, feature engineering, and metrics (AUC-ROC, F1, RMSE).</li><li><b>Business Problem Solving:</b> Translating ambiguous business problems (e.g. churn, customer LTV, delivery delays) into data hypotheses.</li></ul>'
+          },
+          {
+            q: 'What do learners build, and what skills do they gain?',
+            a: 'Learners build enterprise-grade data and ML products:<ul><li>Customer churn and dynamic customer lifetime value (LTV) prediction system with automated feature stores.</li><li>Personalized e-commerce recommendation engine utilizing collaborative filtering and neural embeddings.</li><li>Generative AI automated business intelligence dashboard with natural language to SQL translation.</li><li>Production MLOps pipeline on AWS featuring model versioning, continuous training, and drift detection.</li></ul>'
+          },
+          {
+            q: 'What are our five unique strengths, and how do we compare?',
+            a: '<div class="faq-highlight"><b>Five Core Strengths:</b></div><ol style="margin-left: 20px;"><li><b>Flexible Dual Specialization:</b> Dual tracks for Product Analytics (business focus) and Deep ML Engineering (technical focus).</li><li><b>Real-World Industry Datasets:</b> Work on production datasets from Uber, Netflix, Amazon, and Flipkart.</li><li><b>Executive Storytelling &amp; Dashboards:</b> Specialized training on stakeholder presentations, storytelling with data, and executive influence.</li><li><b>End-to-End MLOps Coverage:</b> Model deployment on AWS with Docker, MLflow, and automated monitoring.</li><li><b>No-Jargon Mathematics:</b> Intuitive, visual instruction in linear algebra, calculus, and probability built for practitioners.</li></ol>'
+          },
+          {
+            q: 'Who is hiring in India, what do they pay, and are global jobs possible?',
+            a: '<ul><li><b>Hiring Companies in India:</b> Flipkart, Target, American Express, Swiggy, Fractal Analytics, Boston Consulting Group, McKinsey QuantumBlack, and global GCCs.</li><li><b>Compensation Range:</b> Analyst (0–3 YOE): <b>₹10 – ₹20 LPA</b>; Data Scientist (3–6 YOE): <b>₹22 – ₹42 LPA</b>; Principal Data Scientist (7+ YOE): <b>₹45 – ₹85 LPA</b>.</li><li><b>Global Opportunities:</b> High demand for remote analytics, quantitative modeling, and risk analytics across US/EU financial institutions.</li></ul>'
+          },
+          {
+            q: 'Why is the course built this way, and can learners get job-ready sooner?',
+            a: 'The curriculum is built modularly: <b>Python &amp; SQL Foundations &rarr; Business Analytics &rarr; Statistics &amp; A/B Testing &rarr; Machine Learning &rarr; MLOps &amp; GenAI</b>. Learners become job-ready for high-demand Data Analyst and Analytics Consultant roles by <b>Month 4–5</b>, and advance into Senior ML Scientist roles upon completing the machine learning specialization.'
+          }
+        ]
+      },
+      'P4_AIML': {
+        name: 'Program 4: AI & Machine Learning / Agentic AI Engineering',
+        faqs: [
+          {
+            q: 'Why is Agentic AI & ML a good career, and why now?',
+            a: 'The global AI race has evolved from conversational chat interfaces to <b>autonomous multi-agent systems</b> that write code, analyze data, and orchestrate complex enterprise operations. Organizations face an extreme deficit of engineers who understand deep learning architectures, LLM fine-tuning, production RAG, and agentic frameworks (LangGraph, CrewAI, AutoGen). Salaries for specialized AI engineers currently outpace general software roles by 30% to 50%.'
+          },
+          {
+            q: 'Who can become an AI Engineer, where do they start, and how far can they grow?',
+            a: '<ul><li><b>Who Can Join:</b> Software engineers, backend developers, data engineers, and tech professionals looking to lead the next decade of AI innovation.</li><li><b>Where They Start:</b> AI Engineer or Applied ML Engineer building RAG systems, model evaluation pipelines, and fine-tuned domain models.</li><li><b>Growth Path:</b> AI Engineer &rarr; Senior AI Architect &rarr; Principal Agentic Systems Engineer &rarr; Chief AI Officer (CAIO).</li></ul>'
+          },
+          {
+            q: 'What do companies test in AI & Agentic AI interviews?',
+            a: 'Leading AI teams (Microsoft AI, Adobe, Nvidia ecosystem, persistent AI labs, and high-growth AI startups) test:<ul><li><b>Mathematical Foundations:</b> Vector calculus, linear algebra, attention mechanisms, and transformer architectures.</li><li><b>Production RAG Design:</b> Chunking algorithms, hybrid dense/sparse search, vector database indexing, re-ranking, and hallucination reduction.</li><li><b>Agentic Orchestration:</b> Multi-agent state machines, tool-calling loops, reflection patterns, and memory management.</li><li><b>LLMOps &amp; Fine-Tuning:</b> Parameter-efficient fine-tuning (LoRA/QLoRA), model evaluation (Ragas), latency optimization, and security guardrails.</li></ul>'
+          },
+          {
+            q: 'What do learners build, and what skills do they gain?',
+            a: 'Learners develop cutting-edge artificial intelligence systems:<ul><li>Autonomous multi-agent collaborative software engineering and debugging team.</li><li>Enterprise multimodal RAG platform indexing millions of complex financial and technical PDFs with sub-second retrieval.</li><li>Fine-tuned open-source LLM (Llama 3/Mistral) specialized for legal/medical domain reasoning with GPU quantization.</li><li>Computer vision and natural language processing pipelines for automated multimodal classification.</li></ul>'
+          },
+          {
+            q: 'What are our five unique strengths, and how do we compare?',
+            a: '<div class="faq-highlight"><b>Five Core Strengths:</b></div><ol style="margin-left: 20px;"><li><b>2026 Agentic Architecture Focus:</b> Deep, hands-on mastery of autonomous agents and multi-agent coordination, not superficial prompting.</li><li><b>Dedicated Cloud GPU Infrastructure:</b> Real hands-on experience training, fine-tuning, and hosting models on high-performance cloud GPUs.</li><li><b>Production System Scalability:</b> Teaches how to scale AI applications to enterprise traffic while minimizing latency and token costs.</li><li><b>World-Class Faculty:</b> Classes taught by AI research scientists and senior engineering practitioners from premier AI organizations.</li><li><b>Enterprise Guardrails &amp; Security:</b> Comprehensive coverage of prompt injection defense, data privacy, and enterprise RBAC compliance.</li></ol>'
+          },
+          {
+            q: 'Who is hiring in India, what do they pay, and are global jobs possible?',
+            a: '<ul><li><b>Hiring Companies in India:</b> Microsoft AI, Adobe, Persistent, Infosys Topaz, Accenture AI Labs, and top US AI unicorn offshore centers in Bengaluru and Hyderabad.</li><li><b>Compensation Range:</b> AI Engineer (1–3 YOE): <b>₹18 – ₹35 LPA</b>; Senior AI Architect (4–8 YOE): <b>₹38 – ₹75 LPA</b>; Principal AI Lead (8+ YOE): <b>₹80 LPA – ₹1.5 Cr+</b>.</li><li><b>Global Remote Market:</b> Unprecedented surge in US/EU remote contracts ($120k – $220k USD) for engineers skilled in production RAG and multi-agent workflows.</li></ul>'
+          },
+          {
+            q: 'Why is the course built this way, and can learners get job-ready sooner?',
+            a: 'The course progresses purposefully: <b>Python &amp; Math Foundations &rarr; Applied Machine Learning &rarr; Deep Learning &amp; Transformers &rarr; Production RAG &rarr; Multi-Agent Systems &rarr; LLMOps &amp; Security</b>. Learners become qualified for Applied AI Developer and RAG Engineer positions by <b>Month 5–6</b>, while advanced cognitive architectures build senior architectural mastery.'
+          }
+        ]
+      },
+      'P5_DEVOPS': {
+        name: 'Program 5: DevOps, Cloud & Platform Engineering',
+        faqs: [
+          {
+            q: 'Why is DevOps & Cloud a good career, and why now?',
+            a: 'Every enterprise software company lives and dies by its cloud infrastructure. With distributed microservices, multi-cloud architectures, and compute-heavy AI workloads, companies cannot afford downtime or runaway cloud bills. <b>Platform Engineers and SREs</b> who automate infrastructure via code, orchestrate Kubernetes clusters, and guarantee 99.99% system availability enjoy tremendous job security and compensation leverage.'
+          },
+          {
+            q: 'Who can become a DevOps Engineer, where do they start, and how far can they grow?',
+            a: '<ul><li><b>Who Can Join:</b> System administrators, tech support engineers, QA/automation engineers, database admins, and developers wanting infrastructure specialization.</li><li><b>Where They Start:</b> Cloud Support / Associate DevOps Engineer managing CI/CD pipelines, Docker containers, and cloud monitoring.</li><li><b>Growth Path:</b> DevOps Engineer &rarr; Site Reliability Engineer (SRE) &rarr; Cloud Infrastructure Architect &rarr; Head of Platform Engineering.</li></ul>'
+          },
+          {
+            q: 'What do companies test in DevOps & Cloud interviews?',
+            a: 'Leading tech enterprises (Cisco, VMware, Red Hat, AWS partners, and major FinTechs) evaluate 4 core pillars:<ul><li><b>Linux Internals &amp; Networking:</b> Process management, kernel namespaces, networking protocols (TCP/UDP, DNS, HTTP/3), and bash automation.</li><li><b>Containerization &amp; Kubernetes:</b> Docker multi-stage optimization, Kubernetes pod lifecycle, ingress controllers, network policies, and Helm charts.</li><li><b>Infrastructure as Code (IaC):</b> Modular Terraform architecture, state locking, drift detection, and multi-region AWS design.</li><li><b>CI/CD, Monitoring &amp; Security:</b> GitHub Actions, ArgoCD GitOps, Prometheus &amp; Grafana observability, and DevSecOps vulnerability scanning.</li></ul>'
+          },
+          {
+            q: 'What do learners build, and what skills do they gain?',
+            a: 'Learners engineer resilient, production-grade cloud environments:<ul><li>Multi-region high-availability Kubernetes cluster on AWS provisioned entirely through Terraform and GitOps (ArgoCD).</li><li>Automated zero-downtime CI/CD deployment pipeline with canary releases and automated rollback triggers.</li><li>Centralized enterprise observability and alerting stack using Prometheus, Grafana, and Loki for real-time anomaly detection.</li><li>DevSecOps security pipeline automating image vulnerability scanning, IAM least-privilege policies, and secret management.</li></ul>'
+          },
+          {
+            q: 'What are our five unique strengths, and how do we compare?',
+            a: '<div class="faq-highlight"><b>Five Core Strengths:</b></div><ol style="margin-left: 20px;"><li><b>100% Real Cloud Infrastructure:</b> Build on real AWS accounts with live VPCs, clusters, and load balancers—not simulated sandboxes.</li><li><b>Deep Kubernetes Mastery:</b> Multiple intensive months dedicated to production Kubernetes, service meshes, and disaster recovery.</li><li><b>DevOps Meets AI &amp; MLOps:</b> Unique elective modules covering MLOps pipelines and GPU cluster management for AI models.</li><li><b>Production Incident War-Rooms:</b> Live troubleshooting simulations where mentors introduce chaotic cluster failures for real-time triage.</li><li><b>Industry Certification Alignment:</b> Fully aligned with AWS Certified Solutions Architect and Certified Kubernetes Administrator (CKA).</li></ol>'
+          },
+          {
+            q: 'Who is hiring in India, what do they pay, and are global jobs possible?',
+            a: '<ul><li><b>Hiring Companies in India:</b> Cisco, VMware, Amazon AWS, Microsoft Azure, Red Hat, Paytm, PhonePe, Jio, Infosys Cloud, and global FinTech GCCs.</li><li><b>Compensation Range:</b> DevOps Engineer (1–3 YOE): <b>₹12 – ₹24 LPA</b>; Senior DevOps/SRE (4–7 YOE): <b>₹26 – ₹50 LPA</b>; Cloud Architect / Staff SRE (8+ YOE): <b>₹55 – ₹90 LPA</b>.</li><li><b>Global Opportunities:</b> Cloud engineering is inherently location-agnostic; high demand for remote SRE and 24/7 follow-the-sun operations in the US and Europe.</li></ul>'
+          },
+          {
+            q: 'Why is the course built this way, and can learners get job-ready sooner?',
+            a: 'The curriculum is built progressively: <b>Python &amp; Linux Internals &rarr; DevOps Toolchain &amp; CI/CD &rarr; AWS Cloud Architecture &rarr; Kubernetes Orchestration &rarr; Observability &amp; Security &rarr; MLOps &amp; AI Systems</b>. Learners become hireable for Cloud Support and Junior DevOps positions within <b>4–5 months</b>, while advanced Kubernetes and IaC modules qualify them for senior high-paying roles.'
+          }
+        ]
+      }
+    };
+
+    let activeFaqProgramKey = 'P1_ACADEMY';
+
+    function resolveFaqProgramKey(progStr) {
+      const s = String(progStr || '').toLowerCase();
+      if (s.includes('devops') || s.includes('cloud') || s.includes('platform') || s.includes('p5') || s.includes('program 5')) return 'P5_DEVOPS';
+      if (s.includes('agentic') || s.includes('aiml') || s.includes('p4') || s.includes('program 4')) return 'P4_AIML';
+      if (s.includes('fde') || s.includes('forward deployed') || s.includes('p3') || s.includes('program 3')) return 'P3_FDE';
+      if (s.includes('dsml') || s.includes('data science') || s.includes('p2') || s.includes('program 2')) return 'P2_DSML';
+      return 'P1_ACADEMY';
+    }
+
+    function switchFaqProgram(progKey) {
+      if (!PROGRAM_STRATEGIC_FAQS[progKey]) progKey = 'P1_ACADEMY';
+      activeFaqProgramKey = progKey;
+
+      // Update selector buttons
+      ['P1_ACADEMY', 'P2_DSML', 'P3_FDE', 'P4_AIML', 'P5_DEVOPS'].forEach(k => {
+        const btn = document.getElementById(`faq-btn-${k}`);
+        if (btn) {
+          if (k === progKey) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+      });
+
+      renderStrategicFaqs(progKey);
+    }
+
+    function toggleFaqItem(idx) {
+      const item = document.getElementById(`faq-item-${idx}`);
+      if (item) {
+        item.classList.toggle('open');
+      }
+    }
+
+    function renderStrategicFaqs(progKey) {
+      const container = document.getElementById('faq-accordion-list');
+      if (!container) return;
+
+      const progData = PROGRAM_STRATEGIC_FAQS[progKey];
+      if (!progData || !progData.faqs) {
+        container.innerHTML = `<div style="padding:10px; color:var(--color-text-inverse);">No FAQs available for this program.</div>`;
+        return;
+      }
+
+      container.innerHTML = progData.faqs.map((item, idx) => {
+        // Open the first question by default
+        const isOpen = (idx === 0) ? 'open' : '';
+        return `
+          <div class="faq-item-card ${isOpen}" id="faq-item-${idx}">
+            <button class="faq-question-btn" onclick="toggleFaqItem(${idx})">
+              <div class="faq-q-left">
+                <span class="faq-q-badge">Q${idx + 1}</span>
+                <span>${item.q}</span>
+              </div>
+              <span class="faq-toggle-icon">▼</span>
+            </button>
+            <div class="faq-answer-body">
+              ${item.a}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
     async function loadCurriculumCatalog() {
       try {
@@ -1672,6 +2102,10 @@
       if (!currentModalLead) return;
       const target = which === 'primary' ? currentModalLead.primary : currentModalLead.fallback;
       if (!target) return;
+
+      // Synchronize Strategic FAQ section to target program
+      const faqKey = resolveFaqProgramKey(target.program || target.catalog_code);
+      switchFaqProgram(faqKey);
 
       const elCurrContainer = document.getElementById('curriculum-modules-container');
       const elCurrTitle = document.getElementById('curriculum-prog-title');

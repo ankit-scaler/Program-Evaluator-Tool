@@ -535,6 +535,282 @@ P1_ACADEMY_ADVANCED_MODULES = [
     }
 ]
 
+# ==============================================================================
+# MODERN DATA SCIENCE & MACHINE LEARNING (DSML) - TRACK SPECIFIC CURRICULA
+# ==============================================================================
+
+# 1. BEGINNERS TRACK (14 - 21.5 Months - Foundations through Machine Learning & Agentic AI)
+P2_DSML_BEGINNER_MODULES = [
+    {
+        'segment': 'Data Foundations & SQL',
+        'type': 'Core',
+        'phase': 'Advanced SQL & AI for Data Professionals',
+        'duration': '2 Months',
+        'topics': 'Data Foundations & SQL Intro, Schema Basics, Data Filtering, NULLs & Aggregation, GROUP BY Metrics, Applied SQL Labs (1 to 4), CASE WHEN, JOINs (INNER, LEFT, FULL OUTER, CROSS, SELF, NON-EQUI), Subqueries (Correlated & Non-Correlated, EXISTS), CTEs, Window Functions (ROW_NUMBER, Advanced Ranking, Navigation & Trends), Date/Time SQL, MySQL Setup, DDL/DML, Views, Indexing, Partitioning, Stored Procedures, Funnel Analytics & Cohort Retention.',
+        'deliverable': 'Production SQL pipelines, cohort retention models, and sub-second analytical query optimization.'
+    },
+    {
+        'segment': 'BI & Storytelling',
+        'type': 'Core',
+        'phase': 'Excel & Dashboarding with AI Storytelling',
+        'duration': '1 Month',
+        'topics': 'Excel (Structure, Formulas, Lookups, Pivot Tables, Mini Dashboard, Live Reporting Case), Tableau (Viz Fundamentals, KPIs, Filters, Calculations, Dashboard Labs, LOD Expressions, Table Calcs, Live Business Case 4: Dashboard Storytelling).',
+        'deliverable': 'Interactive executive dashboards in Tableau and Excel with AI-powered KPI storytelling.'
+    },
+    {
+        'segment': 'Programming for Data',
+        'type': 'Core',
+        'phase': 'Python Foundations + AI Coding Assistants',
+        'duration': '1 Month',
+        'topics': 'Python (Data Types, Variables, I/O, Control Flow, Loops, Functions, Lists, Strings, Data Structures, Debugging Masterclass), Pandas (Read, Filter, Select, Groupby KPIs, Merge, Cleaning, EDA & Data Quality Checks, Complete EDA).',
+        'deliverable': 'Clean Python scripts, automated EDA pipelines, and robust data munging using Pandas.'
+    },
+    {
+        'segment': 'Product Analytics',
+        'type': 'Core',
+        'phase': 'Data to Decisions: Product Analytics with AI',
+        'duration': '1 Month',
+        'topics': 'Metrics Foundations (DAU, MAU, Retention, Funnels), Event Tracking & Data Instrumentation, User Segmentation & Behavioral Analysis, Funnel Analysis, Cohort Analysis & Retention Deep Dive, Growth Metrics (Activation, Engagement, Retention), A/B Testing Fundamentals & Pitfalls, Revenue Metrics (AOV, LTV, CAC), Feature Adoption, AI for Product Analytics, Applied Product Lab.',
+        'deliverable': 'Product analytics frameworks, user retention cohorts, and AI-driven growth hypothesis generation.'
+    },
+    {
+        'segment': 'Analytics Automation',
+        'type': 'Core',
+        'phase': 'Generative AI for Data Analytics & Automation',
+        'duration': '1 Month',
+        'topics': 'GenAI & LLMs for Analysts, Prompt Engineering for Data (SQL, Python, Insights), AI for SQL Query Generation & Debugging, Python/Pandas Automation, AI for Data Cleaning & EDA, Dashboard Insights & Storytelling, AI-Assisted Reports, Automating Repetitive Analysis, Evaluating AI Outputs (Hallucination, Bias), OpenAI APIs for Data Workflows, Mini AI Tools, Applied GenAI Lab.',
+        'deliverable': 'Autonomous analyst workflows, automated report generation, and custom OpenAI-powered data tools.'
+    },
+    {
+        'segment': 'Career Readiness',
+        'type': 'Core',
+        'phase': 'Interview Readiness: Technical & Product Cases',
+        'duration': '1 Month',
+        'topics': 'SQL Pattern Recognition & Case-Based Problem Solving (JOINs, Window Functions, CTEs), Python & Pandas Technical Interview Prep, Product Case Interviews (Metrics & Business Thinking), Estimation & Guesstimates, Resume Building (Projects, Impact, Storytelling), LinkedIn & Portfolio Optimization.',
+        'deliverable': 'Analyst portfolio, case study defense, and technical interview clearance for Tier-1 data teams.'
+    },
+    {
+        'segment': 'Advanced Data Engineering',
+        'type': 'Core',
+        'phase': 'Advanced Analytics with Python, Pandas & AI Workflows',
+        'duration': '1 Month',
+        'topics': 'Python Refresher, Data Manipulation & Chaining, Groupby Transformations, Multi-Table Data Handling, Handling Large Datasets, Data Cleaning at Scale, NumPy Foundations & Advanced NumPy for Analytics, Data Visualization & Feature Engineering, Automation Scripts & Scheduling, AI-Assisted Analysis & Code Generation, End-to-End AI Data Solutions.',
+        'deliverable': 'Scalable data manipulation pipelines processing massive multi-table datasets with automated feature engineering.'
+    },
+    {
+        'segment': 'Applied Statistics',
+        'type': 'Core',
+        'phase': 'Statistics, Experimentation & AI for Data-Driven Decisions',
+        'duration': '1 Month',
+        'topics': 'Probability Foundations, Distributions (Normal, Binomial), Sampling Techniques & Bias, Central Limit Theorem (Intuition + Applications), Hypothesis Testing Fundamentals, p-values, Confidence Intervals & Errors, A/B Testing (Design, Setup, Analysis & Interpretation), Experimentation Pitfalls (Bias, Peeking, Simpson\'s Paradox), Metric Design, AI-Assisted Statistical Interpretation & Validation, Applied Experiment Lab.',
+        'deliverable': 'Rigorous statistical A/B testing framework evaluated by product tech leaders.'
+    },
+    {
+        'segment': 'Product Analytics',
+        'type': 'Core',
+        'phase': 'Advanced Product Analytics & Strategy',
+        'duration': '1 Month',
+        'topics': 'Advanced Funnel Analysis (Multi-step, Multi-channel), Retention Models & Cohort Deep Dive, Customer Lifetime Value (LTV) Modeling, Customer Acquisition Cost (CAC) & Payback, Growth Loops & Product-Led Growth, Segmentation Strategies (Behavioral & Value-based), Churn Analysis & Retention Strategies, Predictive Analytics for Product, Recommendation Systems (Conceptual), Decision Frameworks, AI for Product Strategy, Applied Product Capstone.',
+        'deliverable': 'End-to-end product strategy and predictive customer retention model capstone.'
+    },
+    {
+        'segment': 'Domain Analytics',
+        'type': 'Elective',
+        'phase': 'Domain Analytics (FinTech, E-Commerce, HealthTech)',
+        'duration': '1 Month',
+        'topics': 'E-commerce Analytics & Basket Analysis, FinTech Risk & Fraud Modeling, HealthTech Analytics, SaaS Growth Metrics, Custom Domain Case Studies.',
+        'deliverable': 'Specialized industry capstone solving real enterprise domain problem statements.'
+    },
+    {
+        'segment': 'Cloud Analytics',
+        'type': 'Elective',
+        'phase': 'Cloud & Data Analytics on AWS',
+        'duration': '1 Month',
+        'topics': 'Modern Cloud Data Stack, AWS Fundamentals (S3, IAM), S3 Data Lakes, Querying Data with Amazon Athena, Data Warehousing with Amazon Redshift, ETL with AWS Glue, End-to-End Data Pipelines, Connecting Tableau to Cloud Data Sources, Performance & Cost Optimization, Intro to Databricks & Lakehouse Concept, Applied Cloud Lab.',
+        'deliverable': 'Production cloud data lakehouse on AWS with Athena, Redshift, and automated Glue ETL.'
+    },
+    {
+        'segment': 'Applied AI',
+        'type': 'Core',
+        'phase': 'AI For Everyone & Autonomous Workflows',
+        'duration': '2 Months',
+        'topics': 'Comparative Framework for AI Tools, Model Selection, AI Failure Modes & Mitigation, Voice-Driven Analytical Workflows, No-Code Process Automation for Data, Org Knowledge Bases Integration, Reusable Prompt Libraries, Project Task Decomposition, Three-Tier Workflow Mapping, No-Code Prototyping, Autonomous AI Boundaries, Multi-Step AI Pipelines, Applied Agent Dev (Data Monitoring Workflow), AI-Assisted Presentations & Communicating AI Work Responsibly.',
+        'deliverable': 'Autonomous data-monitoring AI agents and no-code analytical tools deployed across enterprise workflows.'
+    },
+    {
+        'segment': 'Mathematical Foundations',
+        'type': 'Core',
+        'phase': 'Mathematical Foundations for AI',
+        'duration': '1 Month',
+        'topics': 'Linear Algebra in ML (Dot products, hyperplanes, halfspaces, distance, loss minimization in classification), Calculus & Optimization (Gradient descent in action, constrained optimization, Principal Component Analysis PCA).',
+        'deliverable': 'Mathematical vector foundations and custom gradient descent optimization engine from scratch.'
+    },
+    {
+        'segment': 'Machine Learning',
+        'type': 'Core',
+        'phase': 'Machine Learning with AI Workflows',
+        'duration': '1 Month',
+        'topics': 'Intro to ML, Linear Regression (1 to 4), Polynomial Regression, Bias-Variance Tradeoff, Regularization (L1/L2), Cross-Validation, Logistic Regression (1 & 2), Classification Metrics (Confusion Matrix, ROC-AUC, Imbalanced Data).',
+        'deliverable': 'Calibrated predictive regression and classification pipelines handling imbalanced enterprise data.'
+    },
+    {
+        'segment': 'Machine Learning',
+        'type': 'Elective',
+        'phase': 'Supervised Machine Learning with AI',
+        'duration': '1 Month',
+        'topics': 'k-Nearest Neighbors (1 & 2), Decision Trees (1 & 2), Bagging & Random Forest, Boosting (AdaBoost, Gradient Boosting, XGBoost), Ensemble Techniques, Naive Bayes (1 & 2), Support Vector Machines (SVM 1 & 2), Supervised ML Wrap-up.',
+        'deliverable': 'Tuned ensemble models (XGBoost, Random Forest) solving complex classification challenges.'
+    },
+    {
+        'segment': 'Machine Learning',
+        'type': 'Elective',
+        'phase': 'Un-supervised Machine Learning with AI',
+        'duration': '1 Month',
+        'topics': 'Dimensionality Reduction (PCA, t-SNE, UMAP), Clustering (K-Means, K-Means++, Gaussian Mixture Models GMM, Hierarchical Clustering, DBSCAN), Anomaly Detection, End-to-End Business Cases (1 & 2).',
+        'deliverable': 'High-dimensional customer segmentation and anomaly detection engines.'
+    },
+    {
+        'segment': 'Forecasting & Recommenders',
+        'type': 'Elective',
+        'phase': 'Time Series and Recommender Systems with AI Workflows',
+        'duration': '1 Month',
+        'topics': 'Time Series Forecasting (ARIMA, SARIMA, Prophet), Trend & Seasonality Decomposition, Recommender Systems (Collaborative Filtering, Matrix Factorization, Content-Based, Hybrid Engines), End-to-end Practical Session.',
+        'deliverable': 'Scalable multi-modal recommendation engine and automated time-series demand forecasting system.'
+    },
+    {
+        'segment': 'MLOps & Platform',
+        'type': 'Elective',
+        'phase': 'MLOps & AI Deployment',
+        'duration': '1 Month',
+        'topics': 'Git & GitHub for MLOps, Building Streamlit Tools (Cars24 case), Web APIs using Flask/FastAPI, Containerization with Docker & DockerHub, Deploying APIs on AWS ECS, CI/CD with GitHub Actions, Experiment Tracking with MLflow, ML System Design (1 & 2), AWS SageMaker Pipelines, Large-scale processing with Apache Spark.',
+        'deliverable': 'End-to-end production CI/CD MLOps pipeline on AWS ECS with Docker, MLflow, and SageMaker.'
+    },
+    {
+        'segment': 'Deep Learning',
+        'type': 'Elective',
+        'phase': 'Deep Learning & Neural Networks',
+        'duration': '1 Month',
+        'topics': 'Neural Networks Intro, Forward & Backpropagation, N-Layer Neural Networks, Backprop Mathematics, TensorFlow & Keras (1 & 2), Optimizers (Adam, RMSprop), Hyperparameter Tuning, Autoencoders, MLP Design & Debugging, Model Interpretability (LIME).',
+        'deliverable': 'Multi-layer perceptron neural network architectures with custom optimizers and explainability frameworks.'
+    },
+    {
+        'segment': 'Computer Vision',
+        'type': 'Elective',
+        'phase': 'AI for Computer Vision',
+        'duration': '1 Month',
+        'topics': 'Computer Vision Intro (CNNs), Addressing Overfitting, CNN under the hood, Transfer Learning, Image Similarity & Embeddings, CNN for Medical Diagnosis, Object Localization & Detection (YOLO), Object Segmentation, Siamese Networks, Generative Models & GANs Intro.',
+        'deliverable': 'Real-time object detection and visual feature extraction pipeline using Transfer Learning.'
+    },
+    {
+        'segment': 'Natural Language Processing',
+        'type': 'Elective',
+        'phase': 'AI for Natural Language Processing',
+        'duration': '1 Month',
+        'topics': 'NLP Foundations, Text Representation, Word Embeddings (Word2Vec), Language Modeling, Topic Modeling, RNNs, LSTMs, Named Entity Recognition (NER), Attention Mechanisms, Transformer Architecture, BERT.',
+        'deliverable': 'Production text intelligence pipeline with named entity extraction and transformer embeddings.'
+    },
+    {
+        'segment': 'Agentic AI',
+        'type': 'Elective',
+        'phase': 'AI Engineering and Agentic AI',
+        'duration': '1.5 Months',
+        'topics': 'AI Engineering Intro, Modern Text & Image Model Architectures, Text Generation APIs (OpenAI), Eval Pipelines & Observability, Prompt Engineering & Security, RAG & Embeddings Deep Dive, Multimodal & Tabular RAG, Autonomous Agents (Foundations, Planning, Frameworks & Protocols - LangGraph/CrewAI), Fine-Tuning Models, Scaling AI Apps, Quantization, Inference Optimization.',
+        'deliverable': 'Enterprise Autonomous Multi-Agent reasoning system and production RAG pipeline.'
+    }
+]
+
+# 2. INTERMEDIATE TRACK (11.5 Months - Core ML, MLOps, Deep Learning & Agentic AI)
+P2_DSML_INTERMEDIATE_MODULES = [
+    {
+        'segment': 'Advanced Data Engineering',
+        'type': 'Core',
+        'phase': 'Advanced Analytics with Python, Pandas & AI Workflows',
+        'duration': '1 Month',
+        'topics': 'Python Refresher, Data Manipulation & Chaining, Groupby Transformations, Multi-Table Data Handling, Handling Large Datasets, Data Cleaning at Scale, NumPy Foundations & Advanced NumPy for Analytics, Data Visualization & Feature Engineering, Automation Scripts & Scheduling, AI-Assisted Analysis & Code Generation, End-to-End AI Data Solutions.',
+        'deliverable': 'Scalable data manipulation pipelines processing massive multi-table datasets with automated feature engineering.'
+    },
+    {
+        'segment': 'Applied Statistics',
+        'type': 'Core',
+        'phase': 'Statistics, Experimentation & AI for Data-Driven Decisions',
+        'duration': '1 Month',
+        'topics': 'Probability Foundations, Distributions (Normal, Binomial), Sampling Techniques & Bias, Central Limit Theorem (Intuition + Applications), Hypothesis Testing Fundamentals, p-values, Confidence Intervals & Errors, A/B Testing (Design, Setup, Analysis & Interpretation), Experimentation Pitfalls (Bias, Peeking, Simpson\'s Paradox), Metric Design, AI-Assisted Statistical Interpretation & Validation, Applied Experiment Lab.',
+        'deliverable': 'Rigorous statistical A/B testing framework evaluated by product tech leaders.'
+    },
+    {
+        'segment': 'Product Analytics',
+        'type': 'Core',
+        'phase': 'Advanced Product Analytics',
+        'duration': '1 Month',
+        'topics': 'Advanced Funnel Analysis (Multi-step, Multi-channel), Retention Models & Cohort Deep Dive, Customer Lifetime Value (LTV) Modeling, Customer Acquisition Cost (CAC) & Payback, Growth Loops & Product-Led Growth, Segmentation Strategies (Behavioral & Value-based), Churn Analysis & Retention Strategies, Predictive Analytics for Product, Recommendation Systems (Conceptual), Decision Frameworks, AI for Product Strategy, Applied Product Capstone.',
+        'deliverable': 'End-to-end product strategy and predictive customer retention model capstone.'
+    },
+    {
+        'segment': 'Mathematical Foundations',
+        'type': 'Core',
+        'phase': 'Mathematical Foundations for AI',
+        'duration': '1 Month',
+        'topics': 'Linear Algebra in ML (Dot products, hyperplanes, halfspaces, distance, loss minimization in classification), Calculus & Optimization (Gradient descent in action, constrained optimization, Principal Component Analysis PCA).',
+        'deliverable': 'Mathematical vector foundations and custom gradient descent optimization engine from scratch.'
+    },
+    {
+        'segment': 'Machine Learning',
+        'type': 'Core',
+        'phase': 'Machine Learning with AI Workflows',
+        'duration': '1 Month',
+        'topics': 'Intro to ML, Linear Regression (1 to 4), Polynomial Regression, Bias-Variance Tradeoff, Regularization (L1/L2), Cross-Validation, Logistic Regression (1 & 2), Classification Metrics (Confusion Matrix, ROC-AUC, Imbalanced Data).',
+        'deliverable': 'Calibrated predictive regression and classification pipelines handling imbalanced enterprise data.'
+    },
+    {
+        'segment': 'Supervised Learning',
+        'type': 'Core',
+        'phase': 'Supervised Machine Learning with AI',
+        'duration': '1 Month',
+        'topics': 'k-Nearest Neighbors (1 & 2), Decision Trees (1 & 2), Bagging & Random Forest, Boosting (AdaBoost, Gradient Boosting, XGBoost), Ensemble Techniques, Naive Bayes (1 & 2), Support Vector Machines (SVM 1 & 2), Supervised ML Wrap-up.',
+        'deliverable': 'Tuned ensemble models (XGBoost, Random Forest) solving complex classification challenges.'
+    },
+    {
+        'segment': 'Unsupervised Learning',
+        'type': 'Core',
+        'phase': 'Un-supervised Machine Learning with AI',
+        'duration': '1 Month',
+        'topics': 'Dimensionality Reduction (PCA, t-SNE, UMAP), Clustering (K-Means, K-Means++, Gaussian Mixture Models GMM, Hierarchical Clustering, DBSCAN), Anomaly Detection, End-to-End Business Cases (1 & 2).',
+        'deliverable': 'High-dimensional customer segmentation and anomaly detection engines.'
+    },
+    {
+        'segment': 'Forecasting & Recommenders',
+        'type': 'Core',
+        'phase': 'Time Series and Recommender Systems with AI Workflows',
+        'duration': '1 Month',
+        'topics': 'Time Series Forecasting (ARIMA, SARIMA, Prophet), Trend & Seasonality Decomposition, Recommender Systems (Collaborative Filtering, Matrix Factorization, Content-Based, Hybrid Engines), End-to-end Practical Session.',
+        'deliverable': 'Scalable multi-modal recommendation engine and automated time-series demand forecasting system.'
+    },
+    {
+        'segment': 'MLOps & Platform',
+        'type': 'Core',
+        'phase': 'MLOps & AI Deployment',
+        'duration': '1 Month',
+        'topics': 'Git & GitHub for MLOps, Building Streamlit Tools (Cars24 case), Web APIs using Flask/FastAPI, Containerization with Docker & DockerHub, Deploying APIs on AWS ECS, CI/CD with GitHub Actions, Experiment Tracking with MLflow, ML System Design (1 & 2), AWS SageMaker Pipelines, Large-scale processing with Apache Spark.',
+        'deliverable': 'End-to-end production CI/CD MLOps pipeline on AWS ECS with Docker, MLflow, and SageMaker.'
+    },
+    {
+        'segment': 'Deep Learning',
+        'type': 'Core',
+        'phase': 'Deep Learning & Neural Networks',
+        'duration': '1 Month',
+        'topics': 'Neural Networks Intro, Forward & Backpropagation, N-Layer Neural Networks, Backprop Mathematics, TensorFlow & Keras (1 & 2), Optimizers (Adam, RMSprop), Hyperparameter Tuning, Autoencoders, MLP Design & Debugging, Model Interpretability (LIME).',
+        'deliverable': 'Multi-layer perceptron neural network architectures with custom optimizers and explainability frameworks.'
+    },
+    {
+        'segment': 'Agentic AI',
+        'type': 'Core',
+        'phase': 'AI Engineering and Agentic AI',
+        'duration': '1.5 Months',
+        'topics': 'Introduction to AI Engineering, Refresher on Modern Text & Image Model Architectures, Text Generation APIs (OpenAI API), Eval Pipelines & Observability, Prompt Engineering & Security, Retrieval-Augmented Generation (RAG) & Embeddings Deep Dive, Multimodal & Tabular RAG, Autonomous Agents (Foundations, Planning, Frameworks & Protocols), Fine-Tuning Existing Models, Modalities (Audio, Image, Video), Scaling AI Applications, Model Quantization, Advanced Fine-Tuning, Dataset Engineering & Inference Optimization.',
+        'deliverable': 'Production-grade enterprise Autonomous Agent systems, optimized fine-tuned LLMs, and high-performance RAG architectures.'
+    }
+]
+
 
 def resolve_program_code(prog_val):
     if not prog_val:
@@ -556,7 +832,7 @@ def resolve_program_code(prog_val):
 def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
     """
     Returns official catalogue URLs and track-tailored curriculum modules.
-    If Scaler Academy (P1) is selected, returns the precise modules for
+    If Scaler Academy (P1) or DSML (P2) is selected, returns the precise modules for
     the candidate's assigned track (Beginner, Intermediate, or Advanced).
     """
     # 1. Resolve program code
@@ -608,7 +884,40 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
             'track_label': track_label
         }
 
-    # For other programs (P2, P3, P4, P5), return their structured curriculum modules
+    # 3. Track-specific resolution for Modern Data Science & ML (P2)
+    if p_code == 'P2_DSML':
+        t_low = str(track_name).lower() if track_name else ''
+        all_text = f"{str(track_name)} {str(arg1)} {str(arg2)} {str(arg3)} {str(arg4)}".lower()
+
+        if 'intermediate' in t_low or 'core analytics' in t_low or 'machine learning' in t_low or 'predictive' in t_low or 'specialization' in t_low:
+            selected_modules = P2_DSML_INTERMEDIATE_MODULES
+            track_label = 'Intermediate Track (Core ML & AI Engineering)'
+        elif 'beginner' in t_low or 'python prep' in t_low or 'foundation' in t_low or 'business ml' in t_low or 'data analytics' in t_low:
+            selected_modules = P2_DSML_BEGINNER_MODULES
+            track_label = 'Beginner Track (Data Analytics, Python & Business ML)'
+        else:
+            # Fallback based on experience
+            try:
+                exp_num = float(str(arg3).replace('years', '').replace('yrs', '').replace('+', '').strip())
+                if exp_num >= 2.0:
+                    selected_modules = P2_DSML_INTERMEDIATE_MODULES
+                    track_label = 'Intermediate Track (Core ML & AI Engineering)'
+                else:
+                    selected_modules = P2_DSML_BEGINNER_MODULES
+                    track_label = 'Beginner Track (Data Analytics, Python & Business ML)'
+            except Exception:
+                selected_modules = P2_DSML_BEGINNER_MODULES
+                track_label = 'Beginner Track (Data Analytics, Python & Business ML)'
+
+        return {
+            'program_name': p_data['program_name'],
+            'catalogue_url': p_data['catalogue_url'],
+            'top_hiring_companies': p_data.get('top_hiring_companies', []),
+            'curriculum_modules': selected_modules,
+            'track_label': track_label
+        }
+
+    # For other programs (P3, P4, P5), return their structured curriculum modules
     return {
         'program_name': p_data['program_name'],
         'catalogue_url': p_data['catalogue_url'],

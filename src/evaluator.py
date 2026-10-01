@@ -36,10 +36,10 @@ def get_track_duration(program_str, track_str):
     # Program 2: DSML
     elif 'dsml' in p_lower or 'data science' in p_lower or 'program 2' in p_lower:
         if 'beginner' in t_lower:
-            return '16 - 20 Months'
-        elif 'intermediate' in t_lower:
-            return '14 - 16 Months'
-        return '14 - 16 Months'
+            return '14 - 21.5 Months'
+        elif 'intermediate' in t_lower or 'core' in t_lower or 'predictive' in t_lower:
+            return '11.5 Months'
+        return '11.5 - 14 Months'
         
     # Program 3: AI Forward Deployed Engineer (FDE)
     elif 'fde' in p_lower or 'forward deployed' in p_lower or 'program 3' in p_lower:

@@ -46,6 +46,14 @@ def health_check():
         "version": "1.0.0"
     }
 
+@app.get("/scaler_logo.png")
+@app.get("/scaler_logo_full.png")
+async def serve_scaler_logo():
+    logo_path = os.path.join(WEB_DIR, 'scaler_logo.png')
+    if os.path.exists(logo_path):
+        return FileResponse(logo_path, media_type="image/png")
+    raise HTTPException(status_code=404, detail="Logo not found")
+
 # Global in-memory store of uploaded/evaluated leads (Starts 100% EMPTY)
 CACHED_LEADS = []
 CACHED_DF = None

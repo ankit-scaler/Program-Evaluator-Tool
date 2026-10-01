@@ -214,6 +214,264 @@ def calculate_confidence(program_name, inbound_cat, cohort_size, retention_rate,
     }
 
 
+def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona=''):
+    """
+    Synthesizes a role-specific career pitch connecting the candidate's existing professional
+    skills (e.g., accounting ledgers, clinical protocols, QA testing, sales funnels) to the target program track.
+    """
+    r_lower = str(raw_role).lower()
+    p_lower = str(p_lower).lower()
+    t_lower = str(t_lower).lower()
+    
+    # 1. Finance / Accounting / Banking / Audit / CA
+    if any(k in r_lower for k in ['account', 'finance', 'auditor', 'banking', 'ca ', 'chartered', 'tax', 'bookkeeper', 'treasury', 'financial']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), you already work with numerical data, spreadsheets, and financial reports daily. "
+                "This program builds directly on your existing analytical mindset by transforming spreadsheet modeling into SQL queries, "
+                "Python automation, and predictive machine learning models."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), your daily discipline with structured financial calculations, reconciliation logic, "
+                "and numeric precision provides a strong foundation for computational thinking, algorithmic logic, and software development."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), this program offers a practical, tools-oriented technical pivot focusing on "
+                "Linux, cloud infrastructure, and automation scripts without requiring abstract mathematical puzzles."
+            )
+        elif 'agentic' in p_lower or 'aiml' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), your numerical exposure aligns with building domain-specific financial AI agents, "
+                "prompt automations, and LLM data pipelines."
+            )
+
+    # 2. Healthcare / Clinical / Medical / Pharmacy
+    if any(k in r_lower for k in ['nurse', 'nursing', 'doctor', 'hospital', 'physician', 'dentist', 'pharmacist', 'paramedic', 'medical', 'clinic']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your familiarity with patient records, clinical workflows, and diagnostic patterns "
+                "translates directly into healthcare data analytics, statistical modeling, and predictive AI."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your background in executing high-precision clinical protocols and diagnostic decision-making "
+                "translates naturally into structured computational thinking, step-by-step logic, and software engineering."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this program provides an accessible entry into tech through hands-on labs and "
+                "cloud infrastructure automation with 1:1 mentorship."
+            )
+
+    # 3. Operations / Supply Chain / Logistics / Admin / Procurement
+    if any(k in r_lower for k in ['operation', 'logistics', 'supply chain', 'procurement', 'inventory', 'warehouse', 'admin', 'coordinator']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), you already manage operational metrics, workflow pipelines, and inventory data daily. "
+                "This program transforms that operational acumen into structured SQL data pipelines, visual dashboarding, and predictive analytics."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), your background in managing end-to-end operational pipelines aligns directly with "
+                "CI/CD automation, workflow orchestration, and cloud infrastructure management."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), your experience in workflow optimization and system bottleneck resolution "
+                "gives you an intuitive grasp of algorithmic processes and backend system design."
+            )
+
+    # 4. Sales / Marketing / Growth / Business Development
+    if any(k in r_lower for k in ['sales', 'marketing', 'bde', 'bda', 'growth', 'business dev', 'account manager']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), you already understand customer funnels, campaign metrics, and business drivers. "
+                "This program supercharges that commercial instinct with SQL queries, product analytics, and predictive customer modeling."
+            )
+        elif 'fde' in p_lower or 'forward deployed' in p_lower or 'agentic' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), pairing your strong client communication and stakeholder management with "
+                "enterprise AI deployment creates a high-leverage Forward Deployed Engineer profile."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this program takes your commercial communication skills and pairs them with "
+                "computational thinking and coding from scratch to build client-ready software products."
+            )
+
+    # 5. HR / People Ops / Recruitment
+    if any(k in r_lower for k in ['hr', 'human resource', 'recruiter', 'talent', 'people ops']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), you already handle workforce information and recruitment metrics. "
+                "This program formalizes your reporting into SQL data pipelines, People Analytics, and predictive talent modeling."
+            )
+        else:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), this Beginner Track starts from absolute fundamentals, "
+                "building coding habits and computational logic step-by-step."
+            )
+
+    # 6. Core Engineering (Mechanical, Civil, Electrical, Chemical, Electronics)
+    if any(k in r_lower for k in ['mechanical', 'civil', 'chemical', 'electrical', 'biotech', 'aerospace', 'automobile', 'electronics']):
+        if 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your core engineering mathematics and physical systems background "
+                "give you a massive quantitative advantage in understanding algorithms, data structures, and system design."
+            )
+        elif 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your engineering math and scientific modeling training translate seamlessly "
+                "into statistical data science, Python computing, and machine learning."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your background in physical systems and infrastructure makes "
+                "cloud architecture, container clustering, and Linux automation a natural technical pivot."
+            )
+
+    # 7. Customer Support / BPO / Helpdesk
+    if any(k in r_lower for k in ['support', 'bpo', 'kpo', 'helpdesk', 'service desk', 'customer care', 'call center']):
+        if 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your technical troubleshooting and ticket triage background translate directly "
+                "into production incident management, SRE monitoring, and CI/CD cloud operations."
+            )
+        elif 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this track builds on your customer issue resolution experience by teaching you "
+                "SQL queries, product analytics, and customer churn modeling."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your hands-on experience troubleshooting user issues and understanding application workflows "
+                "gives you practical insight into software development and debugging."
+            )
+
+    # 8. QA / SDET / Testing
+    if any(k in r_lower for k in ['qa', 'test', 'sdet', 'quality']):
+        if 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, you already understand software lifecycles and code structures; "
+                "this track bridges the exact gap in algorithmic optimization, advanced DSA, and low-level object-oriented design (LLD) "
+                "to transition into core Backend SDE roles."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your test automation background translates directly into "
+                "CI/CD pipelines, containerized test runners, and cloud infrastructure management - commanding a 30-50% salary boost."
+            )
+        elif 'dsml' in p_lower or 'agentic' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, moving into AI/ML enables you to apply your testing rigor to "
+                "AI model evaluation, data pipelines, and intelligent agent workflows."
+            )
+
+    # 9. Data Analyst / BI / Reporting
+    if any(k in r_lower for k in ['data analyst', 'business analyst', 'bi analyst', 'analytics', 'tableau', 'power bi', 'sql developer']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            if 'beginner' in t_lower or 'analytics' in t_lower:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, you already have reporting exposure; this track solidifies your "
+                    "foundational analytics, Python automation, and product metrics to prepare you for machine learning workflows."
+                )
+            else:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, you already write SQL queries and build dashboards daily; "
+                    "this track breaks through the reporting salary ceiling by adding predictive modeling, deep neural networks, and production MLOps on AWS."
+                )
+        elif 'agentic' in p_lower or 'aiml' in p_lower or 'fde' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, expanding from SQL and dashboards into Agentic AI, GraphRAG, and "
+                "LangGraph multi-agent orchestration elevates your profile to frontier AI engineering roles."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, adding core data structures, algorithms, and backend API engineering "
+                "turns you into a full-stack data and software engineer."
+            )
+
+    # 10. Software Engineer / SDE / Web Developer
+    if any(k in r_lower for k in ['sde', 'software', 'developer', 'frontend', 'backend', 'full stack', 'programmer', 'web dev']):
+        if 'academy' in p_lower or 'software' in p_lower:
+            if 'intermediate' in t_lower or 'dsa' in t_lower:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, you already know how to code - but most engineers fail product company interviews "
+                    "due to lack of systematic algorithmic optimization (time complexity, space trade-offs, edge-case reasoning). "
+                    "This Intermediate Track focuses 100% on FAANG interview patterns: sliding window, DP, graph traversal, and OOP design."
+                )
+            elif 'advanced' in t_lower:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, you have mastered coding and team delivery - but the next level (Staff Engineer, Principal Architect) "
+                    "demands large-scale distributed systems expertise (Kafka, consistent hashing, database sharding, CAP/PACELC)."
+                )
+            else:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, this track builds structured problem-solving and algorithmic thinking "
+                    "that Tier-1 product companies test rigorously in interviews."
+                )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, expanding into Cloud & DevOps complements your development background with "
+                "Docker, Kubernetes, CI/CD automation, and Terraform IaC - skills commanding a 30-50% compensation premium."
+            )
+        elif 'fde' in p_lower or 'forward deployed' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, FDE is the highest-leverage AI role - building AND deploying custom LLM systems "
+                "inside enterprise client infrastructure with LangGraph and Meridian simulation."
+            )
+        elif 'agentic' in p_lower or 'aiml' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, upgrading your backend engineering skills to frontier AI (LangGraph multi-agent systems, "
+                "GraphRAG, PEFT/LoRA fine-tuning, and vLLM deployment) positions you for high-paying AI Engineer roles."
+            )
+
+    # 11. DevOps / Cloud / SRE / SysAdmin
+    if any(k in r_lower for k in ['devops', 'cloud', 'sre', 'sysadmin', 'system admin', 'infrastructure', 'platform engineer']):
+        if 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, modernizing your infrastructure skillset with Kubernetes clustering, "
+                "Terraform GitOps, and AWS cloud architecture elevates you into senior Platform Engineer and SRE roles."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, adding core data structures, algorithms, and backend microservices design "
+                "rounds out your engineering profile to clear Tier-1 software and platform engineering rounds."
+            )
+        elif 'agentic' in p_lower or 'aiml' in p_lower or 'dsml' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, expanding into MLOps on AWS SageMaker and AI agent infrastructure makes you "
+                "an invaluable AI Infrastructure / LLMOps specialist."
+            )
+
+    # 12. Freshers / Students
+    if any(k in r_lower for k in ['fresher', 'student', 'intern', 'college student', 'final year']) or any(k in str(raw_exp).lower() for k in ['fresher', 'entry', 'no exp']) or str(raw_exp).strip() in ['0', '0 yrs', '0.0 yrs']:
+        if 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b>, this Beginner Track takes you from absolute zero to interview-ready software engineer. "
+                "It builds computational thinking, problem-solving, and coding fundamentals from scratch - the exact skills Tier-1 product companies test in every interview."
+            )
+        elif 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b>, this track is the smoothest entry into tech because it does NOT assume any coding background. "
+                "It starts with Excel, SQL queries, and visual dashboards before gradually introducing Python and machine learning."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b>, DevOps & Cloud Engineering is an accessible entry point into tech focusing on "
+                "practical tools, Linux scripting, Docker, and AWS rather than competitive algorithmic problem-solving."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b>, this track provides a structured ramp-up into high-growth technology careers."
+            )
+
+    # Generic Fallback
+    return f"As a <b>{raw_role}</b> ({raw_exp}), this program addresses specific skill gaps in your profile and accelerates your career into high-demand tech roles."
+
+
 def generate_curriculum_grounded_why(
     program_name, track_name, raw_role, raw_exp, modules,
     retention_rate, cohort_size, fit_tier, inbound_cat,
@@ -225,74 +483,19 @@ def generate_curriculum_grounded_why(
     """
     p_lower = str(program_name).lower()
     t_lower = str(track_name).lower()
-    persona_lower = str(persona).lower()
-    role_lower = str(raw_role).lower()
-    
-    # Detect persona type
-    _is_non_tech = persona_lower in [
-        'non_tech', 'non-tech', 'non_tech_career_switcher', 'career_break',
-        'non-tech / operations', 'non-tech / career switcher'
-    ] or any(k in role_lower for k in [
-        'nurse', 'nursing', 'doctor', 'hospital', 'physician', 'dentist', 'pharmacist', 'paramedic',
-        'security guard', 'guard', 'watchman', 'police', 'constable', 'army', 'military',
-        'teacher', 'professor', 'lecturer', 'tutor', 'faculty', 'educator',
-        'chef', 'cook', 'waiter', 'bartender', 'hotel', 'hospitality', 'cabin crew',
-        'electrician', 'plumber', 'carpenter', 'welder', 'mechanic',
-        'driver', 'chauffeur', 'delivery', 'pilot', 'warehouse',
-        'cashier', 'retail', 'shopkeeper',
-        'hr', 'human resource', 'recruiter', 'marketing', 'sales', 'bde', 'bda',
-        'finance', 'accounting', 'accountant', 'auditor', 'banking', 'insurance',
-        'operations', 'admin', 'consultant', 'legal', 'lawyer', 'procurement', 'logistics',
-        'bpo', 'kpo', 'customer support', 'call center',
-        'mechanical', 'civil', 'chemical', 'electrical', 'biotech',
-        'non-tech', 'non tech', 'non coder', 'non-coder', 'career break', 'homemaker'
-    ])
-    
-    _is_fresher = any(k in role_lower for k in ['fresher', 'student', 'intern', 'college student', 'final year']) or \
-                  any(k in str(raw_exp).lower() for k in ['fresher', 'entry', 'no exp']) or \
-                  bool(re.search(r'^\s*0(\.0+)?\s*(yr|year|y|exp|month)?s?\s*$', str(raw_exp).lower()))
 
-    _is_qa = any(k in role_lower for k in ['qa', 'test', 'sdet', 'quality'])
-    _is_data = any(k in role_lower for k in ['data', 'analyst', 'analytics', 'bi', 'business intelligence', 'tableau', 'power bi'])
-    _is_sde = any(k in role_lower for k in ['sde', 'software', 'developer', 'frontend', 'backend', 'full stack', 'programmer', 'web developer'])
-    _is_devops = any(k in role_lower for k in ['devops', 'cloud', 'sysadmin', 'system admin', 'infrastructure', 'sre', 'support', 'network', 'it support'])
+    # 1. Career Pitch grounded in candidate's current role
+    career_desc = generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona)
 
-    # Extract top module phases
+    # 2. Extract top module phases for Curricular Milestones
     module_names = []
     if modules and isinstance(modules, list):
         for m in modules[:5]:
             p = m.get('phase', '')
             if p and p not in module_names:
                 module_names.append(p)
-    module_text = ", ".join(f"<i>{h}</i>" for h in module_names[:3]) if module_names else "core engineering and production milestones"
 
-    # Context prefix based on primary vs fallback and candidate role
-    if is_primary:
-        if _is_fresher:
-            bg = f"As a <b>{raw_role}</b> entering the tech industry for the first time"
-        elif _is_non_tech:
-            bg = f"As a <b>{raw_role}</b> ({raw_exp}) transitioning into tech with no prior coding background"
-        else:
-            bg = f"As a <b>{raw_role}</b> with {raw_exp}"
-    else:
-        if _is_fresher:
-            bg = f"As a <b>{raw_role}</b>, as an alternative high-growth pathway"
-        elif _is_non_tech:
-            bg = f"As a <b>{raw_role}</b> ({raw_exp}) seeking an alternative entry track into tech"
-        elif _is_qa:
-            bg = f"As a <b>{raw_role}</b> with {raw_exp} seeking an alternative technical pivot"
-        elif _is_data:
-            bg = f"As a <b>{raw_role}</b> with {raw_exp} expanding your technical scope"
-        elif _is_sde:
-            bg = f"As a <b>{raw_role}</b> with {raw_exp} exploring an alternative specialization"
-        elif _is_devops:
-            bg = f"As a <b>{raw_role}</b> with {raw_exp} expanding your engineering skillset"
-        else:
-            bg = f"As a <b>{raw_role}</b> with {raw_exp}, as an alternative career pathway"
-
-    # =========================================================================
-    # 1. Scaler Academy (Program 1)
-    # =========================================================================
+    # 3. Standardized, high-impact curricular content descriptions by program
     if 'academy' in p_lower or 'software' in p_lower:
         if 'beginner' in t_lower or 'foundations' in t_lower:
             content_desc = (
@@ -300,20 +503,6 @@ def generate_curriculum_grounded_why(
                 "<i>Intermediate DSA (Prefix Sum, Bit Manipulation, 2D Matrices)</i>, and <i>AI & Agents: From Talking to AI to Building One</i>, "
                 "before advancing into <i>Advanced DSA</i> (Linear/Non-Linear Structures, Trees, Dynamic Programming, Graphs) and <i>System Design</i>."
             )
-            if _is_fresher or _is_non_tech:
-                career_desc = (
-                    f"{bg}, this Beginner Track takes you from absolute zero to interview-ready software engineer. "
-                    "It builds computational thinking, problem-solving, and coding fundamentals from scratch - the exact skills "
-                    "Tier-1 product companies (Google, Amazon, Flipkart) test in every interview. "
-                    "Scaler provides 1:1 mentorship, weekly mock interviews, and AI-assisted coding companions to accelerate your learning."
-                )
-            else:
-                career_desc = (
-                    f"{bg}, the Beginner Track builds the structured problem-solving and algorithmic thinking that Tier-1 product companies "
-                    "test rigorously in interviews. It starts from computational thinking fundamentals, progresses through data structures, "
-                    "and culminates in system design. Scaler provides 1:1 mentorship, mock interviews, and AI-assisted coding companions "
-                    "to compress your preparation into a structured sprint."
-                )
             historical_desc = (
                 f"Backed by an audited <b>{retention_rate}% completion rate</b> across {cohort_size}+ early-career and non-CS learners. "
                 "Beginners placed directly into intermediate algorithms face elevated Day-14 pacing dropout; this structured ramp-up prevents that."
@@ -324,24 +513,6 @@ def generate_curriculum_grounded_why(
                 "<i>Advanced DSA (Divide & Conquer, Trees, Heaps, Graphs, Dynamic Programming)</i>, and <i>Low-Level Object-Oriented Design (LLD)</i>, "
                 "with an elective bridge into <i>Distributed High-Level System Design</i>."
             )
-            if _is_qa:
-                career_desc = (
-                    f"{bg}, transitioning into backend SDE allows you to leverage your testing and scripting background while mastering "
-                    "core algorithmic optimization, data structures, and object-oriented low-level design. Scaler's live problem-solving sessions "
-                    "and 1:1 mentorship bridge the exact gap needed to clear Tier-1 software engineer hiring rounds."
-                )
-            elif _is_data or _is_devops:
-                career_desc = (
-                    f"{bg}, strengthening core algorithms, data structures, and system design unlocks backend engineering roles "
-                    "and provides the coding foundation required to transition into senior technical tracks."
-                )
-            else:
-                career_desc = (
-                    f"{bg}, you already know how to code - but most engineers fail product company interviews due to lack of "
-                    "systematic algorithmic optimization (time complexity, space trade-offs, edge-case reasoning). "
-                    "This Intermediate Track focuses 100% on FAANG interview patterns: sliding window, DP, graph traversal, and OOP design. "
-                    "Scaler's live sessions with Google/Meta instructors plus 500+ curated problems compress 12+ months of self-study into a focused sprint."
-                )
             historical_desc = (
                 f"Supported by an empirical <b>{retention_rate}% completion rate</b> across {cohort_size}+ working technical professionals. "
                 "Maximizes interview-readiness within 12 months while respecting full-time working hours."
@@ -351,20 +522,11 @@ def generate_curriculum_grounded_why(
                 "Centers on architectural scale and engineering leadership: <i>High-Level Distributed System Design & Scalability</i> "
                 "(Kafka event streaming, consistent hashing, caching at scale, database sharding, CAP/PACELC theorems) and <i>Concurrent Backend Microservices</i>."
             )
-            career_desc = (
-                f"{bg}, you've mastered coding and team delivery - but the next level (Staff Engineer, Principal Architect) demands "
-                "large-scale distributed systems expertise rarely taught on the job. This Advanced Track focuses on architectural decisions "
-                "that separate L5/L6 from L7+ leadership: CAP trade-offs, event-driven architectures, and database sharding. "
-                "Scaler's instructors are Staff/Principal engineers from Google, Amazon, and Uber with live system design mock rounds."
-            )
             historical_desc = (
                 f"Demonstrates an elite <b>{retention_rate}% completion rate</b> across senior cohorts. "
                 "Senior candidates thrive when curriculum focuses on system-level architecture rather than repetitive syntax drills."
             )
 
-    # =========================================================================
-    # 2. Modern Data Science & ML (Program 2)
-    # =========================================================================
     elif 'dsml' in p_lower or 'data science' in p_lower:
         if 'beginner' in t_lower or 'analytics' in t_lower:
             content_desc = (
@@ -372,23 +534,6 @@ def generate_curriculum_grounded_why(
                 "<i>Python Foundations + AI Coding Assistants</i>, and <i>Product Analytics with AI</i>, seamlessly progressing into "
                 "<i>Supervised Machine Learning with AI Workflows</i>."
             )
-            if _is_fresher or _is_non_tech:
-                career_desc = (
-                    f"{bg}, this track is the smoothest entry into tech because it does NOT assume any coding background. "
-                    "It starts with Excel, SQL queries, and visual dashboards - tools you can grasp immediately - before gradually introducing "
-                    "Python with AI coding assistants and supervised machine learning. "
-                    "Scaler's structured mentorship, doubt-resolution sessions, and career coaching ensure you build job-ready analytics skills."
-                )
-            elif _is_data:
-                career_desc = (
-                    f"{bg}, you already have reporting exposure; this track solidifies your foundational analytics, Python automation, "
-                    "and product metrics to prepare you for machine learning workflows. Scaler provides capstone projects with real industry datasets."
-                )
-            else:
-                career_desc = (
-                    f"{bg}, this program bridges the gap from raw technical skills to data-driven business modeling, starting with "
-                    "SQL analytics and progressing through Python and machine learning algorithms. Scaler provides 1:1 mentorship from data scientists at top companies."
-                )
             historical_desc = (
                 f"Proven by a <b>{retention_rate}% completion rate</b> across {cohort_size}+ learners. "
                 "This progressive ramp-up achieves the highest retention of any career pivot, virtually eliminating refund risk."
@@ -398,55 +543,22 @@ def generate_curriculum_grounded_why(
                 "Dives directly into <i>Advanced Analytics with Python & Pandas</i>, <i>Statistics & Experimentation for AI (A/B Testing Frameworks)</i>, "
                 "<i>Supervised & Unsupervised Machine Learning</i>, <i>Deep Learning & Neural Networks</i>, and <i>Production MLOps on AWS</i>."
             )
-            if _is_data:
-                career_desc = (
-                    f"{bg}, the career ceiling for descriptive reporting is well-documented. Transitioning from SQL dashboards into "
-                    "predictive modeling, deep learning, and AWS MLOps allows you to command senior Data Scientist and ML Engineer salaries. "
-                    "Scaler provides Kaggle-style competitions, mentorship from production ML engineers, and ML-specific interview prep."
-                )
-            elif _is_sde or _is_qa:
-                career_desc = (
-                    f"{bg}, pivoting into Machine Learning builds upon your programming background by adding statistical experimentation, "
-                    "deep neural networks, and production MLOps deployment on AWS. Scaler connects you directly with practicing ML engineers."
-                )
-            else:
-                career_desc = (
-                    f"{bg}, the highest-paying data roles (ML Engineer, Senior Data Scientist) require predictive modeling, deep learning, and production MLOps. "
-                    "This Core ML Track takes you directly into the applied ML pipeline - from feature engineering to model deployment."
-                )
             historical_desc = (
                 f"Validated by an audited <b>{retention_rate}% completion rate</b> across quantitative cohorts. "
                 "Analysts transitioning through predictive modeling experience rapid career acceleration into senior ML titles."
             )
 
-    # =========================================================================
-    # 3. AI Forward Deployed Engineer (Program 3)
-    # =========================================================================
     elif 'fde' in p_lower or 'forward deployed' in p_lower:
         content_desc = (
             "Delivered entirely through enterprise client simulation (<i>Meridian Platform</i>), covering <i>The Ingestion Pipeline (Production Python)</i>, "
             "<i>Production RAG for Customer Support</i>, <i>Autonomous Agents & Enterprise Integration (LangGraph & MCP)</i>, "
             "<i>Docker & Kubernetes Orchestration</i>, and <i>1-Click AWS Production Deployment with Terraform</i>."
         )
-        if _is_fresher or _is_non_tech:
-            career_desc = (
-                f"{bg}, the FDE program trains you to deploy enterprise AI solutions end-to-end through project-driven learning. "
-                "It assumes foundational programming competency, which is why it is recommended as a high-upside follow-on track after coding fundamentals."
-            )
-        else:
-            career_desc = (
-                f"{bg}, FDE is the highest-leverage AI role - building AND deploying custom LLM systems inside enterprise client infrastructure. "
-                "This program trains you on production RAG pipelines, autonomous agents with LangGraph, and AWS deployment via Meridian platform. "
-                "FDE roles command a 2.5x compensation premium over traditional SDE roles due to extreme market demand."
-            )
         historical_desc = (
             f"Supported by an outstanding <b>{retention_rate}% completion rate</b> across software engineering cohorts. "
             "Forward-deployed roles command a 2.5x compensation premium over traditional development due to high client demand."
         )
 
-    # =========================================================================
-    # 4. AI & Machine Learning with Agentic AI (Program 4)
-    # =========================================================================
     elif 'agentic' in p_lower or 'aiml' in p_lower or 'program 4' in p_lower:
         if 'beginner' in t_lower or 'foundation' in t_lower:
             content_desc = (
@@ -454,20 +566,6 @@ def generate_curriculum_grounded_why(
                 "and 1-Month <i>Python Programming Fundamentals</i>, before advancing into <i>Data Foundations</i>, <i>Supervised/Unsupervised ML</i>, "
                 "<i>MLOps on AWS SageMaker</i>, and <i>LangGraph Agentic Orchestration</i>."
             )
-            if _is_fresher or _is_non_tech:
-                career_desc = (
-                    f"{bg}, this Beginner Track starts with a 2-month Generative AI Foundations module where you learn "
-                    "to use AI tools (ChatGPT, no-code automation, prompt engineering) WITHOUT writing code first. "
-                    "It then progressively builds Python, statistics, and ML foundations before advancing into agentic AI. "
-                    "Scaler's teaching assistants, live doubt sessions, and peer learning groups provide critical support for career pivots."
-                )
-            else:
-                career_desc = (
-                    f"{bg}, the gap between coding ability and building production AI systems is massive. "
-                    "This Beginner Track starts with hands-on Generative AI Foundations (Prompt Engineering, no-code AI) "
-                    "before progressively building Python, ML, and deep learning skills. "
-                    "Scaler's AI/ML instructors bring production experience, and the career team prepares you for the AI Engineer job market."
-                )
             historical_desc = (
                 f"Candidates without prior coding exposure face a 25.8% drop-off if pushed directly into tensor math; "
                 f"this foundational progression preserves high retention (<b>{retention_rate}% completion rate</b> across {cohort_size}+ learners)."
@@ -478,31 +576,11 @@ def generate_curriculum_grounded_why(
                 "<i>MLOps on AWS SageMaker</i>, <i>Agentic Design Patterns & LangGraph Multi-Agent Orchestration</i>, "
                 "<i>Advanced Cognitive Architectures (GraphRAG & Multimodal AI)</i>, and <i>PEFT/LoRA Fine-Tuning served via vLLM</i>."
             )
-            if _is_sde:
-                career_desc = (
-                    f"{bg}, upgrading your backend engineering skills to frontier AI (LangGraph multi-agent systems, GraphRAG, PEFT/LoRA fine-tuning, and vLLM deployment) "
-                    "positions you for high-paying AI Engineer and Applied GenAI roles. Scaler provides hands-on AWS SageMaker infrastructure for live deployments."
-                )
-            elif _is_data:
-                career_desc = (
-                    f"{bg}, expanding from traditional analytics and ML into Agentic AI, GraphRAG, and LLM fine-tuning elevates your profile "
-                    "to frontier AI engineering roles with multi-agent orchestration."
-                )
-            else:
-                career_desc = (
-                    f"{bg}, even experienced engineers struggle to keep up with LLM fine-tuning and agentic orchestration. "
-                    "This Advanced Track takes you directly into frontier AI: PEFT/LoRA fine-tuning, LangGraph multi-agent orchestration, "
-                    "GraphRAG, and production model serving via vLLM. Scaler's instructors are practicing AI engineers, "
-                    "and every module includes hands-on deployment on AWS SageMaker - not just Jupyter notebook experiments."
-                )
             historical_desc = (
                 f"Backed by an empirical <b>{retention_rate}% completion rate</b> across technical cohorts. "
                 "Software developers thrive when immersed directly in modern generative AI architectures and scalable LLMOps."
             )
 
-    # =========================================================================
-    # 5. DevOps, Cloud & AI Platform Engineering (Program 5)
-    # =========================================================================
     elif 'devops' in p_lower or 'cloud' in p_lower or 'platform' in p_lower or 'program 5' in p_lower:
         content_desc = (
             "Systematically covers the entire modern platform stack: <i>Python & Linux Shell Scripting (1 & 2)</i>, "
@@ -510,53 +588,14 @@ def generate_curriculum_grounded_why(
             "<i>DevOps Tools 2 (GitHub Actions CI/CD, ArgoCD GitOps, Ansible)</i>, and <i>AWS 1 & 2 (EKS, VPC, CloudFormation, Terraform IaC)</i>, "
             "with specialized electives in <i>MLOps & AI Observability</i>."
         )
-        if _is_sde:
-            career_desc = (
-                f"{bg}, expanding into Cloud & DevOps complements your development background with Docker, Kubernetes, CI/CD automation, "
-                "and Terraform IaC. Platform and SRE engineers with strong coding roots are among the most sought-after profiles, commanding a 30-50% compensation premium."
-            )
-        elif _is_qa:
-            career_desc = (
-                f"{bg}, moving into DevOps & Cloud Engineering directly capitalizes on your testing and automation foundation, "
-                "transitioning your career into high-impact CI/CD pipelines, container orchestration, and cloud infrastructure management."
-            )
-        elif _is_devops:
-            career_desc = (
-                f"{bg}, modernizing your infrastructure skillset with Kubernetes clustering, Terraform GitOps, and AWS cloud architecture "
-                "elevates you into senior Platform Engineer and SRE roles."
-            )
-        elif _is_fresher or _is_non_tech:
-            career_desc = (
-                f"{bg}, DevOps & Cloud Engineering is an accessible entry point into tech because it focuses on practical tools, automation scripts, "
-                "and cloud infrastructure rather than abstract algorithmic competitions. Scaler teaches Linux, Docker, and AWS step-by-step with hands-on labs."
-            )
-        else:
-            career_desc = (
-                f"{bg}, the highest-growth infrastructure roles (Cloud Engineer, SRE, DevOps Architect) require Docker, Kubernetes, "
-                "CI/CD automation, and Terraform IaC - skills most developers never learn on the job. "
-                "This program converts your engineering instincts into cloud-native expertise without requiring algorithmic problem-solving. "
-                "DevOps/Cloud roles offer 30-50% higher compensation than equivalent SDE roles due to critically low supply."
-            )
         historical_desc = (
             f"Demonstrates an elite <b>{retention_rate}% completion rate</b> ({cohort_size}+ cohort). "
             "Infrastructure and platform engineering provides the highest retention and lowest refund rate among all technical transitions."
         )
 
-    # =========================================================================
-    # Generic Fallback
-    # =========================================================================
     else:
+        module_text = ", ".join(f"<i>{h}</i>" for h in module_names[:3]) if module_names else "core engineering and production milestones"
         content_desc = f"Curriculum structured around {module_text}."
-        if _is_fresher or _is_non_tech:
-            career_desc = (
-                f"{bg}, this program provides a structured learning path designed for professionals entering tech for the first time. "
-                "Scaler's mentorship, live sessions, and career coaching ensure you build job-ready skills."
-            )
-        else:
-            career_desc = (
-                f"{bg}, this program addresses specific skill gaps in your profile and accelerates your career into high-demand tech roles. "
-                "Scaler's structured pedagogy combines live instructor-led sessions, 1:1 mentorship, and dedicated career coaching."
-            )
         historical_desc = f"Supported by a {retention_rate}% completion rate across {cohort_size}+ learners."
 
     full_rationale = (

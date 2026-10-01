@@ -69,33 +69,7 @@ PROGRAM_CATALOG_DATA = {
     'P5_DEVOPS_CLOUD': {
         'program_name': 'DevOps, Cloud & AI Platform Engineering',
         'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/206/970/original/DEVOPS-Brochure-2026_%281%29.pdf?1782371159',
-        'top_hiring_companies': ['Cisco', 'NetApp', 'AWS', 'VMware', 'Red Hat', 'BrowserStack'],
-        'curriculum_modules': [
-            {
-                'segment': 'Systems & Networking',
-                'type': 'Core',
-                'phase': 'Phase 1: Linux Internals & Networking',
-                'duration': '6 Weeks',
-                'topics': 'Kernel namespaces, cgroups, TCP/IP, DNS, Bash automation, System troubleshooting.',
-                'deliverable': 'Custom container runtime built from scratch.'
-            },
-            {
-                'segment': 'Container Orchestration',
-                'type': 'Core',
-                'phase': 'Phase 2: Docker & Kubernetes at Scale',
-                'duration': '10 Weeks',
-                'topics': 'K8s Cluster architecture, Helm, Service Mesh, Ingress, Pod autoscaling, Observability (Prometheus/Grafana).',
-                'deliverable': 'Production K8s deployment handling zero-downtime rolling updates.'
-            },
-            {
-                'segment': 'Infrastructure as Code',
-                'type': 'Specialisation',
-                'phase': 'Phase 3: Infrastructure as Code & GitOps',
-                'duration': '8 Weeks',
-                'topics': 'Terraform, Ansible, ArgoCD, GitHub Actions CI/CD, Multi-cloud AWS/GCP orchestration.',
-                'deliverable': 'Multi-region cloud infrastructure provisioned via 1-click GitOps.'
-            }
-        ]
+        'top_hiring_companies': ['Cisco', 'NetApp', 'AWS', 'VMware', 'Red Hat', 'BrowserStack']
     }
 }
 
@@ -164,7 +138,7 @@ P1_ACADEMY_BEGINNER_MODULES = [
     {
         'segment': 'Advanced DSA',
         'type': 'Core',
-        'phase': 'Advanced DSA: DP, Heaps & Graphs — Crack It with AI Edge',
+        'phase': 'Advanced DSA: DP, Heaps & Graphs - Crack It with AI Edge',
         'duration': '1 Month',
         'topics': 'Heaps & Heap Sort, Greedy Algorithms, Dynamic Programming (1D, 2D, Knapsack), Graphs 1 (DFS & Cycle Detection), Graphs 2 (BFS & MST), Graphs 3 (Dijkstra Algo & Topological Sort), Social Network Analyzer Capstone, Invoice Merger Capstone, Mandatory Skill Evaluation Test.',
         'deliverable': 'Production Capstones: Social Network Graph Analyzer & Invoice Merger; full graph traversal & dynamic programming.'
@@ -288,7 +262,7 @@ P1_ACADEMY_INTERMEDIATE_MODULES = [
     {
         'segment': 'Advanced DSA',
         'type': 'Core',
-        'phase': 'Advanced DSA: DP, Heaps & Graphs — Crack It with AI Edge',
+        'phase': 'Advanced DSA: DP, Heaps & Graphs - Crack It with AI Edge',
         'duration': '1 Month',
         'topics': 'Heaps & Heap Sort, Greedy Algorithms, Dynamic Programming (1D, 2D, Knapsack), Graphs 1 (DFS & Cycle Detection), Graphs 2 (BFS & MST), Graphs 3 (Dijkstra Algo & Topological Sort), Social Network Analyzer Capstone, Invoice Merger Capstone, Mandatory Skill Evaluation Test.',
         'deliverable': 'Production Capstones: Social Network Graph Analyzer & Invoice Merger; full graph traversal & dynamic programming.'
@@ -404,7 +378,7 @@ P1_ACADEMY_ADVANCED_MODULES = [
     {
         'segment': 'Advanced DSA',
         'type': 'Core',
-        'phase': 'Advanced DSA: DP, Heaps & Graphs — Crack It with AI Edge',
+        'phase': 'Advanced DSA: DP, Heaps & Graphs - Crack It with AI Edge',
         'duration': '1 Month',
         'topics': 'Heaps & Heap Sort, Greedy Algorithms, Dynamic Programming (1D, 2D, Knapsack), Graphs 1 (DFS & Cycle Detection), Graphs 2 (BFS & MST), Graphs 3 (Dijkstra Algo & Topological Sort), Social Network Analyzer Capstone, Invoice Merger Capstone, Mandatory Skill Evaluation Test.',
         'deliverable': 'Production Capstones: Social Network Graph Analyzer & Invoice Merger; full graph traversal & dynamic programming.'
@@ -1091,6 +1065,151 @@ P4_AIML_ADVANCED_MODULES = [
 ]
 
 
+
+# ==============================================================================
+# PROGRAM 5: DEVOPS, CLOUD & AI PLATFORM ENGINEERING - OFFICIAL CURRICULUM
+# ==============================================================================
+
+P5_DEVOPS_MODULES = [
+    {
+        'segment': 'Programming & Scripting',
+        'type': 'Core',
+        'phase': 'Python',
+        'duration': '1 Month',
+        'topics': 'Refresher : Introduction To Python and Data Types, Refresher : Operators and Control Statements, Refresher : Iteration : Loops & Iteration Analysis by AI, Refresher : Lab Session on Iteration, Refresher : Functions & Modularity: Designing Code with AI, Refresher : 1D List, Refresher : 2D List, Refresher : Lab Session on List, Refresher : Tuples + Strings, Refresher : Lab Session on Strings, Refresher : Sets and Dictionaries, File & Exception Handling, Interview Problems.',
+        'deliverable': 'Automated DevOps Python automation scripts, structured file parsing, CLI tools, and exception-handled server utilities.'
+    },
+    {
+        'segment': 'Operating Systems & Shell',
+        'type': 'Core',
+        'phase': 'Linux Shell Scripting and Computer Systems 1',
+        'duration': '1 Month',
+        'topics': 'Linux Essentials, Linux - File Management, Linux - Process Management, Linux - Networks, Linux - Text Processing, Shell scripting introduction, Fundamentals of Shell Scripting.',
+        'deliverable': 'Hardened production Linux host with automated system diagnostic scripts, process managers, and text processing utilities.'
+    },
+    {
+        'segment': 'Operating Systems & Shell',
+        'type': 'Core',
+        'phase': 'Linux Shell Scripting and Computer Systems 2',
+        'duration': '1 Month',
+        'topics': 'Shell scripting walk through, Shell scripting for DevOps - file management, Shell scripting for DevOps - process management, Shell scripting for DevOps - filesystem management, Shell scripting for DevOps - backup, Shell scripting for DevOps - Networking, Mock interview Demo by instructor, Git introduction, Git in DevOps - GitHook, PR, Branching.',
+        'deliverable': 'Production-grade Bash backup & networking automation suite, GitHooks automation, and branching release policies.'
+    },
+    {
+        'segment': 'Containers & Orchestration',
+        'type': 'Core',
+        'phase': 'DevOps Tools 1',
+        'duration': '3 Months',
+        'topics': 'Docker introduction, Docker image and Docker containers, Building your own Docker image, Images and Containers Deep dive, Docker volume, Docker networking deep dive, Hardening the Docker env., Demo of implementing industry standard implementation (e.g. in image hardening and other security standards), Introduction to Orchestration, Kubernetes architecture, Kubernetes Pod deep dive, Kubernetes Replicaset and Deployment deep dive, side car, Kubernetes networking, Scaling options in kubernetes - HPA, CA and VPA - compare with Karpentor, Introduction to scaling in kubernets, Network policies, Kubernetes security - RBAC, Kubernetes volumes, Kubernetes ingress, Init Containers, Static Pods, Scheduling, Kubernetes Jobs, Probes, admission controllers, CRD, CNI, Config maps and secrets, Troubleshooting, Deploying a hugging face model on K8s, Introduciton to Observability. Prometheus and Grafana setup, Prometheus Monitoring Configuration, Advanced Monitoring Techniques, Getting Started with Grafana, Variables, Data Sources, and Persistent Dashboards in Grafana, Scaling Grafana: Best Practices, Real-World Use Cases, and Performance Tuning, Deploying your graph in Graphana on a Kubernetes cluster, Advanced observability using Newrelic, Deploying a microservice in Kubernetes cluster project.',
+        'deliverable': 'Production Kubernetes cluster with secure container images, HPA autoscaling, Prometheus/Grafana persistent dashboards, and deployed Hugging Face AI model.'
+    },
+    {
+        'segment': 'CI/CD & Configuration Management',
+        'type': 'Core',
+        'phase': 'DevOps Tools 2',
+        'duration': '2 Months',
+        'topics': 'Introduction to DevOps, Introduction to CI/CD, Jenkins introduction, architecture, jobs, Project: CI/CD on Jenkins using simple job, Jenkins pipeline syntax walk through, Project: CI/CD on Jenkins using pipelines, Jenkins advanced - add nodes, RBAC, Project by engineers on Jenkins end to cicd in industry standard., Introduction to GitHub Actions, Secrets, Events, and Workflow Optimization, Advanced Techniques and Best Practices, Efficient Workflows and Security Practices, Project by engineers on GitHub actions end to cicd in industry standard., Advanced ArgoCD Usage and Configuration, Advanced Features and Integration, ArgoCD-Jenkins Integration, Project Demo, IaC fundamentals and Ansible Fundamentals, Ansible Playbooks & Modules, Templates, Variables & Facts, Roles & Advanced Topics, Ansible Vault & Best Practices, Introduction to SRE concepts, Ansible Project.',
+        'deliverable': 'End-to-end multi-stage CI/CD pipeline using GitHub Actions, Jenkins RBAC, ArgoCD GitOps declarative deployments, and Ansible infrastructure playbooks.'
+    },
+    {
+        'segment': 'Cloud Infrastructure (AWS)',
+        'type': 'Core',
+        'phase': 'AWS 1',
+        'duration': '1.5 Months',
+        'topics': 'Cloud Basics & Evolution, AWS Compute & EC2 Intro, EC2 Deep Dive, EC2 Hosting & Load Balancing, AWS IAM Basics, AWS Storage & CloudFront, S3 Deep Dive, AWS CLI & Boto Intro, AWS VPC & Networking Basics, Advanced AWS Networking, AWS Observability & CloudWatch, CloudWatch & CloudTrail Advanced, Docker App on EC2 Project, AWS Lambda & API Gateway, End-to-End Project.',
+        'deliverable': 'Highly available VPC infrastructure across multiple AZs with ALB load balancing, CloudWatch observability, and serverless API Gateway + Lambda endpoints.'
+    },
+    {
+        'segment': 'Cloud Infrastructure & IaC (AWS)',
+        'type': 'Core',
+        'phase': 'AWS 2',
+        'duration': '3 Months',
+        'topics': 'AWS ECS & ECR Intro, ECS Fundamental, EKS Basics, EKS Advanced, Microservices on AWS Project, AWS CI/CD & Pipelines, Querying AWS Services, Serverless on AWS, AWS Cloud Formation, AWS Security: Identity & Network, AWS Security: Data & Detection, AWS Security Hands-on, AWS Control Tower, AWS RDS (SQL Databases), DynamoDB (NoSQL), AWS Data Engineering (Glue & Athena), AWS Migration Services, AWS Sagemaker, Generative AI on AWS, AWS Services Deep Dive, Project Architecture Review, Kubernetes AI Project, AWS Backup, DevOps Cert Discussion, Terraform & IaC Intro, Terraform Language Deep Dive, Terraform State & Modules, Terraform Dependencies, Advanced Terraform Workspaces, Terraform Cluster Project, Deploying an app - Project.',
+        'deliverable': '1-Click Terraform IaC cloud deployment of EKS Kubernetes cluster, RDS/DynamoDB databases, SageMaker AI integration, and multi-account Control Tower security.'
+    },
+    {
+        'segment': 'Platform SRE & Governance',
+        'type': 'Elective',
+        'phase': 'Observability, Security & Responsible Systems',
+        'duration': '1.5 Months',
+        'topics': 'Introduction to Observability, Security & Responsible Systems, Observability for AI and Operations, Designing ML-Ready Pipelines, Machine-Readable Observability Layer, Anomaly Detection Systems, Feature Engineering & Alerting, Behavioral Fingerprinting, Predictive Operations & Failure Prevention, Forecasting & Early Warning, Security Foundations for AI & Automation, Guardrails & Access Control, Zero-Trust & Audit, AI Threat Models, PII & Model Integrity, Prompt Injection & Testing, Governance and Responsible AI, Audit, Compliance & Ethics.',
+        'deliverable': 'Zero-trust predictive observability platform with AI threat modeling, automated anomaly detection, and SOC2/GDPR compliance guardrails.'
+    },
+    {
+        'segment': 'AI Platform Engineering',
+        'type': 'Elective',
+        'phase': 'ML Systems, MLOps & DataOps',
+        'duration': '1 Month',
+        'topics': 'Introduction to ML Systems and DataOps, AI Observability and Model Health, Drift Detection & Monitoring, Model Health & Retraining, ML-Driven Optimization, Autoscaling & Cost Engineering, MLOps on Kubernetes, Inference & GPU Operations, End-to-End MLOps Build, Dataset Operations (DataOps), Data Quality & Governance.',
+        'deliverable': 'Production MLOps pipeline on Kubernetes with GPU autoscaling, data drift detection, and automated model retraining triggers.'
+    },
+    {
+        'segment': 'Agentic AI & LLMOps',
+        'type': 'Elective',
+        'phase': 'Generative AI & Agentic Systems',
+        'duration': '1 Month',
+        'topics': 'Introduction to Gen AI, Generative AI for Engineers, IaC Generation & Validation, Safe GenAI in Production, Retrieval-Augmented Generation (RAG), Building RAG Systems, RAG Quality & Strategy, Agentic AI Systems, Multi-Agent Architecture, Agent Testing & Human-in-the-Loop, LLM Gateway and Proxy Patterns, Caching, Filtering & Cost Control.',
+        'deliverable': 'Enterprise LLM Gateway with semantic caching, proxy rate limiting, and multi-agent RAG workflow with human-in-the-loop validation.'
+    },
+    {
+        'segment': 'No-Code / Low-Code AI Agents',
+        'type': 'Elective',
+        'phase': 'AI & Agents: From Talking to AI to Building One',
+        'duration': '1 Month',
+        'topics': 'GenAI World & LLM Landscape, Prompt Engineering Basics, Advanced Prompting & AI Safety Basics, LLM Built-in Power Tools, RAG, n8n Automation Workflow, What Is an AI Agent?, Building Agents with n8n, OpenClaw: Personal 24/7 AI Agent, Multi-Agent Systems, MindStudio: Building AI Apps Visually.',
+        'deliverable': 'Autonomous 24/7 AI agent running via n8n automation and MindStudio visual workflows.'
+    },
+    {
+        'segment': 'Data Structures & Algorithms',
+        'type': 'Elective',
+        'phase': 'Intermediate DSA : AI Assisted Problem Solving',
+        'duration': '1 Month',
+        'topics': 'Time Complexity, Arrays & Basics of AI, Lab Session on TC/SC/Output & Debugging, Prefix Sum & Carry Forward with AI-Assisted Problem Solving, Arrays techniques & smart prompting, Memory Management & Sorting Basics, Bit Manipulation Basics, 2D Matrices, Strings & Immutability visualisations through AI, Contest.',
+        'deliverable': 'Foundational algorithmic problem-solving with AI-assisted optimization and prefix sum / matrix techniques.'
+    },
+    {
+        'segment': 'Data Structures & Algorithms',
+        'type': 'Elective',
+        'phase': 'Advanced DSA: Foundations:Core Techniques & Optimization',
+        'duration': '1 Month',
+        'topics': 'DSA: Time Complexity, DSA: Arrays Techniques, DSA: Arrays 1: One Dimensional, DSA: Arrays 2: Two Dimensional, DSA: Lab Session on Arrays, DSA: Bit Manipulation, DSA: Lab Session on Bit Manipulation, DSA: Recursion, DSA: Lab Session on Recursion, DSA: Maths: Modular Arithmetic & GCD, DSA: Hashing, DSA: Lab Session on Hashing, DSA: Sorting 1: Count Sort & Merge Sort, DSA: Sorting 2: Quick Sort & Comparator Problems, DSA: Sample Contest: Dual Camera Proctoring, DSA Contest 1: Arrays, Bit Manipulation, Recursion, Math, Hashing & Sorting.',
+        'deliverable': 'Mastery of recursion, bit manipulation, modular arithmetic, and sorting / hashing algorithmic patterns.'
+    },
+    {
+        'segment': 'Data Structures & Algorithms',
+        'type': 'Elective',
+        'phase': 'Advanced DSA: Linear & Non-Linear Data Structures',
+        'duration': '1 Month',
+        'topics': 'DSA: Searching 1: Binary Search on Array, DSA: Searching 2: Binary Search on Answer, DSA: Lab Session on Searching, DSA: Classes, Objects & Linked List Introduction, DSA: Linked List: Basic Problems, DSA: Stacks, DSA: Lab Session on Stacks, DSA: Queues: Implementation & Problems, DSA: Trees 1: Structure & Traversal, DSA: Trees 2: BST, DSA: Lab Session on Binary Trees, DSA: Revision of DSA 1 & 2, DSA: Break, DSA Contest 2: Searching, Linked List, Stacks, Queues & Trees.',
+        'deliverable': 'Binary search, linked lists, stack/queue memory primitives, and binary search tree traversals.'
+    },
+    {
+        'segment': 'Data Structures & Algorithms',
+        'type': 'Elective',
+        'phase': 'Advanced DSA: Backtracking & Advanced Trees',
+        'duration': '1 Month',
+        'topics': 'DSA: Maths: Combinatorics Basics & Prime Numbers, DSA: Lab Session on Prime Numbers & 2 Pointers, DSA: Lab Session on Maths & 2 Pointers, DSA: Backtracking, DSA: Lab Session on Backtracking, DSA: Linked List: Sorting and Problems, DSA: Linked List: Doubly Linked List & Detecting Loop, DSA: Trees 4: Morris Inorder Traversal + LCA, DSA: Lab Session on Binary Trees 2, DSA: Hashing 3: Internal Implementation & Problems, DSA Contest 3: Math, Two Pointers, Backtracking, Linked List & Trees.',
+        'deliverable': 'Combinatorics, state-space backtracking, Morris traversals, and LCA tree algorithms.'
+    },
+    {
+        'segment': 'Data Structures & Algorithms',
+        'type': 'Elective',
+        'phase': 'Advanced DSA: DP, Heaps & Graphs - Crack It with AI Edge',
+        'duration': '1 Month',
+        'topics': 'DSA: Heaps: Introduction, DSA: Heap Sort & Greedy, DSA: Lab Session on Heaps & Greedy, DSA: Lab Session on Interview Problems 1, DSA: DP 1: One Dimensional, DSA: DP 2: Two Dimensional, DSA: DP 3: Knapsack, DSA: Lab Session on Applications of Knapsack, DSA: Graphs 1: Introduction, DFS & Cycle Detection, DSA: Graphs 2: BFS & MST, DSA: Graphs 3: Dijkstra Algo & Topological Sort, DSA: Lab Session on Interview Problems 2, DSA: Revision of DSA 3 & 4, DSA Contest 4: Heaps, Greedy, DP & Graphs, Mandatory Skill Evaluation Test: DSA, Skill Evaluation Test Discussion + How to ace DSA Interview, DSA : Real World Project 1 (Social Network Analyzer), DSA : Real world Project 2 ( Invoice Merger ).',
+        'deliverable': 'Dynamic programming, Dijkstra graph routing, MST, and real-world system projects (Social Network Analyzer & Invoice Merger).'
+    },
+    {
+        'segment': 'High-Level System Design',
+        'type': 'Elective',
+        'phase': 'Distributed System Design & AI-Integrated Architectures',
+        'duration': '1.5 Months',
+        'topics': 'System Design Foundations & Modern Infrastructure, Load Balancing, Consistent Hashing & Traffic Routing at Scale, Caching Systems: CDN, Backend Caches, Cache Invalidation, Case Study: Caching at Scale (Scaler Code Judge and Contest Leaderboards + AI Workloads), Case Study: Caching Facebook News Feed, CAP / PACELC theorem + Master Slave Replication, SQL vs NoSQL + Sharding, Database Orchestration & Shard Creation, Case study: Google Typeahead (How to approach System Design Problems), Case Study: Google Typeahead (Design and Optimizations), NoSQL Internals - LSM Tree and Multi Master, Case Study: Messaging Apps (FB Messenger, Whatsapp, Slack), Messaging Queues - Apache Kafka & Zookeeper, Case Study: ElasticSearch (Full Text Search), Case Study: S3, HDFS (Large File Storage), Case Study: Uber (Nearest Neighbor Search), Case Study: Rate Limiter + Unique ID Generator (Infra), Case Study: OTT Platform (OTT), Microservices - 1, Microservices - 2, Case Study: Ecommerce Platform (Microservices).',
+        'deliverable': 'Architectural blueprint of high-throughput distributed systems: consistent hashing, Kafka event streaming, LSM-tree NoSQL stores, and Uber/Netflix scale services.'
+    }
+]
+
+
 def resolve_program_code(prog_val):
     if not prog_val:
         return 'P1_ACADEMY'
@@ -1239,7 +1358,17 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
             'track_label': track_label
         }
 
-    # For other programs (P5), return their structured curriculum modules
+    # 6. Track-specific resolution for DevOps, Cloud & AI Platform Engineering (P5)
+    if p_code == 'P5_DEVOPS_CLOUD':
+        return {
+            'program_name': p_data['program_name'],
+            'catalogue_url': p_data['catalogue_url'],
+            'top_hiring_companies': p_data.get('top_hiring_companies', []),
+            'curriculum_modules': P5_DEVOPS_MODULES,
+            'track_label': str(track_name) if track_name else 'Cloud Architecture, SRE & AI Platform Track'
+        }
+
+    # Fallback return
     return {
         'program_name': p_data['program_name'],
         'catalogue_url': p_data['catalogue_url'],

@@ -8,7 +8,7 @@ inbound masterclass vs comprehensive program comparison matrices.
 PROGRAM_CATALOG_DATA = {
     'P1_ACADEMY': {
         'program_name': 'Modern Software & AI Engineering (Scaler Academy)',
-        'catalogue_url': 'https://www.scaler.com/academy/',
+        'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291',
         'top_hiring_companies': [
             'Amazon', 'Microsoft', 'Google', 'Razorpay', 'Swiggy', 
             'PayPal', 'Atlassian', 'Walmart', 'PhonePe', 'Salesforce'
@@ -42,7 +42,7 @@ PROGRAM_CATALOG_DATA = {
     },
     'P2_DSML': {
         'program_name': 'Modern Data Science & Machine Learning (AI Specialization)',
-        'catalogue_url': 'https://www.scaler.com/data-science-course/',
+        'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/210/531/original/DSML_Brochure_2026_%282%29.pdf?1783928557',
         'top_hiring_companies': [
             'Amazon', 'Flipkart', 'PayPal', 'Sigmoid', 'Fractal', 
             'Mu Sigma', 'Quantiphi', 'Deloitte', 'Accenture', 'Tredence'
@@ -76,7 +76,7 @@ PROGRAM_CATALOG_DATA = {
     },
     'P3_FDE': {
         'program_name': 'AI Forward Deployed Engineer (FDE) Program',
-        'catalogue_url': 'https://www.scaler.com/ai-forward-deployed-engineer-course/',
+        'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/217/310/original/FDE_Brochure_.pdf?1786110990',
         'top_hiring_companies': ['Palantir', 'Fractal', 'Tiger Analytics', 'Accenture AI', 'EY Tech', 'KPMG Lighthouse'],
         'curriculum_modules': [
             {
@@ -101,7 +101,7 @@ PROGRAM_CATALOG_DATA = {
     },
     'P4_AIML_AGENTIC': {
         'program_name': 'AI & Machine Learning with Agentic AI Program',
-        'catalogue_url': 'https://www.scaler.com/ai-machine-learning-course/',
+        'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/207/098/original/AI__ML_Agentic_AI_Brochure_.pdf?1782394058',
         'top_hiring_companies': ['Google DeepMind Ecosystem', 'Microsoft Research', 'NVIDIA', 'Siemens Healthineers', 'Zoho AI'],
         'curriculum_modules': [
             {
@@ -126,7 +126,7 @@ PROGRAM_CATALOG_DATA = {
     },
     'P5_DEVOPS_CLOUD': {
         'program_name': 'DevOps, Cloud & AI Platform Engineering',
-        'catalogue_url': 'https://www.scaler.com/devops-course/',
+        'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/206/970/original/DEVOPS-Brochure-2026_%281%29.pdf?1782371159',
         'top_hiring_companies': ['Cisco', 'NetApp', 'AWS', 'VMware', 'Red Hat', 'BrowserStack'],
         'curriculum_modules': [
             {

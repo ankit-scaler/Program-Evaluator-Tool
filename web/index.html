@@ -640,44 +640,6 @@
       margin-bottom: var(--space-6);
     }
 
-    .stat-widget {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-5);
-      background: var(--color-surface-muted);
-      border: 1px solid var(--color-surface-raised);
-      border-radius: var(--radius-xs);
-      padding: var(--space-5) var(--space-6);
-      margin-bottom: var(--space-6);
-    }
-
-    .stat-num-box {
-      text-align: center;
-    }
-
-    .stat-number {
-      font-family: var(--font-family-stack);
-      font-size: var(--font-size-lg);
-      font-weight: 800;
-      line-height: 1.1;
-    }
-
-    .stat-number.retention {
-      color: var(--accent-green);
-    }
-
-    .stat-number.refund {
-      color: #dc2626;
-    }
-
-    .stat-subtext {
-      font-size: 10px;
-      color: var(--color-text-inverse);
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      margin-top: var(--space-2);
-    }
 
     .rec-why-box {
       background: #fafbfc;
@@ -986,21 +948,6 @@
               <div class="rec-program-name" id="modal-primary-prog">-</div>
               <div class="rec-track-name" id="modal-primary-track">-</div>
 
-              <div class="stat-widget" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="stat-num-box">
-                  <div class="stat-number retention" id="modal-primary-retention">0%</div>
-                  <div class="stat-subtext">Historical Retention</div>
-                </div>
-                <div class="stat-num-box">
-                  <div class="stat-number refund" id="modal-primary-refund">0%</div>
-                  <div class="stat-subtext">Cohort Refund Benchmark</div>
-                </div>
-                <div class="stat-num-box" style="background:#f0fdf4; border-color:#bbf7d0;">
-                  <div class="stat-number" style="color:#15803d; font-size:15px; font-weight:800;" id="modal-primary-sat">-</div>
-                  <div class="stat-subtext" style="color:#166534; font-weight:700;">Diagnostic SAT Score</div>
-                </div>
-              </div>
-
               <div class="rec-why-box" id="modal-primary-why">
                 <b>Why This Program:</b> -
               </div>
@@ -1022,21 +969,6 @@
               </div>
               <div class="rec-program-name" id="modal-fallback-prog">-</div>
               <div class="rec-track-name" id="modal-fallback-track">-</div>
-
-              <div class="stat-widget" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="stat-num-box">
-                  <div class="stat-number" style="color:var(--accent-amber);" id="modal-fallback-retention">0%</div>
-                  <div class="stat-subtext">Retention Comparison</div>
-                </div>
-                <div class="stat-num-box">
-                  <div class="stat-number refund" id="modal-fallback-refund">0%</div>
-                  <div class="stat-subtext">Refund Benchmark</div>
-                </div>
-                <div class="stat-num-box" style="background:#f8fafc; border-color:#e2e8f0;">
-                  <div class="stat-number" style="color:#475569; font-size:14px; font-weight:700;" id="modal-fallback-sat">Required</div>
-                  <div class="stat-subtext" style="color:#64748b;">Diagnostic Gate</div>
-                </div>
-              </div>
 
               <div class="rec-why-box" style="border-left-color: var(--accent-amber);" id="modal-fallback-why">
                 <b>Why Fallback:</b> -
@@ -1296,10 +1228,6 @@
       const primTitle = prim.catalog_code ? `${prim.catalog_code}: ${prim.program}` : prim.program;
       document.getElementById('modal-primary-prog').innerText = primTitle;
       document.getElementById('modal-primary-track').innerText = `Track: ${prim.track}`;
-      document.getElementById('modal-primary-retention').innerText = prim.retention_rate + '%';
-      document.getElementById('modal-primary-refund').innerText = prim.refund_rate + '%';
-      const satScoreText = tp.sat_score || tp.sat_status || 'SAT Pending';
-      document.getElementById('modal-primary-sat').innerText = satScoreText;
       document.getElementById('modal-primary-why').innerHTML = `<b>Why This Program:</b> ${prim.why}`;
       document.getElementById('modal-primary-guardrail').innerText = `Leveling Rule: ${prim.guardrail}`;
 
@@ -1323,9 +1251,6 @@
       const fallTitle = fall.catalog_code ? `${fall.catalog_code}: ${fall.program}` : fall.program;
       document.getElementById('modal-fallback-prog').innerText = fallTitle;
       document.getElementById('modal-fallback-track').innerText = `Track: ${fall.track}`;
-      document.getElementById('modal-fallback-retention').innerText = fall.retention_rate + '%';
-      document.getElementById('modal-fallback-refund').innerText = fall.refund_rate + '%';
-      document.getElementById('modal-fallback-sat').innerText = satScoreText.includes('Passed') ? 'Qualified' : (satScoreText.includes('Attempted') ? 'Pending' : 'Required');
       document.getElementById('modal-fallback-why').innerHTML = `<b>Why Fallback:</b> ${fall.why}`;
 
       // Fallback Confidence Badge

@@ -47,9 +47,9 @@ def get_track_duration(program_str, track_str):
         
     # Program 4: AI & ML with Agentic AI
     elif 'agentic' in p_lower or 'program 4' in p_lower or 'aiml' in p_lower:
-        if 'beginner' in t_lower:
-            return '14 - 16 Months'
-        return '12 - 15 Months'
+        if 'beginner' in t_lower or 'foundation' in t_lower:
+            return '14 - 18 Months'
+        return '11 - 15 Months'
         
     # Program 5: DevOps, Cloud & AI Platform Engineering
     elif 'devops' in p_lower or 'cloud' in p_lower or 'platform' in p_lower or 'program 5' in p_lower:
@@ -398,7 +398,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             if inbound_cat in ['P4_AIML_AGENTIC', 'P3_FDE']:
                 fallback['program'] = 'AI & Machine Learning with Agentic AI'
                 fallback['catalog_code'] = 'Program 4'
-                fallback['track'] = 'Beginner Track (Applied AI Foundation with Math Prep)'
+                fallback['track'] = 'Beginner Track (AI & Machine Learning Foundations)'
                 fallback['fit_tier'] = 'High Risk / Conditional Fallback'
                 fallback['why'] = (
                     f"You enquired about AI, but Catalog Rule 6 strictly mandates coding aptitude. "
@@ -418,7 +418,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         if inbound_cat == 'P4_AIML_AGENTIC':
             primary['program'] = 'AI & Machine Learning with Agentic AI'
             primary['catalog_code'] = 'Program 4'
-            primary['track'] = 'Core Machine Learning & Autonomous Agents Track'
+            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
             primary['fit_tier'] = 'Best Fit (Advanced AI Modeling)'
             primary['why'] = (
                 f"Your background as a {raw_role} gives you data intuition. Program 4 elevates you into "
@@ -459,7 +459,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
             fallback['program'] = 'AI & Machine Learning with Agentic AI'
             fallback['catalog_code'] = 'Program 4'
-            fallback['track'] = 'GenAI & Autonomous Agent Specialization'
+            fallback['track'] = 'Advanced Track (Agentic AI & LLMOps)'
             fallback['fit_tier'] = 'Advanced Next-Gen AI Pivot'
             fallback['why'] = "Alternative path to specialize in frontier LLM engineering and agentic workflows."
 
@@ -587,7 +587,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
                 fallback['program'] = 'AI & Machine Learning with Agentic AI'
                 fallback['catalog_code'] = 'Program 4'
-                fallback['track'] = 'Autonomous Agents & LLM Fine-Tuning Track'
+                fallback['track'] = 'Advanced Track (Agentic AI & LLMOps)'
                 fallback['fit_tier'] = 'Alternative AI Modeling Track'
                 fallback['why'] = "Focuses on model fine-tuning and autonomous multi-agent design rather than client consulting."
 
@@ -605,13 +605,13 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
                 fallback['program'] = 'AI & Machine Learning with Agentic AI'
                 fallback['catalog_code'] = 'Program 4'
-                fallback['track'] = 'Beginner Track (Applied AI Foundation with Math Prep)'
+                fallback['track'] = 'Beginner Track (AI & Machine Learning Foundations)'
                 fallback['fit_tier'] = 'Alternative Applied AI Track'
                 fallback['why'] = "Direct entry with intensive math and Python machine learning preparation."
             else:
                 primary['program'] = 'AI & Machine Learning with Agentic AI'
                 primary['catalog_code'] = 'Program 4'
-                primary['track'] = 'Applied AI Engineering & Autonomous Agents Track'
+                primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
                 primary['fit_tier'] = 'Best Fit (AI / LLM Engineering)'
                 primary['why'] = (
                     f"With your software engineering foundation as a {raw_role}, you skip basic programming and dive "

@@ -64,33 +64,7 @@ PROGRAM_CATALOG_DATA = {
     'P4_AIML_AGENTIC': {
         'program_name': 'AI & Machine Learning with Agentic AI Program',
         'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/207/098/original/AI__ML_Agentic_AI_Brochure_.pdf?1782394058',
-        'top_hiring_companies': ['Google DeepMind Ecosystem', 'Microsoft Research', 'NVIDIA', 'Siemens Healthineers', 'Zoho AI'],
-        'curriculum_modules': [
-            {
-                'segment': 'Deep Learning Core',
-                'type': 'Core',
-                'phase': 'Phase 1: Deep Learning Foundations & Transformers',
-                'duration': '10 Weeks',
-                'topics': 'Attention Mechanisms, Transformer Architectures from scratch, BERT, GPT, Vision Transformers, PyTorch internals.',
-                'deliverable': 'Implement and train mini-transformer decoder from scratch using PyTorch.'
-            },
-            {
-                'segment': 'Agentic Architectures',
-                'type': 'Core',
-                'phase': 'Phase 2: Multi-Agent Systems & Tool Calling',
-                'duration': '10 Weeks',
-                'topics': 'LangGraph, AutoGen, CrewAI, Function Calling, ReAct Agent Loops, Memory Architectures, Vector Stores.',
-                'deliverable': 'Autonomous multi-agent research analyst team coordinating code writing and verification.'
-            },
-            {
-                'segment': 'Autonomous Execution',
-                'type': 'Specialisation',
-                'phase': 'Phase 3: Autonomous Task Execution & Evaluation Frameworks',
-                'duration': '8 Weeks',
-                'topics': 'Agent benchmarking (SWE-bench), Guardrails, Safety, Cost & Latency Optimization, Production Deployment.',
-                'deliverable': 'Production agent capable of debugging and generating GitHub Pull Requests autonomously.'
-            }
-        ]
+        'top_hiring_companies': ['Google DeepMind Ecosystem', 'Microsoft Research', 'NVIDIA', 'Siemens Healthineers', 'Zoho AI']
     },
     'P5_DEVOPS_CLOUD': {
         'program_name': 'DevOps, Cloud & AI Platform Engineering',
@@ -905,6 +879,218 @@ P3_FDE_MODULES = [
 ]
 
 
+
+# ==============================================================================
+# PROGRAM 4: AI & MACHINE LEARNING WITH AGENTIC AI - OFFICIAL TRACK CURRICULA
+# ==============================================================================
+
+# Core shared modules
+P4_AIML_DATA_FOUNDATIONS = {
+    'segment': 'Data Foundations',
+    'type': 'Core',
+    'phase': 'Data Foundations',
+    'duration': '1 Month',
+    'topics': 'Numpy / Pandas, Data frames, EDA, Data Plotting and visualisation basics, Probability Foundations.',
+    'deliverable': 'Comprehensive exploratory data analysis (EDA) pipeline with automated summary statistics, data plotting, and probabilistic inference.'
+}
+
+P4_AIML_SUPERVISED = {
+    'segment': 'ML Coding (Applied AI-ML)',
+    'type': 'Core',
+    'phase': 'Supervised Learning',
+    'duration': '1.5 Months',
+    'topics': 'Linear Regression, regression metrics and Sklearn pipelines, Logistic Regression, Classification Metrics, KNN, Decision Trees, Bagging & Boosting, Naive Bayes.',
+    'deliverable': 'Production Scikit-Learn machine learning pipelines with cross-validated hyperparameter tuning and model performance evaluation.'
+}
+
+P4_AIML_UNSUPERVISED_TS_REC = {
+    'segment': 'ML Coding (Applied AI-ML)',
+    'type': 'Core',
+    'phase': 'Unsupervised Learning, Time series & Recommender Systems',
+    'duration': '1.5 Months',
+    'topics': 'Clustering, Anomaly Detection, GMM, Dimensionality Reduction, Time series pre-processing and decomposition, Time series analysis, Collaborative filtering & ARM, Content based filtering.',
+    'deliverable': 'Hybrid recommender engine and time-series demand forecasting system with automated anomaly detection.'
+}
+
+P4_AIML_NEURAL_NETWORKS = {
+    'segment': 'ML Coding (Applied AI-ML)',
+    'type': 'Core',
+    'phase': 'Neural Networks',
+    'duration': '1 Month',
+    'topics': 'Neural Networks, Optimizers, Loss function, activation functions, weight initialization, regularization.',
+    'deliverable': 'Custom deep neural network built and optimized from first principles with custom backpropagation and adaptive learning rate schedulers.'
+}
+
+P4_AIML_CV_NLP = {
+    'segment': 'ML Coding (Applied AI-ML)',
+    'type': 'Core',
+    'phase': 'Computer Vision and Natural Language Processing',
+    'duration': '1 Month',
+    'topics': 'OpenCV, Applied Deep Learning (CNNs, LSTM, GRU, Autoencoders, etc), Transfer Learning, Advance Computer Vision - Image gen, Face detection / recognition, segmentation, Text Pre-Processing (NLTK/spaCy), topic modelling, Sentiment Analysis, LSTM, RNN, Attention, Advanced NLP - Transformers / GPT.',
+    'deliverable': 'Dual-modal vision and language solution combining computer vision segmentation with Transformer/GPT text classification.'
+}
+
+P4_AIML_MLOPS = {
+    'segment': 'ML & Gen AI Engineering',
+    'type': 'Core',
+    'phase': 'MLOps',
+    'duration': '1.5 Months',
+    'topics': 'ML lifecycle, CI/CD pipelines, Feature Stores for ML, Serving ML Models, ML Monitoring, Experiment tracking, MLflow, Docker, Optuna, AWS SageMaker.',
+    'deliverable': 'Automated end-to-end MLOps deployment pipeline on AWS SageMaker with MLflow experiment tracking, Dockerized containers, and live drift monitoring.'
+}
+
+P4_AIML_SYSTEM_DESIGN = {
+    'segment': 'ML & Gen AI Engineering',
+    'type': 'Core',
+    'phase': 'System Design',
+    'duration': '1 Month',
+    'topics': 'ML System Design fundamentals, Microservices, Design Patterns, Scalability and Cost.',
+    'deliverable': 'Enterprise ML system design blueprint addressing microservices partitioning, caching layers, distributed throughput, and infrastructure cost optimization.'
+}
+
+P4_AIML_FOUNDATIONS_RAG = {
+    'segment': 'ML & Gen AI Engineering',
+    'type': 'Core',
+    'phase': 'Foundations of AI Engineering & RAG Systems',
+    'duration': '1.5 Months',
+    'topics': 'Prompt Engineering, Jailbreaks, and Guardrails, RAG Systems, Vector Databases, and Embeddings.',
+    'deliverable': 'Enterprise Retrieval-Augmented Generation (RAG) system with semantic chunking, vector database indexation, and safety guardrails.'
+}
+
+P4_AIML_AGENTIC_PATTERNS = {
+    'segment': 'ML & Gen AI Engineering',
+    'type': 'Core',
+    'phase': 'Agentic Design Patterns & Multi-Agent Orchestration',
+    'duration': '1.5 Months',
+    'topics': 'LangChain, LangGraph, Memory Systems (Short-term, Long-term, Episodic).',
+    'deliverable': 'Autonomous multi-agent orchestration architecture in LangGraph equipped with episodic memory, cyclical state machines, and dynamic tool calling.'
+}
+
+P4_AIML_ADVANCED_COGNITIVE = {
+    'segment': 'ML & Gen AI Engineering',
+    'type': 'Core',
+    'phase': 'Advanced Cognitive Architectures & Multimodal Intelligence',
+    'duration': '1 Month',
+    'topics': 'Agentic RAG, GraphRAG, Multimodal AI (Vision with GPT-4V/LLaVA, Audio with Whisper).',
+    'deliverable': 'Multimodal GraphRAG intelligent system synthesizing knowledge graphs with audio transcription and vision understanding.'
+}
+
+P4_AIML_FINETUNING_LLMOPS = {
+    'segment': 'ML & Gen AI Engineering',
+    'type': 'Core',
+    'phase': 'Fine tuning, LLMOPS and Security',
+    'duration': '0.5 Month',
+    'topics': 'Parameter-Efficient Fine-Tuning (PEFT) & LoRA, Serving LLMs (vLLM, TGI, Quantization) and Token Economics, LLMOPS.',
+    'deliverable': 'Domain-adapted LLM fine-tuned using LoRA/PEFT, served via vLLM with 4-bit quantization and token economic budgeting.'
+}
+
+P4_AIML_ADV_ML_DL_1 = {
+    'segment': 'Advanced ML, Deep Learning & NLP',
+    'type': 'Elective',
+    'phase': 'Advanced Machine Learning and Deep Learning 1',
+    'duration': '1 Month',
+    'topics': 'Prob and Stats, Math for ML, Optimisation Theory, Loss Functions, Linear Models, Logistic Regression, Decision Tree and Forests, Support Vector Machines, Clustering, Dimensionality Reduction, Statistical Learning Theory.',
+    'deliverable': 'Mathematical derivations and algorithmic implementations of convex optimization, SVM kernel functions, and statistical learning bounds.'
+}
+
+P4_AIML_ADV_ML_DL_2 = {
+    'segment': 'Advanced ML, Deep Learning & NLP',
+    'type': 'Elective',
+    'phase': 'Advanced Machine Learning and Deep Learning 2',
+    'duration': '1 Month',
+    'topics': 'Neural Networks, Model Interpretability, Backpropagation, Advanced NLP - Transformers / GPT, Attention Mechanisms.',
+    'deliverable': 'Custom multi-head self-attention mechanism and Transformer encoder-decoder built from first principles with model interpretability.'
+}
+
+P4_AIML_DSA = {
+    'segment': 'DSA',
+    'type': 'Optional',
+    'phase': 'DSA for Professionals',
+    'duration': '4-6 Months',
+    'topics': 'Time and Space Complexity Analysis, Array Problem Solving Patterns (Prefix, Sliding Windows, Subarrays, Subsets, Subsequences), Bit Manipulation, Maths for Problem Solving, Recursion, Backtracking, Sorting, Searching (Binary Search), Two Pointers, Hashing, String Problem Solving Patterns, String Pattern Matching, Linked Lists, Stacks, Queues and Deques, Trees and BST, Tries, Heaps, Greedy, Dynamic Programming, Graphs.',
+    'deliverable': 'Rigorous algorithmic problem solving and optimization patterns covering 300+ advanced LeetCode problems for Tier-1 engineering interviews.'
+}
+
+P4_AIML_BIG_DATA = {
+    'segment': 'Big Data (Recorded)',
+    'type': 'Core',
+    'phase': 'Big data (Recorded)',
+    'duration': '1 Month',
+    'topics': 'Hadoop & HDFS, Spark (RDDs, DataFrames, Spark SQL), Spark Streaming & MLlib, Hive & Kafka Integration, Data Visualization (Tableau, AWS QuickSight).',
+    'deliverable': 'Scalable distributed batch and stream processing engine using Apache Spark, Kafka, and cloud enterprise visualization dashboards.'
+}
+
+P4_AIML_RL = {
+    'segment': 'Reinforcement Learning (Recorded)',
+    'type': 'Core',
+    'phase': 'Reinforcement learning (Recorded)',
+    'duration': '1 Month',
+    'topics': 'Markov Decision Processes (MDPs), Dynamic Programming (Value & Policy Iteration), Q-Learning & DQN, Policy Gradients & Actor-Critic, PPO, SAC, TD3, Imitation Learning & Multi-Agent RL.',
+    'deliverable': 'Autonomous reinforcement learning agent trained in complex environments using Policy Gradients (PPO/SAC) and Actor-Critic architectures.'
+}
+
+# Beginner Track Modules: Starts with Generative AI (2 mo) and Python Programming Fundamentals (1 mo)
+P4_AIML_GENAI_FOUNDATIONS = {
+    'segment': 'Generative AI',
+    'type': 'Core',
+    'phase': 'Generative AI',
+    'duration': '2 Months',
+    'topics': 'Generative AI Foundations & the LLM Landscape, Prompt Engineering - Anatomy to Advanced Patterns, AI Reliability - Safety, Evaluation & Power Tools, AI Ecosystems, Productivity & Meeting Intelligence, Knowledge Management & RAG in Practice, Web-Grounded Research & Citations, Building No-Code AI Chatbots, AI for Content Creation, Multimodal GenAI -Images, Video & Voice, Workflow Automation Essentials, Automating with n8n, Automating with Zapier, What Is an AI Agent? Concepts & Live Demos, Tools, Memory & MCP - Agent Building Blocks, Building Agents Without Code, Personal Agents & Multi-Agent Systems, No-Code Coding IDEs - Vibe Coding, Claude Ecosystem Deep-Dive - Skills, Artifacts, claude.md, Prompt Management as a Practice, AI System Design, Evaluation & Observability, Deploying AI Apps - Hosting & Going Live, Deploying AI Apps on AWS.',
+    'deliverable': 'Production GenAI workflow automations with n8n/Zapier, multi-agent assistant pipelines with tools & memory, and AWS hosted AI applications.'
+}
+
+P4_AIML_PYTHON_FOUNDATIONS = {
+    'segment': 'Python Programming Fundamentals',
+    'type': 'Core',
+    'phase': 'Python Programming Fundamentals',
+    'duration': '1 Month',
+    'topics': 'Data Types, Variables & Input/Output, Operators, Control Statements, Loops, Functions, Lists, Strings, Sets, Tuples & Dictionaries, Functional Programming, Object-Oriented Programming (OOP), Regular Expressions (Regex), File Handling.',
+    'deliverable': 'Modular object-oriented Python software package with regex text parsing, structured file I/O, and automated test coverage.'
+}
+
+# Complete Beginner Track (18 modules)
+P4_AIML_BEGINNER_MODULES = [
+    P4_AIML_GENAI_FOUNDATIONS,
+    P4_AIML_PYTHON_FOUNDATIONS,
+    P4_AIML_DATA_FOUNDATIONS,
+    P4_AIML_SUPERVISED,
+    P4_AIML_UNSUPERVISED_TS_REC,
+    P4_AIML_NEURAL_NETWORKS,
+    P4_AIML_CV_NLP,
+    P4_AIML_MLOPS,
+    P4_AIML_SYSTEM_DESIGN,
+    P4_AIML_FOUNDATIONS_RAG,
+    P4_AIML_AGENTIC_PATTERNS,
+    P4_AIML_ADVANCED_COGNITIVE,
+    P4_AIML_FINETUNING_LLMOPS,
+    P4_AIML_ADV_ML_DL_1,
+    P4_AIML_ADV_ML_DL_2,
+    P4_AIML_DSA,
+    P4_AIML_BIG_DATA,
+    P4_AIML_RL
+]
+
+# Complete Advanced Track (16 modules - skips GenAI 2mo & Python 1mo)
+P4_AIML_ADVANCED_MODULES = [
+    P4_AIML_DATA_FOUNDATIONS,
+    P4_AIML_SUPERVISED,
+    P4_AIML_UNSUPERVISED_TS_REC,
+    P4_AIML_NEURAL_NETWORKS,
+    P4_AIML_CV_NLP,
+    P4_AIML_MLOPS,
+    P4_AIML_SYSTEM_DESIGN,
+    P4_AIML_FOUNDATIONS_RAG,
+    P4_AIML_AGENTIC_PATTERNS,
+    P4_AIML_ADVANCED_COGNITIVE,
+    P4_AIML_FINETUNING_LLMOPS,
+    P4_AIML_ADV_ML_DL_1,
+    P4_AIML_ADV_ML_DL_2,
+    P4_AIML_DSA,
+    P4_AIML_BIG_DATA,
+    P4_AIML_RL
+]
+
+
 def resolve_program_code(prog_val):
     if not prog_val:
         return 'P1_ACADEMY'
@@ -1020,7 +1206,40 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
             'track_label': str(track_name) if track_name else 'Enterprise AI Integration & Client Systems Track'
         }
 
-    # For other programs (P4, P5), return their structured curriculum modules
+    # 5. Track-specific resolution for AI & Machine Learning with Agentic AI (P4)
+    if p_code == 'P4_AIML_AGENTIC':
+        t_low = str(track_name).lower() if track_name else ''
+        all_text = f"{str(track_name)} {str(arg1)} {str(arg2)} {str(arg3)} {str(arg4)}".lower()
+
+        if 'beginner' in t_low or 'foundation' in t_low or 'math prep' in t_low:
+            selected_modules = P4_AIML_BEGINNER_MODULES
+            track_label = 'Beginner Track (AI & Machine Learning Foundations)'
+        elif 'advanced' in t_low or 'agentic' in t_low or 'applied ai' in t_low or 'core machine learning' in t_low or 'autonomous' in t_low or 'specialization' in t_low:
+            selected_modules = P4_AIML_ADVANCED_MODULES
+            track_label = 'Advanced Track (Agentic AI & LLMOps)'
+        else:
+            # Fallback based on experience
+            try:
+                exp_num = float(str(arg3).replace('years', '').replace('yrs', '').replace('+', '').strip())
+                if exp_num >= 2.0:
+                    selected_modules = P4_AIML_ADVANCED_MODULES
+                    track_label = 'Advanced Track (Agentic AI & LLMOps)'
+                else:
+                    selected_modules = P4_AIML_BEGINNER_MODULES
+                    track_label = 'Beginner Track (AI & Machine Learning Foundations)'
+            except Exception:
+                selected_modules = P4_AIML_BEGINNER_MODULES
+                track_label = 'Beginner Track (AI & Machine Learning Foundations)'
+
+        return {
+            'program_name': p_data['program_name'],
+            'catalogue_url': p_data['catalogue_url'],
+            'top_hiring_companies': p_data.get('top_hiring_companies', []),
+            'curriculum_modules': selected_modules,
+            'track_label': track_label
+        }
+
+    # For other programs (P5), return their structured curriculum modules
     return {
         'program_name': p_data['program_name'],
         'catalogue_url': p_data['catalogue_url'],

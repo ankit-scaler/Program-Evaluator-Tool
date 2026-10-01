@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Scaler Sales Intelligence Desk | Academic Fit & Retention Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --scaler-red: #e11d48;
+      --scaler-navy: #0f172a;
+      --scaler-blue: #2563eb;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-card: #e2e8f0;
+      --border-focus: #3b82f6;
+      --text-heading: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --accent-green: #059669;
+      --bg-green-soft: #ecfdf5;
+      --border-green: #a7f3d0;
+      --accent-amber: #d97706;
+      --bg-amber-soft: #fffbeb;
+      --border-amber: #fde68a;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 6px 18px -3px rgba(15, 23, 42, 0.07), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+      --shadow-xl: 0 20px 40px -8px rgba(15, 23, 42, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOP NAVBAR */
+    nav {
+      padding: 16px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-card);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, var(--scaler-red), #be123c);
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 17px;
+      color: white;
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-heading);
+      letter-spacing: -0.3px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: #f1f5f9;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-card);
+    }
+
+    .status-badge b {
+      color: var(--scaler-navy);
+    }
+
+    .btn-sm {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--border-card);
+      background: #ffffff;
+      color: var(--text-body);
+      transition: all 0.15s;
+    }
+
+    .btn-sm:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    /* MAIN CONTAINER */
+    .app-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+      width: 100%;
+    }
+
+    /* HERO HEADER */
+    .hero-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .hero-title span {
+      color: var(--scaler-red);
+    }
+
+    .hero-tagline {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* UPLOAD DROPZONE CARD */
+    .upload-card {
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dropzone-box {
+      border: 2px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 28px 20px;
+      text-align: center;
+      background: #fcfdfe;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dropzone-box:hover {
+      border-color: var(--scaler-blue);
+      background: #f8faff;
+    }
+
+    .dropzone-title {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* FILTERS SECTION */
+    .filters-card {
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 18px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filters-header {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .filter-input, .filter-select {
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-family: var(--font-body);
+      color: var(--text-heading);
+      outline: none;
+      width: 100%;
+    }
+
+    .filter-input:focus, .filter-select:focus {
+      border-color: var(--border-focus);
+    }
+
+    /* DATA TABLE */
+    .table-card {
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .table-top-bar {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-card);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-count-label {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      max-height: 520px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-card);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-body);
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .tag-green {
+      background: var(--bg-green-soft);
+      color: var(--accent-green);
+      border: 1px solid var(--border-green);
+    }
+
+    .tag-amber {
+      background: var(--bg-amber-soft);
+      color: var(--accent-amber);
+      border: 1px solid var(--border-amber);
+    }
+
+    .tag-red {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    .tag-blue {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .btn-action-view {
+      font-family: var(--font-heading);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: var(--scaler-blue);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-action-view:hover {
+      background: #eff6ff;
+      border-color: var(--scaler-blue);
+    }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 1060px;
+      max-height: 92vh;
+      border-radius: 14px;
+      box-shadow: var(--shadow-xl);
+      overflow-y: auto;
+      border: 1px solid var(--border-card);
+      position: relative;
+    }
+
+    .modal-header {
+      padding: 18px 26px;
+      border-bottom: 1px solid var(--border-card);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      z-index: 10;
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-heading);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .id-tag {
+      font-size: 11px;
+      background: #eff6ff;
+      color: var(--scaler-blue);
+      border: 1px solid #bfdbfe;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .modal-close-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border-card);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+
+    .modal-body {
+      padding: 22px 26px;
+    }
+
+    /* PROFILE STRIP */
+    .profile-strip {
+      background: #f8fafc;
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .strip-item-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .strip-item-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+
+    /* TOUCHPOINTS STRIP */
+    .touchpoints-strip {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .tp-item-label {
+      font-size: 10px;
+      color: #166534;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .tp-item-val {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f172a;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* PAGINATION BAR */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border-card);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* SIDE BY SIDE RECOMMENDATIONS */
+    .rec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .rec-box {
+      border-radius: 10px;
+      padding: 18px;
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .rec-box.primary-rec {
+      border: 1.5px solid var(--border-green);
+      background: #fafdfb;
+    }
+
+    .rec-box.fallback-rec {
+      border: 1.5px solid var(--border-amber);
+      background: #fffdfa;
+    }
+
+    .rec-badge-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      width: fit-content;
+    }
+
+    .pill-primary {
+      background: var(--bg-green-soft);
+      color: var(--accent-green);
+      border: 1px solid var(--border-green);
+    }
+
+    .pill-fallback {
+      background: var(--bg-amber-soft);
+      color: var(--accent-amber);
+      border: 1px solid var(--border-amber);
+    }
+
+    .rec-program-name {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 2px;
+    }
+
+    .rec-track-name {
+      font-size: 12.5px;
+      color: var(--scaler-blue);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .stat-widget {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+
+    .stat-num-box {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .stat-number.retention {
+      color: var(--accent-green);
+    }
+
+    .stat-number.refund {
+      color: #dc2626;
+    }
+
+    .stat-subtext {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .rec-why-box {
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--text-body);
+      line-height: 1.5;
+      margin-bottom: 10px;
+      border-left: 3px solid var(--scaler-blue);
+    }
+
+    .rec-why-box b {
+      color: var(--text-heading);
+    }
+
+    .guardrail-box {
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .guardrail-green {
+      background: var(--bg-green-soft);
+      color: var(--accent-green);
+      border: 1px solid var(--border-green);
+    }
+
+    .guardrail-amber {
+      background: var(--bg-amber-soft);
+      color: var(--accent-amber);
+      border: 1px solid var(--border-amber);
+    }
+
+    /* STATISTICAL GRAPHS IN RECOMMENDATION CARDS */
+    .stat-graphs-section {
+      background: #f8fafc;
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .graph-block {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .graph-header-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .graph-title-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .graph-benchmark-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #0369a1;
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      border-radius: 3px;
+      padding: 1px 6px;
+    }
+
+    .retention-meter-track {
+      position: relative;
+      height: 20px;
+      background: #f1f5f9;
+      border-radius: 5px;
+      overflow: hidden;
+      display: flex;
+      border: 1px solid #e2e8f0;
+    }
+
+    .meter-bar-fill {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: white;
+      transition: width 0.4s ease-in-out;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    }
+
+    .ret-fill {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .ref-fill {
+      background: linear-gradient(90deg, #f87171, #dc2626);
+    }
+
+    .meter-target-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 80%;
+      width: 2px;
+      background: #0284c7;
+      z-index: 5;
+      box-shadow: 0 0 4px rgba(2, 132, 199, 0.6);
+    }
+
+    .meter-legend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-green { background: #059669; }
+    .dot-red { background: #dc2626; }
+    .dot-blue { background: #0284c7; }
+
+    /* FACTOR BREAKDOWN BARS */
+    .factor-bars-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 3px;
+    }
+
+    .factor-bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .factor-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-body);
+      font-weight: 600;
+    }
+
+    .factor-bar-track {
+      height: 5px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .factor-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .factor-fill-green { background: linear-gradient(90deg, #34d399, #059669); }
+    .factor-fill-blue { background: linear-gradient(90deg, #60a5fa, #2563eb); }
+    .factor-fill-amber { background: linear-gradient(90deg, #fbbf24, #d97706); }
+    .factor-fill-purple { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+
+    /* SEQUENTIAL LINEAR CALL FLOW (NO 2x2 GRID) */
+    .scripts-container {
+      background: #f8fafc;
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .scripts-header {
+      font-family: var(--font-heading);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .scripts-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .script-step-card {
+      display: flex;
+      gap: 14px;
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 14px 18px;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    }
+
+    .script-step-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+    }
+
+    .script-step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--scaler-blue);
+      border: 1.5px solid #bfdbfe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .script-step-body {
+      flex: 1;
+    }
+
+    .script-step-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .script-step-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .script-step-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .badge-blue { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .badge-green { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    .badge-amber { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .badge-rose { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
+
+    .script-quote-box {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--text-body);
+      background: #f8fafc;
+      border-left: 3px solid var(--scaler-blue);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-style: normal;
+    }
+
+    .script-step-card.step-warning {
+      background: #fffdfd;
+      border-color: #fecdd3;
+    }
+
+    .script-step-card.step-warning .script-step-num {
+      background: #fff1f2;
+      color: #e11d48;
+      border-color: #fecdd3;
+    }
+
+    .script-step-card.step-warning .script-quote-box {
+      border-left-color: #e11d48;
+      background: #fff5f5;
+      color: #9f1239;
+    }
+
+    .modal-footer {
+      padding: 14px 26px;
+      border-top: 1px solid var(--border-card);
+      background: #ffffff;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      position: sticky;
+      bottom: 0;
+      border-radius: 0 0 14px 14px;
+    }
+
+    .btn-primary {
+      font-family: var(--font-heading);
+      background: var(--scaler-navy);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: #1e293b;
+    }
+
+    #file-upload-input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <nav>
+    <a href="#" class="brand-logo">
+      <div class="logo-badge">S</div>
+      <div class="brand-title">Scaler Sales Intelligence Desk</div>
+    </a>
+    <div class="nav-actions">
+      <!-- Dynamic CRM Email/Phone Lookup Bar -->
+      <div style="display:flex; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:2px 8px; width:340px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+        <input 
+          type="text" 
+          id="nav-crm-search-input" 
+          placeholder="Lookup lead by email, phone, or name..." 
+          style="border:none; outline:none; font-size:12px; width:100%; padding:5px; color:#1e293b;"
+          onkeydown="if(event.key === 'Enter') executeCrmLookup()"
+        >
+        <button onclick="executeCrmLookup()" style="background:var(--scaler-navy); color:#ffffff; border:none; border-radius:4px; padding:5px 12px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;">
+          Search
+        </button>
+      </div>
+      <button class="btn-sm" onclick="syncMetabaseLeads()" id="btn-sync-metabase" style="display:flex; align-items:center; gap:5px; font-weight:700;">
+        <span>&#8635;</span> Sync Metabase
+      </button>
+      <span class="status-badge" id="leads-count-status">Active Leads: <b id="stat-total">0</b></span>
+      <button class="btn-sm" onclick="downloadMasterCsv()">
+        Export CRM CSV
+      </button>
+    </div>
+  </nav>
+
+  <!-- APP CONTAINER -->
+  <div class="app-container">
+
+    <!-- HERO HEADER -->
+    <div class="hero-header">
+      <h1 class="hero-title">
+        Program Recommendation & <span>Sales Intelligence</span> Desk
+      </h1>
+      <p class="hero-tagline">
+        Upload inbound leads CSV to evaluate academic eligibility, track leveling, and empirical retention benchmarks against catalog rules.
+      </p>
+    </div>
+
+    <!-- CSV UPLOAD DROPZONE -->
+    <div class="upload-card">
+      <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
+      <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
+        <div class="dropzone-title" id="dropzone-status-title">Choose or Drag & Drop Leads CSV File</div>
+        <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience, Organization, Inbound Program). Evaluates automatically upon upload.</div>
+      </div>
+    </div>
+
+    <!-- FILTERS BAR -->
+    <div class="filters-card" id="filters-section">
+      <div class="filters-header">Filter & Search Evaluated Leads</div>
+      <div class="filters-grid">
+        <input 
+          type="text" 
+          id="filter-search" 
+          class="filter-input" 
+          placeholder="Search Name, Email, or Company..." 
+          oninput="applyFilters()"
+        >
+
+        <select id="filter-program" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Programs (1 to 5)</option>
+          <option value="Program 1">Program 1: Scaler Academy</option>
+          <option value="Program 2">Program 2: DSML</option>
+          <option value="Program 3">Program 3: FDE</option>
+          <option value="Program 4">Program 4: Agentic AI</option>
+          <option value="Program 5">Program 5: DevOps & Cloud</option>
+        </select>
+
+        <select id="filter-track" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Track Levels</option>
+          <option value="Beginner">Beginner Track</option>
+          <option value="Intermediate">Intermediate Track</option>
+          <option value="Advanced">Advanced Track</option>
+        </select>
+
+        <select id="filter-persona" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Role Personas</option>
+          <option value="Non-Tech">Non-Tech / Operations</option>
+          <option value="QA">QA / Testing</option>
+          <option value="Data">Data & Analytics</option>
+          <option value="Systems">Systems & Embedded</option>
+          <option value="Software">Software Engineering</option>
+        </select>
+
+        <select id="filter-retention" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Retention Levels</option>
+          <option value="HIGH">High Retention (>=80%)</option>
+          <option value="MODERATE">Moderate (75 - 79%)</option>
+          <option value="RISK">Pacing Risk (<75%)</option>
+        </select>
+
+        <select id="filter-confidence" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Confidence Tiers</option>
+          <option value="HIGH">High Confidence (>=75%)</option>
+          <option value="MID">Mid Confidence (55 - 74%)</option>
+          <option value="LOW">Low Confidence (<55%)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- LEADS TABLE -->
+    <div class="table-card">
+      <div class="table-top-bar">
+        <div class="table-count-label">
+          Evaluated Leads (<span id="table-display-count">0</span> / <span id="table-total-count">0</span>)
+        </div>
+        <button class="btn-sm" onclick="downloadMasterCsv()">
+          Download Filtered CSV
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="leads-table">
+          <thead>
+            <tr>
+              <th>Lead ID</th>
+              <th>Candidate</th>
+              <th>Current Role</th>
+              <th>Previous Org</th>
+              <th>Experience</th>
+              <th>Captured Touchpoint</th>
+              <th>Recommended Program</th>
+              <th>Retention & Confidence</th>
+              <th>Fallback Program</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody">
+            <tr>
+              <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 36px;">
+                No CSV uploaded yet. Please choose or drop a leads CSV file above to evaluate.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINATION BAR -->
+      <div class="pagination-bar" id="pagination-bar">
+        <div id="pagination-info">Showing 0 of 0 leads</div>
+        <div class="pagination-controls">
+          <button class="btn-sm" id="btn-prev-page" onclick="changePage(-1)" disabled>Previous</button>
+          <span style="font-weight:600; color:var(--text-heading); font-size:12px;">Page <span id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
+          <button class="btn-sm" id="btn-next-page" onclick="changePage(1)" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- POP-UP SALES DOSSIER MODAL -->
+  <div class="modal-overlay" id="lead-modal" onclick="handleOverlayClick(event)">
+    <div class="modal-container">
+      
+      <!-- MODAL HEADER -->
+      <div class="modal-header">
+        <div class="modal-title">
+          <span id="modal-name">Candidate Profile</span>
+          <span class="id-tag" id="modal-id">LD-SALES-0001</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+      </div>
+
+      <!-- MODAL BODY -->
+      <div class="modal-body">
+        
+        <!-- PROFILE STRIP -->
+        <div class="profile-strip" style="grid-template-columns: repeat(6, 1fr);">
+          <div>
+            <div class="strip-item-label">Current Role</div>
+            <div class="strip-item-val" id="modal-role">-</div>
+          </div>
+          <div>
+            <div class="strip-item-label">Previous Org</div>
+            <div class="strip-item-val" id="modal-org">-</div>
+          </div>
+          <div>
+            <div class="strip-item-label">Experience</div>
+            <div class="strip-item-val" id="modal-exp">-</div>
+          </div>
+          <div>
+            <div class="strip-item-label">Education</div>
+            <div class="strip-item-val" id="modal-edu">-</div>
+          </div>
+          <div>
+            <div class="strip-item-label">Company Type</div>
+            <div class="strip-item-val" id="modal-company">-</div>
+          </div>
+          <div>
+            <div class="strip-item-label">Inbound Enquiry</div>
+            <div class="strip-item-val" id="modal-inbound" style="color:var(--scaler-red);">-</div>
+          </div>
+        </div>
+
+        <!-- CAPTURED TOUCHPOINTS STRIP -->
+        <div class="touchpoints-strip">
+          <div>
+            <div class="tp-item-label">Inbound Masterclass / Course</div>
+            <div class="tp-item-val" id="modal-tp-event" title="">-</div>
+          </div>
+          <div>
+            <div class="tp-item-label">Attendance & Watch Time</div>
+            <div class="tp-item-val" id="modal-tp-attendance">-</div>
+          </div>
+          <div>
+            <div class="tp-item-label">Diagnostic Coding SAT</div>
+            <div class="tp-item-val" id="modal-tp-sat">-</div>
+          </div>
+          <div>
+            <div class="tp-item-label">Source & Channel</div>
+            <div class="tp-item-val" id="modal-tp-channel">-</div>
+          </div>
+          <div>
+            <div class="tp-item-label">Platform & Geography</div>
+            <div class="tp-item-val" id="modal-tp-platform">-</div>
+          </div>
+        </div>
+
+        <!-- RECOMMENDATION SIDE-BY-SIDE CARDS -->
+        <div class="rec-grid">
+          
+          <!-- PRIMARY RECOMMENDATION CARD -->
+          <div class="rec-box primary-rec">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <div class="rec-badge-pill pill-primary">Primary Recommendation</div>
+                  <div id="modal-primary-confidence" style="font-size:11px; font-weight:700; color:#15803d; background:#dcfce7; border:1px solid #bbf7d0; border-radius:4px; padding:2px 8px;">High Confidence (85%)</div>
+                </div>
+                <div id="modal-primary-duration" style="font-size:11px; font-weight:700; color:#0369a1; background:#e0f2fe; border:1px solid #7dd3fc; border-radius:4px; padding:2px 8px;">Duration: -</div>
+              </div>
+              <div class="rec-program-name" id="modal-primary-prog">-</div>
+              <div class="rec-track-name" id="modal-primary-track">-</div>
+
+              <div class="stat-widget" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-num-box">
+                  <div class="stat-number retention" id="modal-primary-retention">0%</div>
+                  <div class="stat-subtext">Historical Retention</div>
+                </div>
+                <div class="stat-num-box">
+                  <div class="stat-number refund" id="modal-primary-refund">0%</div>
+                  <div class="stat-subtext">Cohort Refund Benchmark</div>
+                </div>
+                <div class="stat-num-box" style="background:#f0fdf4; border-color:#bbf7d0;">
+                  <div class="stat-number" style="color:#15803d; font-size:15px; font-weight:800;" id="modal-primary-sat">-</div>
+                  <div class="stat-subtext" style="color:#166534; font-weight:700;">Diagnostic SAT Score</div>
+                </div>
+              </div>
+
+              <!-- STATISTICAL VISUALIZATIONS & CHARTS -->
+              <div class="stat-graphs-section">
+                <!-- 1. RETENTION VS REFUND DISTRIBUTION BAR -->
+                <div class="graph-block">
+                  <div class="graph-header-line">
+                    <span class="graph-title-label">Cohort Retention vs Refund Risk</span>
+                    <span class="graph-benchmark-badge" id="modal-primary-benchmark-label">Target: 80%</span>
+                  </div>
+                  <div class="retention-meter-track">
+                    <div id="modal-primary-meter-ret" class="meter-bar-fill ret-fill" style="width: 78%;">
+                      <span id="modal-primary-meter-ret-label">78%</span>
+                    </div>
+                    <div id="modal-primary-meter-ref" class="meter-bar-fill ref-fill" style="width: 22%;">
+                      <span id="modal-primary-meter-ref-label">22%</span>
+                    </div>
+                    <div class="meter-target-line" title="80% Scaler High-Retention Target"></div>
+                  </div>
+                  <div class="meter-legend-row">
+                    <span class="legend-item"><span class="legend-dot dot-green"></span> Retained Learners</span>
+                    <span class="legend-item"><span class="legend-dot dot-red"></span> Cohort Drop / Refund</span>
+                    <span class="legend-item" style="color:#0369a1;"><span class="legend-dot dot-blue"></span> Benchmark (80%)</span>
+                  </div>
+                </div>
+
+                <!-- 2. EMPIRICAL CONFIDENCE BREAKDOWN 4-PILLAR MINI BARS -->
+                <div class="graph-block" style="margin-top: 10px;">
+                  <div class="graph-header-line">
+                    <span class="graph-title-label">Confidence & Fit Decomposition</span>
+                    <span style="font-size: 10px; font-weight: 700; color: var(--text-muted);" id="modal-primary-factor-total">Total: 85%</span>
+                  </div>
+                  <div class="factor-bars-grid" id="modal-primary-factors">
+                    <!-- Dynamic factor bars populated via JS -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="rec-why-box" id="modal-primary-why">
+                <b>Why This Program:</b> -
+              </div>
+            </div>
+
+            <div class="guardrail-box guardrail-green" id="modal-primary-guardrail">
+              -
+            </div>
+          </div>
+
+          <!-- FALLBACK RECOMMENDATION CARD -->
+          <div class="rec-box fallback-rec">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <div class="rec-badge-pill pill-fallback">Fallback / Next Program</div>
+                  <div id="modal-fallback-confidence" style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:4px; padding:2px 8px;">Mid Confidence (65%)</div>
+                </div>
+                <div id="modal-fallback-duration" style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:4px; padding:2px 8px;">Duration: -</div>
+              </div>
+              <div class="rec-program-name" id="modal-fallback-prog">-</div>
+              <div class="rec-track-name" id="modal-fallback-track">-</div>
+
+              <div class="stat-widget" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-num-box">
+                  <div class="stat-number" style="color:var(--accent-amber);" id="modal-fallback-retention">0%</div>
+                  <div class="stat-subtext">Retention Comparison</div>
+                </div>
+                <div class="stat-num-box">
+                  <div class="stat-number refund" id="modal-fallback-refund">0%</div>
+                  <div class="stat-subtext">Refund Benchmark</div>
+                </div>
+                <div class="stat-num-box" style="background:#f8fafc; border-color:#e2e8f0;">
+                  <div class="stat-number" style="color:#475569; font-size:14px; font-weight:700;" id="modal-fallback-sat">Required</div>
+                  <div class="stat-subtext" style="color:#64748b;">Diagnostic Gate</div>
+                </div>
+              </div>
+
+              <!-- STATISTICAL VISUALIZATIONS & CHARTS -->
+              <div class="stat-graphs-section">
+                <!-- 1. RETENTION VS REFUND DISTRIBUTION BAR -->
+                <div class="graph-block">
+                  <div class="graph-header-line">
+                    <span class="graph-title-label">Cohort Retention vs Refund Risk</span>
+                    <span class="graph-benchmark-badge" id="modal-fallback-benchmark-label">Target: 80%</span>
+                  </div>
+                  <div class="retention-meter-track">
+                    <div id="modal-fallback-meter-ret" class="meter-bar-fill ret-fill" style="width: 75%;">
+                      <span id="modal-fallback-meter-ret-label">75%</span>
+                    </div>
+                    <div id="modal-fallback-meter-ref" class="meter-bar-fill ref-fill" style="width: 25%;">
+                      <span id="modal-fallback-meter-ref-label">25%</span>
+                    </div>
+                    <div class="meter-target-line" title="80% Scaler High-Retention Target"></div>
+                  </div>
+                  <div class="meter-legend-row">
+                    <span class="legend-item"><span class="legend-dot dot-green"></span> Retained Learners</span>
+                    <span class="legend-item"><span class="legend-dot dot-red"></span> Cohort Drop / Refund</span>
+                    <span class="legend-item" style="color:#0369a1;"><span class="legend-dot dot-blue"></span> Benchmark (80%)</span>
+                  </div>
+                </div>
+
+                <!-- 2. EMPIRICAL CONFIDENCE BREAKDOWN 4-PILLAR MINI BARS -->
+                <div class="graph-block" style="margin-top: 10px;">
+                  <div class="graph-header-line">
+                    <span class="graph-title-label">Confidence & Fit Decomposition</span>
+                    <span style="font-size: 10px; font-weight: 700; color: var(--text-muted);" id="modal-fallback-factor-total">Total: 65%</span>
+                  </div>
+                  <div class="factor-bars-grid" id="modal-fallback-factors">
+                    <!-- Dynamic factor bars populated via JS -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="rec-why-box" style="border-left-color: var(--accent-amber);" id="modal-fallback-why">
+                <b>Why Fallback:</b> -
+              </div>
+            </div>
+
+            <div class="guardrail-box guardrail-amber" id="modal-fallback-guardrail">
+              Offer if learner specifically demands inbound path or seeks alternative tech focus.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SPOKEN SALES CALL SCRIPTS (LINEAR SEQUENTIAL FLOW) -->
+        <div class="scripts-container">
+          <div class="scripts-header">
+            <div>
+              <span>Sequential Sales Call Dialogue (Teleprompter Flow)</span>
+              <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 2px;">
+                Read sequentially as the conversation progresses from discovery to closing.
+              </div>
+            </div>
+            <button class="btn-sm" onclick="copyCallScript()">Copy Full Call Script</button>
+          </div>
+
+          <div class="scripts-timeline">
+            <!-- STEP 1 -->
+            <div class="script-step-card">
+              <div class="script-step-num">1</div>
+              <div class="script-step-body">
+                <div class="script-step-top">
+                  <span class="script-step-title">Opening & Career Goal Discovery</span>
+                  <span class="script-step-badge badge-blue">Stage 1: Discovery</span>
+                </div>
+                <div class="script-quote-box" id="modal-call-opening">-</div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="script-step-card">
+              <div class="script-step-num">2</div>
+              <div class="script-step-body">
+                <div class="script-step-top">
+                  <span class="script-step-title">Recommended Program & Track Value Pitch</span>
+                  <span class="script-step-badge badge-green">Stage 2: Core Value Pitch</span>
+                </div>
+                <div class="script-quote-box" id="modal-program-pitch" style="border-left-color: #059669;">-</div>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="script-step-card">
+              <div class="script-step-num">3</div>
+              <div class="script-step-body">
+                <div class="script-step-top">
+                  <span class="script-step-title">Course Alignment & Objection Rebuttal</span>
+                  <span class="script-step-badge badge-amber">Stage 3: Handling Objections</span>
+                </div>
+                <div class="script-quote-box" id="modal-inbound-handling" style="border-left-color: #d97706;">-</div>
+              </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="script-step-card step-warning">
+              <div class="script-step-num">4</div>
+              <div class="script-step-body">
+                <div class="script-step-top">
+                  <span class="script-step-title">Pacing & Time Commitment Reality Setting</span>
+                  <span class="script-step-badge badge-rose">Stage 4: Retention Gate (Reduces Refunds)</span>
+                </div>
+                <div class="script-quote-box" id="modal-commitment-setting">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div class="modal-footer">
+        <button class="btn-sm" onclick="closeModal()">Close</button>
+        <button class="btn-primary" onclick="copyCallScript()">Copy Call Script</button>
+      </div>
+
+  </div>
+  </div>
+
+  <script>
+    let allLeads = [];
+    let filteredLeads = [];
+    let activeLeadData = null;
+    let currentPage = 1;
+    const PAGE_SIZE = 50;
+
+    async function handleFileChosen(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      document.getElementById('dropzone-status-title').innerText = `Evaluating ${file.name}...`;
+      document.getElementById('dropzone-status-sub').innerText = 'Running multi-matrix scoring, retention calculations, and touchpoints ingestion...';
+
+      try {
+        const res = await fetch('/api/upload-csv', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.status === 'success' && data.leads && data.leads.length > 0) {
+          allLeads = data.leads;
+          document.getElementById('dropzone-status-title').innerText = `Evaluated: ${file.name}`;
+          document.getElementById('dropzone-status-sub').innerText = `Successfully evaluated ${data.total} leads. Use filters below to inspect.`;
+          
+          document.getElementById('stat-total').innerText = data.total;
+          document.getElementById('table-total-count').innerText = data.total;
+
+          currentPage = 1;
+          applyFilters();
+
+          // Auto open modal for first lead
+          activeLeadData = allLeads[0];
+          openModalWithLead(allLeads[0]);
+        } else {
+          alert('Upload failed: ' + (data.detail || 'Could not parse leads'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Server error while evaluating CSV.');
+      }
+    }
+
+    function applyFilters() {
+      currentPage = 1;
+      const q = document.getElementById('filter-search').value.toLowerCase().trim();
+      const prog = document.getElementById('filter-program').value;
+      const track = document.getElementById('filter-track').value;
+      const persona = document.getElementById('filter-persona').value;
+      const ret = document.getElementById('filter-retention').value;
+      const conf = document.getElementById('filter-confidence') ? document.getElementById('filter-confidence').value : 'ALL';
+
+      filteredLeads = allLeads.filter(lead => {
+        const p = lead.person;
+        const prim = lead.primary;
+        const tp = lead.touchpoints || {};
+
+        // Search text
+        if (q) {
+          const matchSearch = (
+            p.name.toLowerCase().includes(q) ||
+            p.email.toLowerCase().includes(q) ||
+            p.role.toLowerCase().includes(q) ||
+            p.previous_org.toLowerCase().includes(q) ||
+            lead.lead_id.toLowerCase().includes(q) ||
+            (tp.event_name && tp.event_name.toLowerCase().includes(q))
+          );
+          if (!matchSearch) return false;
+        }
+
+        // Program filter
+        if (prog !== 'ALL') {
+          if (!prim.catalog_code.toLowerCase().includes(prog.toLowerCase())) return false;
+        }
+
+        // Track filter
+        if (track !== 'ALL') {
+          if (!prim.track.toLowerCase().includes(track.toLowerCase())) return false;
+        }
+
+        // Persona filter
+        if (persona !== 'ALL') {
+          if (!p.normalized_persona.toLowerCase().includes(persona.toLowerCase()) &&
+              !p.role.toLowerCase().includes(persona.toLowerCase())) {
+            return false;
+          }
+        }
+
+        // Retention filter
+        if (ret !== 'ALL') {
+          const r = prim.retention_rate;
+          if (ret === 'HIGH' && r < 80) return false;
+          if (ret === 'MODERATE' && (r < 75 || r >= 80)) return false;
+          if (ret === 'RISK' && r >= 75) return false;
+        }
+
+        // Confidence filter
+        if (conf !== 'ALL') {
+          const ct = prim.confidence_tier || 'Mid';
+          if (conf === 'HIGH' && ct !== 'High') return false;
+          if (conf === 'MID' && ct !== 'Mid') return false;
+          if (conf === 'LOW' && ct !== 'Low') return false;
+        }
+
+        return true;
+      });
+
+      renderTable();
+    }
+
+    function changePage(delta) {
+      const totalPages = Math.ceil(filteredLeads.length / PAGE_SIZE) || 1;
+      currentPage += delta;
+      if (currentPage < 1) currentPage = 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('leads-tbody');
+      tbody.innerHTML = '';
+      document.getElementById('table-display-count').innerText = filteredLeads.length;
+
+      const totalPages = Math.ceil(filteredLeads.length / PAGE_SIZE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      document.getElementById('current-page-display').innerText = currentPage;
+      document.getElementById('total-pages-display').innerText = totalPages;
+      document.getElementById('btn-prev-page').disabled = (currentPage <= 1);
+      document.getElementById('btn-next-page').disabled = (currentPage >= totalPages);
+
+      if (filteredLeads.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 30px;">No leads matching active filters.</td></tr>`;
+        document.getElementById('pagination-info').innerText = 'Showing 0 of 0 leads';
+        return;
+      }
+
+      const startIdx = (currentPage - 1) * PAGE_SIZE;
+      const endIdx = Math.min(startIdx + PAGE_SIZE, filteredLeads.length);
+      document.getElementById('pagination-info').innerText = `Showing ${startIdx + 1} - ${endIdx} of ${filteredLeads.length} leads`;
+
+      const pageLeads = filteredLeads.slice(startIdx, endIdx);
+
+      pageLeads.forEach(lead => {
+        const p = lead.person;
+        const prim = lead.primary;
+        const fall = lead.fallback;
+        const tp = lead.touchpoints || {};
+        const badgeClass = prim.retention_rate >= 80 ? 'tag-green' : (prim.retention_rate >= 75 ? 'tag-amber' : '');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b style="color:var(--scaler-navy); font-size:11px;">${lead.lead_id}</b></td>
+          <td>
+            <b>${p.name}</b><br>
+            <span style="font-size:11px; color:var(--text-muted);">${p.email}</span>
+            ${p.education_level === 'BELOW_GRAD' ? '<br><span style="display:inline-block; font-size:9.5px; font-weight:700; color:#dc2626; background:#fee2e2; border:1px solid #fecaca; padding:1px 5px; border-radius:3px; margin-top:2px;">Ineligible (Below Grad)</span>' : ''}
+          </td>
+          <td>${p.role}</td>
+          <td>${p.previous_org}</td>
+          <td>${p.experience}</td>
+          <td>
+            <div style="font-size:11.5px; font-weight:600; color:var(--text-heading); max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${tp.event_name || ''}">
+              ${tp.event_name || p.enquired_program}
+            </div>
+            <div style="font-size:10.5px; margin-top:2px;">
+              <span style="color:${tp.attended === 'Attended' ? 'var(--accent-green)' : 'var(--text-muted)'}; font-weight:700;">${tp.attended || 'Registered'}</span>
+              <span style="color:var(--text-muted);">${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''} | ${tp.sat_status || 'SAT Pending'}</span>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight:700; color:var(--scaler-navy); font-size:12px;">${prim.catalog_code}: ${prim.program.split('(')[0]}</div>
+            <div style="font-size:11px; color:#475569; margin-top:2px;">Track: <b>${prim.track.split('(')[0]}</b></div>
+            <div style="margin-top:3px; display:flex; gap:4px; flex-wrap:wrap; align-items:center;">
+              <span style="display:inline-block; font-size:10px; font-weight:700; background:#e0f2fe; color:#0369a1; padding:1px 6px; border-radius:3px; border:1px solid #bae6fd;">Duration: ${prim.duration || '12 Months'}</span>
+              <span style="display:inline-block; font-size:10px; font-weight:700; ${(tp.sat_status && (tp.sat_status.includes('Passed') || tp.sat_status.includes('Score'))) ? 'background:#dcfce7; color:#15803d; border:1px solid #bbf7d0;' : ((tp.sat_status && tp.sat_status.includes('Attempted')) ? 'background:#fef3c7; color:#b45309; border:1px solid #fde68a;' : 'background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;')} padding:1px 6px; border-radius:3px;">SAT: ${tp.sat_score || tp.sat_status || 'Pending'}</span>
+            </div>
+          </td>
+          <td>
+            <span class="tag-badge ${badgeClass}">${prim.retention_rate}%</span>
+            <div style="margin-top:3px;">
+              <span class="tag-badge ${prim.confidence_tier === 'High' ? 'tag-green' : (prim.confidence_tier === 'Mid' ? 'tag-amber' : 'tag-red')}" style="font-size:10px; padding:1px 5px;" title="${prim.confidence_rationale || ''}">
+                ${prim.confidence_tier || 'Mid'} (${prim.confidence_score !== undefined ? prim.confidence_score : 70}%)
+              </span>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight:600; color:var(--text-heading); font-size:11.5px;">${fall.catalog_code}: ${fall.program.split('(')[0]}</div>
+            <div style="font-size:10.5px; color:var(--text-muted); margin-top:1px;">Track: ${fall.track.split('(')[0]}</div>
+            <div style="margin-top:2px;">
+              <span style="display:inline-block; font-size:9.5px; font-weight:600; background:#f1f5f9; color:#475569; padding:1px 5px; border-radius:3px;">Duration: ${fall.duration || '12 Months'}</span>
+            </div>
+          </td>
+          <td><button class="btn-action-view" onclick='viewLeadDetails("${lead.lead_id}")'>View Dossier</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function viewLeadDetails(leadId) {
+      const lead = allLeads.find(l => l.lead_id === leadId);
+      if (lead) {
+        activeLeadData = lead;
+        openModalWithLead(lead);
+      }
+    }
+
+    function openModalWithLead(lead) {
+      const p = lead.person;
+      const prim = lead.primary;
+      const fall = lead.fallback;
+      const tp = lead.touchpoints || {};
+      const s = lead.sales_script || {};
+
+      document.getElementById('modal-name').innerText = p.name;
+      document.getElementById('modal-id').innerText = lead.lead_id;
+
+      // Profile strip
+      document.getElementById('modal-role').innerText = p.role;
+      document.getElementById('modal-org').innerText = p.previous_org;
+      document.getElementById('modal-exp').innerText = p.experience;
+      document.getElementById('modal-edu').innerText = p.education || 'Graduated / Degree';
+      document.getElementById('modal-company').innerText = p.company_type;
+      document.getElementById('modal-inbound').innerText = p.enquired_program;
+
+      // Captured Touchpoints strip
+      document.getElementById('modal-tp-event').innerText = tp.event_name || '-';
+      document.getElementById('modal-tp-event').title = tp.event_name || '';
+      document.getElementById('modal-tp-attendance').innerText = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
+      document.getElementById('modal-tp-sat').innerText = tp.sat_status || 'SAT Not Attempted';
+      document.getElementById('modal-tp-channel').innerText = tp.channel || 'Direct Web';
+      document.getElementById('modal-tp-platform').innerText = `${tp.platform || 'Desktop'} | ${tp.geography || 'General'}`;
+
+      // Primary
+      const primTitle = prim.catalog_code ? `${prim.catalog_code}: ${prim.program}` : prim.program;
+      document.getElementById('modal-primary-prog').innerText = primTitle;
+      document.getElementById('modal-primary-track').innerText = `Track: ${prim.track}`;
+      document.getElementById('modal-primary-duration').innerText = `Duration: ${prim.duration || '12 Months'}`;
+      document.getElementById('modal-primary-retention').innerText = prim.retention_rate + '%';
+      document.getElementById('modal-primary-refund').innerText = prim.refund_rate + '%';
+      const satScoreText = tp.sat_score || tp.sat_status || 'SAT Pending';
+      document.getElementById('modal-primary-sat').innerText = satScoreText;
+      document.getElementById('modal-primary-why').innerHTML = `<b>Why This Program:</b> ${prim.why}`;
+      document.getElementById('modal-primary-guardrail').innerText = `Leveling Rule: ${prim.guardrail}`;
+
+      // Primary Confidence Badge & Factor Bars
+      const primConfTier = prim.confidence_tier || 'Mid';
+      const primConfScore = prim.confidence_score !== undefined ? prim.confidence_score : 75;
+      const elPrimConf = document.getElementById('modal-primary-confidence');
+      if (elPrimConf) {
+        elPrimConf.innerText = `${primConfTier} Confidence (${primConfScore}%)`;
+        elPrimConf.title = prim.confidence_rationale || '';
+        if (primConfTier === 'High') {
+          elPrimConf.style.color = '#15803d'; elPrimConf.style.background = '#dcfce7'; elPrimConf.style.borderColor = '#bbf7d0';
+        } else if (primConfTier === 'Mid') {
+          elPrimConf.style.color = '#b45309'; elPrimConf.style.background = '#fef3c7'; elPrimConf.style.borderColor = '#fde68a';
+        } else {
+          elPrimConf.style.color = '#b91c1c'; elPrimConf.style.background = '#fee2e2'; elPrimConf.style.borderColor = '#fca5a5';
+        }
+      }
+
+      // 1. Primary Retention Meter Graph
+      const primRet = Math.min(100, Math.max(0, prim.retention_rate || 0));
+      const primRef = Math.min(100, Math.max(0, prim.refund_rate || (100 - primRet)));
+      const elPrimMeterRet = document.getElementById('modal-primary-meter-ret');
+      const elPrimMeterRef = document.getElementById('modal-primary-meter-ref');
+      if (elPrimMeterRet) {
+        elPrimMeterRet.style.width = `${primRet}%`;
+        const lbl = document.getElementById('modal-primary-meter-ret-label');
+        if (lbl) lbl.innerText = primRet >= 12 ? `${primRet}%` : '';
+      }
+      if (elPrimMeterRef) {
+        elPrimMeterRef.style.width = `${primRef}%`;
+        const lbl = document.getElementById('modal-primary-meter-ref-label');
+        if (lbl) lbl.innerText = primRef >= 12 ? `${primRef}%` : '';
+      }
+
+      // 2. Primary Confidence Breakdown Bars
+      const primBk = prim.confidence_breakdown || {
+        cohort_pts: prim.cohort_size >= 30 ? 35 : (prim.cohort_size >= 10 ? 25 : 12),
+        cohort_max: 35, cohort_desc: `Cohort N=${prim.cohort_size}`,
+        ret_pts: prim.retention_rate >= 80 ? 25 : (prim.retention_rate >= 75 ? 18 : 10),
+        ret_max: 25, ret_desc: `Retention ${prim.retention_rate}%`,
+        intent_pts: 25, intent_max: 25, intent_desc: 'Inbound Match',
+        apt_pts: 15, apt_max: 15, apt_desc: 'Academic Foundation'
+      };
+      const elPrimFactorTotal = document.getElementById('modal-primary-factor-total');
+      if (elPrimFactorTotal) elPrimFactorTotal.innerText = `Score: ${primConfScore}%`;
+      renderFactorBars('modal-primary-factors', primBk);
+
+      // Fallback
+      const fallTitle = fall.catalog_code ? `${fall.catalog_code}: ${fall.program}` : fall.program;
+      document.getElementById('modal-fallback-prog').innerText = fallTitle;
+      document.getElementById('modal-fallback-track').innerText = `Track: ${fall.track}`;
+      document.getElementById('modal-fallback-duration').innerText = `Duration: ${fall.duration || '12 Months'}`;
+      document.getElementById('modal-fallback-retention').innerText = fall.retention_rate + '%';
+      document.getElementById('modal-fallback-refund').innerText = fall.refund_rate + '%';
+      document.getElementById('modal-fallback-sat').innerText = satScoreText.includes('Passed') ? 'Qualified' : (satScoreText.includes('Attempted') ? 'Pending' : 'Required');
+      document.getElementById('modal-fallback-why').innerHTML = `<b>Why Fallback:</b> ${fall.why}`;
+
+      // Fallback Confidence Badge
+      const fallConfTier = fall.confidence_tier || 'Mid';
+      const fallConfScore = fall.confidence_score !== undefined ? fall.confidence_score : 65;
+      const elFallConf = document.getElementById('modal-fallback-confidence');
+      if (elFallConf) {
+        elFallConf.innerText = `${fallConfTier} Confidence (${fallConfScore}%)`;
+        elFallConf.title = fall.confidence_rationale || '';
+        if (fallConfTier === 'High') {
+          elFallConf.style.color = '#15803d'; elFallConf.style.background = '#dcfce7'; elFallConf.style.borderColor = '#bbf7d0';
+        } else if (fallConfTier === 'Mid') {
+          elFallConf.style.color = '#b45309'; elFallConf.style.background = '#fef3c7'; elFallConf.style.borderColor = '#fde68a';
+        } else {
+          elFallConf.style.color = '#b91c1c'; elFallConf.style.background = '#fee2e2'; elFallConf.style.borderColor = '#fca5a5';
+        }
+      }
+
+      // 3. Fallback Retention Meter Graph
+      const fallRet = Math.min(100, Math.max(0, fall.retention_rate || 0));
+      const fallRef = Math.min(100, Math.max(0, fall.refund_rate || (100 - fallRet)));
+      const elFallMeterRet = document.getElementById('modal-fallback-meter-ret');
+      const elFallMeterRef = document.getElementById('modal-fallback-meter-ref');
+      if (elFallMeterRet) {
+        elFallMeterRet.style.width = `${fallRet}%`;
+        const lbl = document.getElementById('modal-fallback-meter-ret-label');
+        if (lbl) lbl.innerText = fallRet >= 12 ? `${fallRet}%` : '';
+      }
+      if (elFallMeterRef) {
+        elFallMeterRef.style.width = `${fallRef}%`;
+        const lbl = document.getElementById('modal-fallback-meter-ref-label');
+        if (lbl) lbl.innerText = fallRef >= 12 ? `${fallRef}%` : '';
+      }
+
+      // 4. Fallback Confidence Breakdown Bars
+      const fallBk = fall.confidence_breakdown || {
+        cohort_pts: fall.cohort_size >= 30 ? 35 : (fall.cohort_size >= 10 ? 25 : 12),
+        cohort_max: 35, cohort_desc: `Cohort N=${fall.cohort_size}`,
+        ret_pts: fall.retention_rate >= 80 ? 25 : (fall.retention_rate >= 75 ? 18 : 10),
+        ret_max: 25, ret_desc: `Retention ${fall.retention_rate}%`,
+        intent_pts: 15, intent_max: 25, intent_desc: 'Alternative Alignment',
+        apt_pts: 10, apt_max: 15, apt_desc: 'Prerequisite Check'
+      };
+      const elFallFactorTotal = document.getElementById('modal-fallback-factor-total');
+      if (elFallFactorTotal) elFallFactorTotal.innerText = `Score: ${fallConfScore}%`;
+      renderFactorBars('modal-fallback-factors', fallBk);
+
+      // Spoken Sales Dialogue Scripts
+      document.getElementById('modal-call-opening').innerText = s.call_opening || '-';
+      document.getElementById('modal-program-pitch').innerText = s.program_pitch || '-';
+      document.getElementById('modal-inbound-handling').innerText = s.inbound_handling || '-';
+      document.getElementById('modal-commitment-setting').innerText = s.commitment_setting || '-';
+
+      document.getElementById('lead-modal').classList.add('active');
+    }
+
+    function renderFactorBars(containerId, bk) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      const factors = [
+        { name: 'Cohort Sample Size (N)', pts: bk.cohort_pts !== undefined ? bk.cohort_pts : 0, max: bk.cohort_max || 35, desc: bk.cohort_desc || '', colorClass: 'factor-fill-blue' },
+        { name: 'Track Retention Rate', pts: bk.ret_pts !== undefined ? bk.ret_pts : 0, max: bk.ret_max || 25, desc: bk.ret_desc || '', colorClass: 'factor-fill-green' },
+        { name: 'Inbound Intent Synergy', pts: bk.intent_pts !== undefined ? bk.intent_pts : 0, max: bk.intent_max || 25, desc: bk.intent_desc || '', colorClass: 'factor-fill-purple' },
+        { name: 'Diagnostic SAT & Degree', pts: bk.apt_pts !== undefined ? bk.apt_pts : 0, max: bk.apt_max || 15, desc: bk.apt_desc || '', colorClass: 'factor-fill-amber' }
+      ];
+
+      container.innerHTML = factors.map(f => {
+        const pct = Math.min(100, Math.max(0, Math.round((f.pts / (f.max || 1)) * 100)));
+        return `
+          <div class="factor-bar-row">
+            <div class="factor-bar-labels">
+              <span><b>${f.name}</b> <span style="font-size:9.5px; color:var(--text-muted); font-weight:500;">(${f.desc})</span></span>
+              <span><b style="color:var(--text-heading);">${f.pts}</b> / ${f.max} pts</span>
+            </div>
+            <div class="factor-bar-track">
+              <div class="factor-bar-fill ${f.colorClass}" style="width: ${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function closeModal() {
+      document.getElementById('lead-modal').classList.remove('active');
+    }
+
+    function handleOverlayClick(event) {
+      if (event.target.id === 'lead-modal') {
+        closeModal();
+      }
+    }
+
+    function copyCallScript() {
+      if (!activeLeadData) return;
+      const s = activeLeadData.sales_script || {};
+      const p = activeLeadData.person;
+      const text = `SALES CALL SCRIPT: ${p.name} (${p.role})\n\n` +
+        `1. OPENING & DISCOVERY:\n${s.call_opening}\n\n` +
+        `2. PROGRAM & TRACK VALUE PITCH:\n${s.program_pitch}\n\n` +
+        `3. INBOUND HANDLING & REBUTTAL:\n${s.inbound_handling}\n\n` +
+        `4. TIME COMMITMENT SETTING:\n${s.commitment_setting}`;
+      navigator.clipboard.writeText(text);
+      alert('Call script copied to clipboard.');
+    }
+
+    async function executeCrmLookup() {
+      const q = document.getElementById('nav-crm-search-input').value.trim();
+      if (!q) {
+        alert('Please enter an email, phone number, name, or Lead ID to search.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/lookup?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data.status === 'success' && data.lead) {
+          if (!allLeads.some(l => l.lead_id === data.lead.lead_id)) {
+            allLeads.unshift(data.lead);
+            filteredLeads = [...allLeads];
+            document.getElementById('stat-total').innerText = allLeads.length;
+            renderTable();
+          }
+          activeLeadData = data.lead;
+          openModalWithLead(data.lead);
+        } else {
+          alert(`No CRM lead found matching "${q}". Verify the email address or phone number.`);
+        }
+      } catch (err) {
+        alert('Lookup request failed: ' + err.message);
+      }
+    }
+
+    async function syncMetabaseLeads() {
+      const btn = document.getElementById('btn-sync-metabase');
+      const origText = btn.innerHTML;
+      btn.innerText = 'Syncing...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/metabase/sync', { method: 'POST' });
+        const data = await res.json();
+        if (data.status === 'success') {
+          if (data.leads && data.leads.length > 0) {
+            allLeads = data.leads;
+            filteredLeads = [...allLeads];
+            document.getElementById('stat-total').innerText = data.total_synced;
+            document.getElementById('table-total-count').innerText = data.total_synced;
+            renderTable();
+          }
+          alert(data.message);
+        } else if (data.status === 'not_configured') {
+          alert('Metabase is not configured yet.\n\nPlease open "Program_Evaluator_Sales/metabase_config.json" and enter your Metabase URL and Card ID or Public UUID.');
+        } else {
+          alert(data.message || data.detail || 'Metabase sync failed');
+        }
+      } catch (err) {
+        alert('Metabase sync request failed: ' + err.message);
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
+    }
+
+    function downloadMasterCsv() {
+      window.location.href = '/api/export';
+    }
+  </script>
+</body>
+</html>

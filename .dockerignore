@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+.env
+venv
+.venv
+Data_Source/*.csv
+Data_Source/*.pdf
+output/crm_evaluated_master.csv
+*.log

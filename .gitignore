@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.local
+
+# Large test data files (>50MB, not suitable for GitHub)
+Data_Source/*.csv
+output/leads_store.db
+output/crm_evaluated_master.csv
+
+# Logs & temp files
+*.log
+.tempmediaStorage/
+.system_generated/

@@ -1,0 +1,169 @@
+program,persona,experience,cohort_size,refunds,raw_retention_rate,raw_refund_rate,smoothed_retention_rate,smoothed_refund_rate,risk_level
+Program 1: Software & AI Engineering (Scaler Academy),Software Engineering (Backend/FullStack),5+ yrs (Senior / Lead),960,243,74.7,25.3,74.7,25.3,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),General IT Services / Maintenance,5+ yrs (Senior / Lead),685,137,80.0,20.0,80.0,20.0,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),Software Engineering (Backend/FullStack),3 - 5 yrs (Experienced Mid),519,113,78.2,21.8,78.2,21.8,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),Engineering Leadership / Management,5+ yrs (Senior / Lead),493,92,81.3,18.7,81.2,18.8,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Software Engineering (Backend/FullStack),1 - 3 yrs (Junior / Mid),456,118,74.1,25.9,74.3,25.7,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Non-Tech / Career Switcher,5+ yrs (Senior / Lead),414,81,80.4,19.6,80.4,19.6,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),General IT Services / Maintenance,3 - 5 yrs (Experienced Mid),265,60,77.4,22.6,77.4,22.6,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),General IT Services / Maintenance,< 1 yr (Early / Fresher),234,32,86.3,13.7,85.8,14.2,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),General IT Services / Maintenance,1 - 3 yrs (Junior / Mid),220,62,71.8,28.2,72.2,27.8,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Non-Tech / Career Switcher,1 - 3 yrs (Junior / Mid),162,42,74.1,25.9,74.4,25.6,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Non-Tech / Career Switcher,3 - 5 yrs (Experienced Mid),134,33,75.4,24.6,75.7,24.3,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),Software Engineering (Backend/FullStack),< 1 yr (Early / Fresher),130,24,81.5,18.5,81.2,18.8,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Data & Analytics,5+ yrs (Senior / Lead),105,24,77.1,22.9,77.3,22.7,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),QA / SDET / Testing,5+ yrs (Senior / Lead),100,19,81.0,19.0,80.6,19.4,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Frontend Engineering,5+ yrs (Senior / Lead),83,14,83.1,16.9,82.4,17.6,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Engineering Leadership / Management,3 - 5 yrs (Experienced Mid),70,18,74.3,25.7,75.0,25.0,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Non-Tech / Career Switcher,< 1 yr (Early / Fresher),64,7,89.1,10.9,87.0,13.0,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Frontend Engineering,3 - 5 yrs (Experienced Mid),55,11,80.0,20.0,79.6,20.4,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),Frontend Engineering,1 - 3 yrs (Junior / Mid),48,14,70.8,29.2,72.6,27.4,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Data & Analytics,3 - 5 yrs (Experienced Mid),38,9,76.3,23.7,76.9,23.1,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),QA / SDET / Testing,3 - 5 yrs (Experienced Mid),38,9,76.3,23.7,76.9,23.1,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),Data & Analytics,1 - 3 yrs (Junior / Mid),34,9,73.5,26.5,75.0,25.0,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Systems & Embedded Engineering,5+ yrs (Senior / Lead),34,9,73.5,26.5,75.0,25.0,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),QA / SDET / Testing,1 - 3 yrs (Junior / Mid),29,4,86.2,13.8,83.5,16.5,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Engineering Leadership / Management,1 - 3 yrs (Junior / Mid),28,12,57.1,42.9,64.5,35.5,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Systems & Embedded Engineering,1 - 3 yrs (Junior / Mid),24,8,66.7,33.3,71.1,28.9,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),Systems & Embedded Engineering,3 - 5 yrs (Experienced Mid),23,6,73.9,26.1,75.6,24.4,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),DevOps & Cloud Platform,5+ yrs (Senior / Lead),21,5,76.2,23.8,77.0,23.0,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),Frontend Engineering,< 1 yr (Early / Fresher),14,1,92.9,7.1,85.3,14.7,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Data & Analytics,< 1 yr (Early / Fresher),13,3,76.9,23.1,77.6,22.4,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),QA / SDET / Testing,< 1 yr (Early / Fresher),9,1,88.9,11.1,82.2,17.8,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),Systems & Embedded Engineering,< 1 yr (Early / Fresher),9,0,100.0,0.0,86.4,13.6,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),DevOps & Cloud Platform,1 - 3 yrs (Junior / Mid),8,0,100.0,0.0,85.8,14.2,High Retention
+Program 1: Software & AI Engineering (Scaler Academy),DevOps & Cloud Platform,3 - 5 yrs (Experienced Mid),8,2,75.0,25.0,77.1,22.9,Moderate
+Program 1: Software & AI Engineering (Scaler Academy),Engineering Leadership / Management,< 1 yr (Early / Fresher),7,3,57.1,42.9,71.5,28.5,High Risk
+Program 1: Software & AI Engineering (Scaler Academy),DevOps & Cloud Platform,< 1 yr (Early / Fresher),4,1,75.0,25.0,77.5,22.5,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),Non-Tech / Career Switcher,5+ yrs (Senior / Lead),604,156,74.2,25.8,74.3,25.7,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),General IT Services / Maintenance,5+ yrs (Senior / Lead),497,122,75.5,24.5,75.5,24.5,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),Engineering Leadership / Management,5+ yrs (Senior / Lead),359,98,72.7,27.3,72.9,27.1,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),General IT Services / Maintenance,< 1 yr (Early / Fresher),304,38,87.5,12.5,87.1,12.9,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),Data & Analytics,5+ yrs (Senior / Lead),236,47,80.1,19.9,80.0,20.0,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),General IT Services / Maintenance,3 - 5 yrs (Experienced Mid),210,52,75.2,24.8,75.4,24.6,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),Non-Tech / Career Switcher,1 - 3 yrs (Junior / Mid),200,51,74.5,25.5,74.8,25.2,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Non-Tech / Career Switcher,3 - 5 yrs (Experienced Mid),195,45,76.9,23.1,77.0,23.0,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),General IT Services / Maintenance,1 - 3 yrs (Junior / Mid),172,54,68.6,31.4,69.4,30.6,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Software Engineering (Backend/FullStack),5+ yrs (Senior / Lead),137,44,67.9,32.1,68.9,31.1,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Non-Tech / Career Switcher,< 1 yr (Early / Fresher),116,26,77.6,22.4,77.7,22.3,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),QA / SDET / Testing,5+ yrs (Senior / Lead),113,19,83.2,16.8,82.6,17.4,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),Data & Analytics,1 - 3 yrs (Junior / Mid),105,29,72.4,27.6,73.1,26.9,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Data & Analytics,3 - 5 yrs (Experienced Mid),101,27,73.3,26.7,73.9,26.1,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Data & Analytics,< 1 yr (Early / Fresher),68,13,80.9,19.1,80.4,19.6,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),Software Engineering (Backend/FullStack),3 - 5 yrs (Experienced Mid),60,21,65.0,35.0,67.6,32.4,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Software Engineering (Backend/FullStack),1 - 3 yrs (Junior / Mid),48,10,79.2,20.8,78.9,21.1,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),Engineering Leadership / Management,3 - 5 yrs (Experienced Mid),47,11,76.6,23.4,77.0,23.0,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),Engineering Leadership / Management,1 - 3 yrs (Junior / Mid),35,9,74.3,25.7,75.5,24.5,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),QA / SDET / Testing,3 - 5 yrs (Experienced Mid),25,7,72.0,28.0,74.3,25.7,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Software Engineering (Backend/FullStack),< 1 yr (Early / Fresher),23,5,78.3,21.7,78.2,21.8,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),QA / SDET / Testing,1 - 3 yrs (Junior / Mid),22,4,81.8,18.2,80.4,19.6,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),Systems & Embedded Engineering,3 - 5 yrs (Experienced Mid),19,4,78.9,21.1,78.6,21.4,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),Systems & Embedded Engineering,5+ yrs (Senior / Lead),14,4,71.4,28.6,74.9,25.1,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),DevOps & Cloud Platform,5+ yrs (Senior / Lead),12,1,91.7,8.3,84.2,15.8,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),Engineering Leadership / Management,< 1 yr (Early / Fresher),12,2,83.3,16.7,80.5,19.5,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),Systems & Embedded Engineering,1 - 3 yrs (Junior / Mid),6,1,83.3,16.7,79.7,20.3,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),Frontend Engineering,5+ yrs (Senior / Lead),5,3,40.0,60.0,68.7,31.3,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Frontend Engineering,3 - 5 yrs (Experienced Mid),4,0,100.0,0.0,82.8,17.2,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),Frontend Engineering,1 - 3 yrs (Junior / Mid),2,0,100.0,0.0,80.8,19.2,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),QA / SDET / Testing,< 1 yr (Early / Fresher),2,0,100.0,0.0,80.8,19.2,High Retention
+Program 2: Modern Data Science & Machine Learning (DSML),DevOps & Cloud Platform,1 - 3 yrs (Junior / Mid),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 2: Modern Data Science & Machine Learning (DSML),DevOps & Cloud Platform,3 - 5 yrs (Experienced Mid),1,1,0.0,100.0,73.3,26.7,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Frontend Engineering,< 1 yr (Early / Fresher),1,1,0.0,100.0,73.3,26.7,High Risk
+Program 2: Modern Data Science & Machine Learning (DSML),Systems & Embedded Engineering,< 1 yr (Early / Fresher),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),Software Engineering (Backend/FullStack),5+ yrs (Senior / Lead),46,5,89.1,10.9,86.4,13.6,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),General IT Services / Maintenance,5+ yrs (Senior / Lead),40,6,85.0,15.0,83.1,16.9,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Non-Tech / Career Switcher,5+ yrs (Senior / Lead),28,1,96.4,3.6,90.1,9.9,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Engineering Leadership / Management,5+ yrs (Senior / Lead),27,5,81.5,18.5,80.3,19.7,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Data & Analytics,5+ yrs (Senior / Lead),20,1,95.0,5.0,87.8,12.2,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),General IT Services / Maintenance,3 - 5 yrs (Experienced Mid),13,3,76.9,23.1,77.6,22.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),Software Engineering (Backend/FullStack),3 - 5 yrs (Experienced Mid),11,1,90.9,9.1,83.6,16.4,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),DevOps & Cloud Platform,5+ yrs (Senior / Lead),8,1,87.5,12.5,81.4,18.6,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Software Engineering (Backend/FullStack),< 1 yr (Early / Fresher),8,3,62.5,37.5,72.7,27.3,High Risk
+Program 3: AI Forward Deployed Engineer (FDE),Engineering Leadership / Management,3 - 5 yrs (Experienced Mid),7,2,71.4,28.6,76.1,23.9,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),QA / SDET / Testing,5+ yrs (Senior / Lead),7,1,85.7,14.3,80.6,19.4,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),General IT Services / Maintenance,< 1 yr (Early / Fresher),6,0,100.0,0.0,84.4,15.6,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Frontend Engineering,5+ yrs (Senior / Lead),4,1,75.0,25.0,77.5,22.5,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),Data & Analytics,3 - 5 yrs (Experienced Mid),3,1,66.7,33.3,76.3,23.7,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),General IT Services / Maintenance,1 - 3 yrs (Junior / Mid),3,0,100.0,0.0,81.8,18.2,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Non-Tech / Career Switcher,< 1 yr (Early / Fresher),3,0,100.0,0.0,81.8,18.2,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),QA / SDET / Testing,3 - 5 yrs (Experienced Mid),3,0,100.0,0.0,81.8,18.2,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Data & Analytics,1 - 3 yrs (Junior / Mid),2,1,50.0,50.0,74.9,25.1,High Risk
+Program 3: AI Forward Deployed Engineer (FDE),Non-Tech / Career Switcher,1 - 3 yrs (Junior / Mid),2,0,100.0,0.0,80.8,19.2,High Retention
+Program 3: AI Forward Deployed Engineer (FDE),Software Engineering (Backend/FullStack),1 - 3 yrs (Junior / Mid),2,1,50.0,50.0,74.9,25.1,High Risk
+Program 3: AI Forward Deployed Engineer (FDE),Data & Analytics,< 1 yr (Early / Fresher),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),DevOps & Cloud Platform,3 - 5 yrs (Experienced Mid),1,1,0.0,100.0,73.3,26.7,High Risk
+Program 3: AI Forward Deployed Engineer (FDE),DevOps & Cloud Platform,< 1 yr (Early / Fresher),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),Frontend Engineering,3 - 5 yrs (Experienced Mid),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),Non-Tech / Career Switcher,3 - 5 yrs (Experienced Mid),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),QA / SDET / Testing,1 - 3 yrs (Junior / Mid),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),QA / SDET / Testing,< 1 yr (Early / Fresher),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 3: AI Forward Deployed Engineer (FDE),Systems & Embedded Engineering,3 - 5 yrs (Experienced Mid),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 4: AI & Machine Learning with Agentic AI,Software Engineering (Backend/FullStack),5+ yrs (Senior / Lead),477,69,85.5,14.5,85.3,14.7,High Retention
+Program 4: AI & Machine Learning with Agentic AI,General IT Services / Maintenance,5+ yrs (Senior / Lead),333,52,84.4,15.6,84.1,15.9,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Engineering Leadership / Management,5+ yrs (Senior / Lead),324,45,86.1,13.9,85.8,14.2,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Data & Analytics,5+ yrs (Senior / Lead),162,40,75.3,24.7,75.6,24.4,Moderate
+Program 4: AI & Machine Learning with Agentic AI,Non-Tech / Career Switcher,5+ yrs (Senior / Lead),141,29,79.4,20.6,79.3,20.7,Moderate
+Program 4: AI & Machine Learning with Agentic AI,General IT Services / Maintenance,3 - 5 yrs (Experienced Mid),101,13,87.1,12.9,86.0,14.0,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Software Engineering (Backend/FullStack),3 - 5 yrs (Experienced Mid),96,20,79.2,20.8,79.0,21.0,Moderate
+Program 4: AI & Machine Learning with Agentic AI,QA / SDET / Testing,5+ yrs (Senior / Lead),72,8,88.9,11.1,87.0,13.0,High Retention
+Program 4: AI & Machine Learning with Agentic AI,General IT Services / Maintenance,1 - 3 yrs (Junior / Mid),69,13,81.2,18.8,80.6,19.4,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Data & Analytics,3 - 5 yrs (Experienced Mid),66,10,84.8,15.2,83.6,16.4,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Software Engineering (Backend/FullStack),1 - 3 yrs (Junior / Mid),64,10,84.4,15.6,83.2,16.8,High Retention
+Program 4: AI & Machine Learning with Agentic AI,General IT Services / Maintenance,< 1 yr (Early / Fresher),61,8,86.9,13.1,85.2,14.8,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Data & Analytics,1 - 3 yrs (Junior / Mid),52,11,78.8,21.2,78.7,21.3,Moderate
+Program 4: AI & Machine Learning with Agentic AI,DevOps & Cloud Platform,5+ yrs (Senior / Lead),44,7,84.1,15.9,82.6,17.4,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Non-Tech / Career Switcher,3 - 5 yrs (Experienced Mid),33,6,81.8,18.2,80.7,19.3,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Non-Tech / Career Switcher,1 - 3 yrs (Junior / Mid),27,8,70.4,29.6,73.2,26.8,High Risk
+Program 4: AI & Machine Learning with Agentic AI,Software Engineering (Backend/FullStack),< 1 yr (Early / Fresher),26,4,84.6,15.4,82.3,17.7,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Frontend Engineering,5+ yrs (Senior / Lead),25,3,88.0,12.0,84.3,15.7,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Engineering Leadership / Management,3 - 5 yrs (Experienced Mid),23,7,69.6,30.4,73.0,27.0,High Risk
+Program 4: AI & Machine Learning with Agentic AI,Non-Tech / Career Switcher,< 1 yr (Early / Fresher),15,0,100.0,0.0,89.1,10.9,High Retention
+Program 4: AI & Machine Learning with Agentic AI,DevOps & Cloud Platform,3 - 5 yrs (Experienced Mid),14,4,71.4,28.6,74.9,25.1,High Risk
+Program 4: AI & Machine Learning with Agentic AI,QA / SDET / Testing,3 - 5 yrs (Experienced Mid),13,0,100.0,0.0,88.3,11.7,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Data & Analytics,< 1 yr (Early / Fresher),12,2,83.3,16.7,80.5,19.5,High Retention
+Program 4: AI & Machine Learning with Agentic AI,QA / SDET / Testing,1 - 3 yrs (Junior / Mid),11,2,81.8,18.2,79.7,20.3,Moderate
+Program 4: AI & Machine Learning with Agentic AI,Engineering Leadership / Management,1 - 3 yrs (Junior / Mid),8,2,75.0,25.0,77.1,22.9,Moderate
+Program 4: AI & Machine Learning with Agentic AI,Frontend Engineering,3 - 5 yrs (Experienced Mid),8,2,75.0,25.0,77.1,22.9,Moderate
+Program 4: AI & Machine Learning with Agentic AI,DevOps & Cloud Platform,1 - 3 yrs (Junior / Mid),6,2,66.7,33.3,74.9,25.1,High Risk
+Program 4: AI & Machine Learning with Agentic AI,Frontend Engineering,1 - 3 yrs (Junior / Mid),6,1,83.3,16.7,79.7,20.3,Moderate
+Program 4: AI & Machine Learning with Agentic AI,Systems & Embedded Engineering,3 - 5 yrs (Experienced Mid),6,2,66.7,33.3,74.9,25.1,High Risk
+Program 4: AI & Machine Learning with Agentic AI,Systems & Embedded Engineering,5+ yrs (Senior / Lead),5,1,80.0,20.0,78.7,21.3,Moderate
+Program 4: AI & Machine Learning with Agentic AI,QA / SDET / Testing,< 1 yr (Early / Fresher),4,2,50.0,50.0,72.3,27.7,High Risk
+Program 4: AI & Machine Learning with Agentic AI,Engineering Leadership / Management,< 1 yr (Early / Fresher),2,0,100.0,0.0,80.8,19.2,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Systems & Embedded Engineering,< 1 yr (Early / Fresher),2,0,100.0,0.0,80.8,19.2,High Retention
+Program 4: AI & Machine Learning with Agentic AI,Frontend Engineering,< 1 yr (Early / Fresher),1,0,100.0,0.0,79.6,20.4,Moderate
+Program 4: AI & Machine Learning with Agentic AI,Systems & Embedded Engineering,1 - 3 yrs (Junior / Mid),1,0,100.0,0.0,79.6,20.4,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",General IT Services / Maintenance,5+ yrs (Senior / Lead),188,47,75.0,25.0,75.2,24.8,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",Non-Tech / Career Switcher,5+ yrs (Senior / Lead),173,52,69.9,30.1,70.6,29.4,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",DevOps & Cloud Platform,5+ yrs (Senior / Lead),116,21,81.9,18.1,81.5,18.5,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",Engineering Leadership / Management,5+ yrs (Senior / Lead),96,15,84.4,15.6,83.5,16.5,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",QA / SDET / Testing,5+ yrs (Senior / Lead),79,16,79.7,20.3,79.5,20.5,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",Software Engineering (Backend/FullStack),5+ yrs (Senior / Lead),76,23,69.7,30.3,71.1,28.9,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",General IT Services / Maintenance,3 - 5 yrs (Experienced Mid),74,17,77.0,23.0,77.2,22.8,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",Non-Tech / Career Switcher,3 - 5 yrs (Experienced Mid),67,14,79.1,20.9,78.9,21.1,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",DevOps & Cloud Platform,3 - 5 yrs (Experienced Mid),54,14,74.1,25.9,75.0,25.0,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Software Engineering (Backend/FullStack),3 - 5 yrs (Experienced Mid),47,17,63.8,36.2,67.3,32.7,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",General IT Services / Maintenance,1 - 3 yrs (Junior / Mid),45,13,71.1,28.9,72.9,27.1,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Non-Tech / Career Switcher,1 - 3 yrs (Junior / Mid),42,13,69.0,31.0,71.5,28.5,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",General IT Services / Maintenance,< 1 yr (Early / Fresher),37,4,89.2,10.8,86.0,14.0,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",DevOps & Cloud Platform,1 - 3 yrs (Junior / Mid),34,5,85.3,14.7,83.1,16.9,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",QA / SDET / Testing,3 - 5 yrs (Experienced Mid),30,4,86.7,13.3,83.8,16.2,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",Data & Analytics,5+ yrs (Senior / Lead),23,9,60.9,39.1,67.7,32.3,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Software Engineering (Backend/FullStack),1 - 3 yrs (Junior / Mid),23,9,60.9,39.1,67.7,32.3,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Non-Tech / Career Switcher,< 1 yr (Early / Fresher),17,4,76.5,23.5,77.3,22.7,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",DevOps & Cloud Platform,< 1 yr (Early / Fresher),13,3,76.9,23.1,77.6,22.4,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",Engineering Leadership / Management,3 - 5 yrs (Experienced Mid),13,5,61.5,38.5,70.5,29.5,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Systems & Embedded Engineering,3 - 5 yrs (Experienced Mid),11,2,81.8,18.2,79.7,20.3,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",Systems & Embedded Engineering,5+ yrs (Senior / Lead),11,3,72.7,27.3,75.9,24.1,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",Data & Analytics,3 - 5 yrs (Experienced Mid),10,5,50.0,50.0,66.9,33.1,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",QA / SDET / Testing,1 - 3 yrs (Junior / Mid),10,3,70.0,30.0,74.9,25.1,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Software Engineering (Backend/FullStack),< 1 yr (Early / Fresher),8,1,87.5,12.5,81.4,18.6,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",Engineering Leadership / Management,1 - 3 yrs (Junior / Mid),6,3,50.0,50.0,70.1,29.9,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Frontend Engineering,5+ yrs (Senior / Lead),5,0,100.0,0.0,83.7,16.3,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",Frontend Engineering,< 1 yr (Early / Fresher),4,0,100.0,0.0,82.8,17.2,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",Systems & Embedded Engineering,1 - 3 yrs (Junior / Mid),4,1,75.0,25.0,77.5,22.5,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",Data & Analytics,1 - 3 yrs (Junior / Mid),2,1,50.0,50.0,74.9,25.1,High Risk
+"Program 5: DevOps, Cloud & AI Platform Engineering",Data & Analytics,< 1 yr (Early / Fresher),2,0,100.0,0.0,80.8,19.2,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",Frontend Engineering,3 - 5 yrs (Experienced Mid),2,0,100.0,0.0,80.8,19.2,High Retention
+"Program 5: DevOps, Cloud & AI Platform Engineering",Engineering Leadership / Management,< 1 yr (Early / Fresher),1,0,100.0,0.0,79.6,20.4,Moderate
+"Program 5: DevOps, Cloud & AI Platform Engineering",QA / SDET / Testing,< 1 yr (Early / Fresher),1,0,100.0,0.0,79.6,20.4,Moderate

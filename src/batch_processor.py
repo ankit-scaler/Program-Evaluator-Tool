@@ -1,0 +1,361 @@
+import os
+import io
+import re
+import pandas as pd
+from .evaluator import evaluate_lead_profile
+
+def find_col(df, candidates):
+    cols_lower = {str(c).lower().strip(): c for c in df.columns}
+    for cand in candidates:
+        if cand in cols_lower:
+            return cols_lower[cand]
+    for cand in candidates:
+        for c_lower, orig in cols_lower.items():
+            # Avoid substring collisions: 'company' should not match 'company_type'
+            if cand == 'company' and 'type' in c_lower:
+                continue
+            # 'name' as substring must NOT match 'first_name', 'last_name', 'company_name', 'event_name', etc.
+            if cand == 'name' and any(sub in c_lower for sub in ['first', 'last', 'org', 'company', 'event', 'course', 'full', 'student', 'lead', 'team']):
+                continue
+            if cand == 'role' and any(sub in c_lower for sub in ['owner', 'team']):
+                continue
+            if cand in c_lower:
+                return orig
+    return None
+
+def process_leads_dataframe(df):
+    """
+    Defensively processes an arbitrary leads dataframe, evaluates each lead,
+    and returns a list of evaluated records plus an enriched exportable dataframe.
+    """
+    col_first_name = find_col(df, ['first_name', 'first name', 'firstname', 'fname', 'given_name', 'candidate_first_name', 'lead_first_name', 'contact_first_name'])
+    col_last_name = find_col(df, ['last_name', 'last name', 'lastname', 'lname', 'surname', 'family_name', 'candidate_last_name', 'lead_last_name', 'contact_last_name'])
+    col_full_name = find_col(df, ['full_name', 'fullname', 'candidate_name', 'lead_name', 'student_name', 'contact_name', 'name'])
+    col_email = find_col(df, ['email', 'email id', 'lead email', 'contact email'])
+    col_phone = find_col(df, ['phone', 'contact', 'mobile', 'phone number', 'mobile number'])
+    col_role = find_col(df, ['role', 'current role', 'designation', 'job title', 'title', 'current designation', 'profile'])
+    col_company_type = find_col(df, ['company_type', 'company type', 'org type', 'current company type', 'industry', 'sector'])
+    col_prev_org = find_col(df, ['orgname', 'organization', 'previous org name', 'employer', 'company_name', 'company', 'prev org', 'current company'])
+    col_prev_year = find_col(df, ['orgyear', 'org year', 'previous org year', 'graduation_year', 'passout_year', 'batch_year', 'tenure'])
+    col_exp = find_col(df, ['experience', 'yoe', 'total experience', 'work experience', 'total work experience', 'years of experience', 'exp'])
+    col_event = find_col(df, ['event_name', 'event', 'webinar', 'course_name', 'activity', 'masterclass'])
+    col_prog = find_col(df, ['program_type', 'which_bda_team', 'program', 'inbound program', 'intake program', 'current program', 'course', 'enquiry program', 'applied program'])
+    col_attended = find_col(df, ['attended', 'is_attended', 'webinar_attended', 'live_attended', 'mng attended live', '1 live attendance'])
+    col_attended_at = find_col(df, ['attended_at', 'attendance_time', 'attended_date'])
+    col_duration = find_col(df, ['minutes_in_event', 'duration', 'watch_time', 'time_spent', 'minutes_spent'])
+    col_utm_source = find_col(df, ['utm_source', 'source', 'lead_source', 'marketing_source'])
+    col_utm_medium = find_col(df, ['utm_medium', 'medium'])
+    col_utm_campaign = find_col(df, ['utm_campaign', 'campaign'])
+    col_landing = find_col(df, ['landing_page_url', 'landing_url', 'url', 'page_url'])
+    col_platform = find_col(df, ['platform', 'device', 'device_type'])
+    col_test_launched = find_col(df, ['test_launched_flag', 'attempted_sat', 'attempted sat', 'sat_attempted', 'test_launched'])
+    col_test_passed = find_col(df, ['test_passed_flag', 'test_passed', 'sat_passed'])
+    col_lead_score = find_col(df, ['lead_score', 'score', 'activity_score', 'lsq_score'])
+    col_stage = find_col(df, ['current_lead_stage', 'lead_stage', 'stage', 'last_lead_stage'])
+    col_country = find_col(df, ['country_type', 'country', 'region', 'entity'])
+    col_signup = find_col(df, ['signed_up_date', 'signup_date', 'created_at', 'lead_created_at', 'registration_date1', 'registration_date', 'onboarding date'])
+    col_edu = find_col(df, ['education', 'degree', 'qualification', 'highest_qualification', 'stream', 'branch', 'graduation', 'college_degree', 'course_degree', 'academic_qualification', 'highest qualification', 'college_name'])
+    col_sat_score = find_col(df, ['sat_score', 'sat_marks', 'test_score', 'coding_test_score', 'diagnostic_score', 'assessment_score', 'test_marks', 'sat_result'])
+
+    evaluated_records = []
+    enriched_rows = []
+    import datetime
+    CURRENT_YEAR = datetime.datetime.now().year
+
+    raw_records = df.to_dict('records')
+    for idx, row in enumerate(raw_records):
+        # Phone extraction first for fallback naming
+        raw_phone = row[col_phone] if col_phone and pd.notna(row[col_phone]) else "N/A"
+        if isinstance(raw_phone, float) and raw_phone.is_integer():
+            cand_phone = str(int(raw_phone))
+        else:
+            cand_phone = str(raw_phone).replace('.0', '').strip()
+
+        # 1. Candidate Name (supporting split first/last name, full name, or phone/email fallback)
+        fname_val = str(row[col_first_name]).strip() if col_first_name and pd.notna(row[col_first_name]) else ""
+        lname_val = str(row[col_last_name]).strip() if col_last_name and pd.notna(row[col_last_name]) else ""
+        if fname_val.lower() in ['nan', 'none', 'null']: fname_val = ""
+        if lname_val.lower() in ['nan', 'none', 'null']: lname_val = ""
+
+        split_parts = [p for p in [fname_val, lname_val] if p]
+        split_name = " ".join(split_parts).strip()
+
+        full_val = str(row[col_full_name]).strip() if col_full_name and pd.notna(row[col_full_name]) else ""
+        if full_val.lower() in ['nan', 'none', 'null']: full_val = ""
+
+        # Prioritize full_name if available; otherwise split_name
+        raw_name = full_val if full_val else split_name
+
+        has_hash = ('_' in raw_name) or bool(re.match(r'^\d+$', raw_name)) or (len(re.findall(r'[a-f0-9]{8,}', raw_name)) > 0)
+        if not raw_name or has_hash:
+            derived_name = None
+            if col_email and pd.notna(row[col_email]):
+                em = str(row[col_email]).strip().lower()
+                if '@' in em and not any(ign in em for ign in ['scaler-tmp', 'scaler-sales', 'example.com', 'test.com']):
+                    user_part = em.split('@')[0]
+                    clean_user = re.sub(r'\d+', '', user_part)
+                    parts = [p.capitalize() for p in re.split(r'[._]', clean_user) if len(p) >= 2]
+                    if len(parts) >= 1:
+                        derived_name = " ".join(parts)
+
+            if derived_name:
+                cand_name = derived_name
+            elif cand_phone and cand_phone != "N/A" and len(cand_phone) >= 7:
+                cand_name = f"Candidate ({cand_phone})"
+            else:
+                cand_name = f"Candidate #{idx+1}"
+        else:
+            cand_name = raw_name
+
+        cand_email = str(row[col_email]).strip() if col_email and pd.notna(row[col_email]) else f"lead_{idx+1}@scaler-sales.com"
+
+        # 2. Organization & Company Type
+        raw_org = str(row[col_prev_org]).strip() if col_prev_org and pd.notna(row[col_prev_org]) else ""
+        if raw_org.lower() in ['not applicable', 'not applicable account', 'nan', 'none', '']:
+            cand_org = "Independent / Transitioning"
+        else:
+            cand_org = raw_org
+
+        raw_comp_type = str(row[col_company_type]).strip() if col_company_type and pd.notna(row[col_company_type]) else ""
+        if raw_comp_type.lower() in ['not applicable', 'nan', 'none', '']:
+            cand_comp_type = "IT Services / Technology"
+        else:
+            cand_comp_type = raw_comp_type
+
+        # 3. Graduation / Passout Year
+        raw_year = row[col_prev_year] if col_prev_year and pd.notna(row[col_prev_year]) else None
+        grad_year = None
+        if raw_year is not None:
+            m_yr = re.search(r'(19\d\d|20\d\d)', str(raw_year).replace(',', ''))
+            if m_yr:
+                grad_year = int(m_yr.group(1))
+
+        # 4. Role
+        raw_role = str(row[col_role]).strip() if col_role and pd.notna(row[col_role]) else ""
+        if raw_role.lower() in ['nan', 'none']:
+            raw_role = ""
+
+        # 5. Experience Ingestion & Fallback Logic
+        raw_exp = row[col_exp] if col_exp and pd.notna(row[col_exp]) else None
+        exp_years = None
+        exp_display = ""
+
+        if raw_exp is not None:
+            m_exp = re.search(r'[-+]?\d*\.?\d+', str(raw_exp).replace(',', ''))
+            if m_exp:
+                try:
+                    num_val = float(m_exp.group())
+                    if num_val > 0:
+                        if num_val > 15:
+                            exp_years = round(num_val / 12.0, 1)
+                            exp_display = f"{exp_years} yrs ({int(num_val)} mos)"
+                        else:
+                            exp_years = num_val
+                            exp_display = f"{num_val} yrs"
+                    elif num_val == 0:
+                        exp_years = 0.0
+                except Exception:
+                    pass
+
+        # If experience is 0 or missing, consult orgyear (graduation year), role, or event
+        event_str = str(row[col_event]).strip() if col_event and pd.notna(row[col_event]) else ""
+        is_beginner_event = any(k in event_str.lower() for k in ['beginner', 'college', 'foundation', 'starter', 'for beginners'])
+
+        is_senior_role = any(k in raw_role.lower() for k in ['leadership', 'director', 'vp', 'manager', 'head of', 'architect', 'principal'])
+        is_entry_role = any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
+
+        if exp_years is None or exp_years == 0.0:
+            if is_senior_role:
+                exp_years = 7.0
+                exp_display = "7+ yrs (Senior Leadership)"
+            elif is_entry_role:
+                exp_years = 0.0
+                exp_display = "Fresher (Entry-level Role)"
+            elif grad_year is not None:
+                if grad_year >= 2025:
+                    exp_years = 0.0
+                    exp_display = f"Fresher (Batch {grad_year})"
+                    if not raw_role or raw_role.lower() in ['learner', 'other']:
+                        raw_role = "College Student"
+                else:
+                    inferred_yoe = max(0, CURRENT_YEAR - grad_year)
+                    exp_years = float(inferred_yoe)
+                    exp_display = f"{inferred_yoe} yrs (Batch {grad_year})"
+            elif is_beginner_event:
+                exp_years = 0.0
+                exp_display = "Fresher / Learner"
+                if not raw_role:
+                    raw_role = "Learner / Transitioner"
+            elif raw_role and any(k in raw_role.lower() for k in ['lead', 'senior', 'staff']):
+                exp_years = 6.0
+                exp_display = "6+ yrs (Senior Profile)"
+            else:
+                exp_years = 2.0
+                exp_display = "2 yrs (Estimated)"
+
+        if not raw_role:
+            if exp_years == 0.0:
+                raw_role = "College Student / Fresher"
+            else:
+                raw_role = "Software Engineer / IT Professional"
+
+        # 6. Inbound Program Synthesis (event_name + program_type)
+        prog_str = str(row[col_prog]).strip() if col_prog and pd.notna(row[col_prog]) else ""
+        combined_intent = f"{event_str} {prog_str}".lower()
+
+        if any(k in combined_intent for k in ['agentic', 'agent memory', 'rag pipeline', 'ai agent', 'genai', 'ai_ml']):
+            inbound_prog = "Program 4: AI & Machine Learning with Agentic AI"
+        elif any(k in combined_intent for k in ['forward deployed', 'fde', 'solutions engineer']):
+            inbound_prog = "Program 3: AI Forward Deployed Engineer (FDE)"
+        elif any(k in combined_intent for k in ['docker', 'kubernetes', 'devops', 'cloud', 'platform engineer']):
+            inbound_prog = "Program 5: DevOps, Cloud & AI Platform Engineering"
+        elif any(k in combined_intent for k in ['data_science', 'machine learning', 'data science', 'dsml', 'data analyst']):
+            inbound_prog = "Program 2: Modern Data Science & Machine Learning (DSML)"
+        else:
+            inbound_prog = "Program 1: Software & AI Engineering (Scaler Academy)"
+
+        # 7. Comprehensive Touchpoint Capture
+        attended_val = row[col_attended] if col_attended and pd.notna(row[col_attended]) else None
+        if attended_val is not None:
+            try:
+                is_att = int(float(str(attended_val).strip())) == 1
+                attended_str = "Attended" if is_att else "Registered Only"
+            except Exception:
+                attended_str = str(attended_val)
+        else:
+            attended_str = "Registered Only"
+
+        dur_val = row[col_duration] if col_duration and pd.notna(row[col_duration]) else None
+        duration_str = f"{round(float(dur_val), 1)} mins" if dur_val is not None and str(dur_val).replace('.', '').isdigit() else ""
+
+        sat_score_val = row[col_sat_score] if col_sat_score and pd.notna(row[col_sat_score]) else None
+        test_val = row[col_test_launched] if col_test_launched and pd.notna(row[col_test_launched]) else None
+        test_passed_val = row[col_test_passed] if col_test_passed and pd.notna(row[col_test_passed]) else None
+
+        if sat_score_val is not None and str(sat_score_val).strip() not in ['', 'nan', 'none']:
+            sat_score_clean = str(sat_score_val).replace('.0', '').strip()
+            sat_score_display = f"{sat_score_clean}/100" if sat_score_clean.isdigit() and int(sat_score_clean) <= 100 else sat_score_clean
+            sat_status = f"Score: {sat_score_display}"
+        elif test_passed_val is not None and str(test_passed_val).strip() in ['1', '1.0', 'true', 'True']:
+            sat_status = "SAT Passed"
+            sat_score_display = "Passed (Cleared)"
+        elif test_val is not None and str(test_val).strip() in ['1', '1.0', 'true', 'True']:
+            sat_status = "SAT Attempted"
+            sat_score_display = "Attempted (Evaluation Pending)"
+        else:
+            sat_status = "SAT Not Attempted"
+            sat_score_display = "Not Attempted"
+
+        src_val = str(row[col_utm_source]).strip() if col_utm_source and pd.notna(row[col_utm_source]) else ""
+        med_val = str(row[col_utm_medium]).strip() if col_utm_medium and pd.notna(row[col_utm_medium]) else ""
+        camp_val = str(row[col_utm_campaign]).strip() if col_utm_campaign and pd.notna(row[col_utm_campaign]) else ""
+        channel_str = f"{src_val} / {med_val}".strip(" /") if (src_val or med_val) else "Direct Web"
+
+        plat_val = str(row[col_platform]).strip() if col_platform and pd.notna(row[col_platform]) else "Desktop"
+        geo_val = str(row[col_country]).strip() if col_country and pd.notna(row[col_country]) else "India / General"
+        signup_val = str(row[col_signup]).strip() if col_signup and pd.notna(row[col_signup]) else "Recent"
+        landing_val = str(row[col_landing]).strip() if col_landing and pd.notna(row[col_landing]) else ""
+        score_val = str(row[col_lead_score]).replace('.0', '') if col_lead_score and pd.notna(row[col_lead_score]) else "N/A"
+
+        # Touchpoint 1-line summary for table glance
+        if duration_str:
+            key_touchpoint = f"{attended_str} ({duration_str}) - {event_str[:40]}" if event_str else f"{attended_str} ({duration_str})"
+        elif event_str:
+            key_touchpoint = f"{attended_str} - {event_str[:45]}"
+        else:
+            key_touchpoint = f"{channel_str} - Inbound Web"
+
+        touchpoint_dict = {
+            'summary': key_touchpoint,
+            'event_name': event_str if event_str else "Direct Inbound Registration",
+            'attended': attended_str,
+            'duration': duration_str if duration_str else "N/A",
+            'sat_status': sat_status,
+            'sat_score': sat_score_display,
+            'channel': channel_str,
+            'campaign': camp_val if camp_val else "N/A",
+            'platform': plat_val,
+            'geography': geo_val,
+            'signup_date': signup_val,
+            'lead_score': score_val,
+            'landing_page': landing_val if landing_val else "https://www.scaler.com"
+        }
+
+        cand_edu = str(row[col_edu]).strip() if col_edu and pd.notna(row[col_edu]) else "Graduated / Degree"
+        if cand_edu.lower() in ['nan', 'none', 'null', '']:
+            cand_edu = "Graduated / Degree"
+
+        lead_dict = {
+            'name': cand_name,
+            'email': cand_email,
+            'phone': cand_phone,
+            'role': raw_role,
+            'company type': cand_comp_type,
+            'previous org name': cand_org,
+            'previous org year': str(grad_year) if grad_year else "1-2 years",
+            'experience': exp_display if exp_display else f"{exp_years} years",
+            'education': cand_edu,
+            'sat_score': sat_score_display,
+            'sat_status': sat_status,
+            'program': inbound_prog
+        }
+        
+        eval_res = evaluate_lead_profile(lead_dict)
+        lead_id = f"LD-SALES-{idx+1:04d}"
+        eval_res['lead_id'] = lead_id
+        eval_res['touchpoints'] = touchpoint_dict
+        evaluated_records.append(eval_res)
+
+        s = eval_res.get('sales_script', {})
+
+        # Flat row for CRM export
+        flat_row = {
+            'Lead ID': lead_id,
+            'Name': eval_res['person']['name'],
+            'Email': eval_res['person']['email'],
+            'Phone': eval_res['person']['phone'],
+            'Current Role': eval_res['person']['role'],
+            'Company Type': eval_res['person']['company_type'],
+            'Previous Org': eval_res['person']['previous_org'],
+            'Total Experience': eval_res['person']['experience'],
+            'Education': eval_res['person']['education'],
+            'Academic Eligibility': 'Eligible' if eval_res['person'].get('education_level') != 'BELOW_GRAD' else 'Ineligible (Degree Prerequisite)',
+            'Enquired Program': eval_res['person']['enquired_program'],
+            'Key Touchpoint': touchpoint_dict['summary'],
+            'Event Name': touchpoint_dict['event_name'],
+            'Attended Status': touchpoint_dict['attended'],
+            'Watch Duration': touchpoint_dict['duration'],
+            'Diagnostic SAT Status': touchpoint_dict['sat_status'],
+            'Diagnostic SAT Score': touchpoint_dict['sat_score'],
+            'Acquisition Channel': touchpoint_dict['channel'],
+            'Device Platform': touchpoint_dict['platform'],
+            'Signup Date': touchpoint_dict['signup_date'],
+            'Lead Score': touchpoint_dict['lead_score'],
+            'Primary Catalog Code': eval_res['primary'].get('catalog_code', 'Program 1'),
+            'Primary Program': eval_res['primary']['program'],
+            'Primary Track': eval_res['primary']['track'],
+            'Primary Duration': eval_res['primary'].get('duration', '12 Months'),
+            'Primary Fit Tier': eval_res['primary']['fit_tier'],
+            'Primary Retention %': eval_res['primary']['retention_rate'],
+            'Primary Refund %': eval_res['primary']['refund_rate'],
+            'Primary Confidence Tier': eval_res['primary'].get('confidence_tier', 'Mid'),
+            'Primary Confidence Score': eval_res['primary'].get('confidence_score', 70),
+            'Primary Confidence Rationale': eval_res['primary'].get('confidence_rationale', ''),
+            'Primary Rationale': eval_res['primary']['why'],
+            'Fallback Catalog Code': eval_res['fallback'].get('catalog_code', 'Program 2'),
+            'Fallback Program': eval_res['fallback']['program'],
+            'Fallback Track': eval_res['fallback']['track'],
+            'Fallback Duration': eval_res['fallback'].get('duration', '12 Months'),
+            'Fallback Fit Tier': eval_res['fallback']['fit_tier'],
+            'Fallback Retention %': eval_res['fallback']['retention_rate'],
+            'Fallback Refund %': eval_res['fallback']['refund_rate'],
+            'Fallback Rationale': eval_res['fallback']['why'],
+            'Sales Call Opening Script': s.get('call_opening', ''),
+            'Program Value Pitch Script': s.get('program_pitch', ''),
+            'Inbound Handling Script': s.get('inbound_handling', ''),
+            'Commitment Setting Script': s.get('commitment_setting', '')
+        }
+        enriched_rows.append(flat_row)
+
+    enriched_df = pd.DataFrame(enriched_rows)
+    return evaluated_records, enriched_df

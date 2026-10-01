@@ -43,7 +43,7 @@ def get_track_duration(program_str, track_str):
         
     # Program 3: AI Forward Deployed Engineer (FDE)
     elif 'fde' in p_lower or 'forward deployed' in p_lower or 'program 3' in p_lower:
-        return '12 Months'
+        return '12 - 16 Months'
         
     # Program 4: AI & ML with Agentic AI
     elif 'agentic' in p_lower or 'program 4' in p_lower or 'aiml' in p_lower:

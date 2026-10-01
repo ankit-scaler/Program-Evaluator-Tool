@@ -59,33 +59,7 @@ PROGRAM_CATALOG_DATA = {
     'P3_FDE': {
         'program_name': 'AI Forward Deployed Engineer (FDE) Program',
         'catalogue_url': 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/217/310/original/FDE_Brochure_.pdf?1786110990',
-        'top_hiring_companies': ['Palantir', 'Fractal', 'Tiger Analytics', 'Accenture AI', 'EY Tech', 'KPMG Lighthouse'],
-        'curriculum_modules': [
-            {
-                'segment': 'Enterprise Data Pipelines',
-                'type': 'Core',
-                'phase': 'Phase 1: Enterprise Problem Framing & Data Engineering',
-                'duration': '8 Weeks',
-                'topics': 'ETL Pipelines, PySpark, Snowflake, Data Governance, Client Solution Discovery, Cloud Warehousing.',
-                'deliverable': 'Automated enterprise ingestion pipeline processing streaming IoT/CRM data.'
-            },
-            {
-                'segment': 'Applied AI Solutions',
-                'type': 'Core',
-                'phase': 'Phase 2: Production Applied ML & LLM Workflows',
-                'duration': '10 Weeks',
-                'topics': 'HuggingFace, Fine-Tuning Open-Weights LLMs (Llama-3), Embeddings, Agentic Decision Loops, Tool Calling.',
-                'deliverable': 'Automated document processing and intelligence extraction system for enterprise clients.'
-            },
-            {
-                'segment': 'Client Deployment & Security',
-                'type': 'Specialisation',
-                'phase': 'Phase 3: Client Deployment & AI Architecture Integration',
-                'duration': '8 Weeks',
-                'topics': 'Enterprise Security, SOC2 Compliance, On-Prem/VPC LLM Deployment, System Evaluation, Air-gapped Infra.',
-                'deliverable': 'Full client-ready PoC deployed in air-gapped simulated VPC environment.'
-            }
-        ]
+        'top_hiring_companies': ['Palantir', 'Fractal', 'Tiger Analytics', 'Accenture AI', 'EY Tech', 'KPMG Lighthouse']
     },
     'P4_AIML_AGENTIC': {
         'program_name': 'AI & Machine Learning with Agentic AI Program',
@@ -811,6 +785,125 @@ P2_DSML_INTERMEDIATE_MODULES = [
     }
 ]
 
+# ==============================================================================
+# AI FORWARD DEPLOYED ENGINEER (FDE) - COMPREHENSIVE CURRICULUM & DEEP DIVE
+# ==============================================================================
+
+P3_FDE_MODULES = [
+    {
+        'segment': 'Enterprise Data & Role Playbook',
+        'type': 'Core',
+        'phase': 'The FDE Launchpad — Role, SQL & the Legacy Data Problem',
+        'duration': '1.25 Months',
+        'topics': 'Your Playbook for Every Client Room, The Artifact Toolkit That Runs Every Engagement, Meet the Schema - From Entities to Queries, Reporting Views That Run the Dashboard, Find the Bottleneck, Fix the Query, No Half-Measures - Atomic Updates That Don\'t Corrupt, Designing a Schema the Client Won\'t Outgrow, Building Meridian\'s Full Data Model, Lock It Down - PII, Encryption & Audit Trails, Reaching Across the Firewall - Legacy Data Access, Picking the Right Engine for the Job, Quick Diagnostics Before the Pipeline Exists, Designing the Pipeline - ETL Thinking, Explaining Your Schema to the VP Who Signs Off, Turning Query Results into Client-Ready Insight.',
+        'deliverable': 'Production enterprise data model (Meridian Data Architecture), legacy data access bridge, and client-ready analytical views with audit trails.'
+    },
+    {
+        'segment': 'Data Ingestion & Concurrency',
+        'type': 'Core',
+        'phase': 'The Ingestion Pipeline — Production Python',
+        'duration': '1.25 Months',
+        'topics': 'Your Workbench - Python Toolchain Done Right, Stream It, Don\'t Load It, Reusable Building Blocks - Decorators & Context Managers, Modeling the Real World in Code, Make It Fast - Concurrency & Async, When the Data Fights Back - Error Handling & Resilience, Validate Everything, Log Everything, Prove It Works - Testing & CI, Code That Survives the Next Engineer, PySpark - When Python Meets Big Data, Pipeline Day - Full PySpark Ingestion Build, Under Pressure - Timed Python Build, PR Reviews That Build Trust, Write the Doc They\'ll Actually Read.',
+        'deliverable': 'Resilient, high-throughput asynchronous PySpark ingestion pipeline processing enterprise streaming and batch feeds.'
+    },
+    {
+        'segment': 'Enterprise Backend & APIs',
+        'type': 'Core',
+        'phase': 'The Platform\'s Backend — Orders, Payments & Real-Time Systems',
+        'duration': '1.75 Months',
+        'topics': 'Your First Production API, Routing the First Request, Making FastAPI Do the Heavy Lifting, Consuming APIs Like a Professional, Who Gets In - Auth Done Right with OAuth2 & JWT, Locking Doors by Role - RBAC, OIDC & Multi-Tenant Auth, The Order Lifecycle - State Machines in Production, Money and Messages - Payments & Notifications, The Contract Between Backend & Frontend, Break the Contract, Break the Build, Push, Don\'t Poll - WebSockets & Server-Sent Events, Queues, Cache, Invalidate - Redis & Message Patterns, Observability & Tracing, Beyond Rows - JSONB, Full-Text Search & Vector Storage, Warehouse Layer - dbt, DuckDB & Dimensional Modeling, Orchestrating the Nightly Pipeline, Kafka Fundamentals, Pipeline Under Fire - Timed Debug Challenge, Running the Room - API Reviews & Incident Updates.',
+        'deliverable': 'Production FastAPI enterprise service with multi-tenant RBAC, Kafka event bus, Redis caching, and real-time WebSockets.'
+    },
+    {
+        'segment': 'Client-Facing Systems & UI',
+        'type': 'Core',
+        'phase': 'The Client-Facing Layer — Frontend Engineering for FDEs',
+        'duration': '1 Month',
+        'topics': 'How the Web Works: From DOM to Dashboard, Async, Typed and Connected: Talking to the Backend, Thinking in Components: Building the Dashboard One Boundary at a Time, Forms That Don\'t Frustrate: Validation, Control and Reuse, Wiring the Dashboard Live: APIs, Caching and Server State, KPIs, Tables and Filters: The Dashboard Takes Shape, Defending the Architecture: React Decisions and Next.js Awareness, Gating the Dashboard: Authentication, Roles and Protected Routes, Real-Time and AI-Ready Interfaces, Fast, Reliable and Ready: Testing and Performance, Defending the Solution to Leadership, The Handover Moment: Walking the Ops Team Through Their Dashboard.',
+        'deliverable': 'Modern enterprise React/Next.js client operations dashboard with live KPI state management and role-gated UI routes.'
+    },
+    {
+        'segment': 'Enterprise RAG & Evaluation',
+        'type': 'Core',
+        'phase': 'The New Ask — Production RAG for Customer Support',
+        'duration': '1 Month',
+        'topics': 'The AI Landscape - Picking Your Weapons, Your First System Prompt - And Why It\'ll Break, Choosing How to Serve - APIs, Context & Parameters, Prompts as Code - Versioning & Regression Testing, Building the Knowledge Pipeline - RAG End to End, Does It Actually Find the Right Answer?, Does It Tell the Truth? - Generation Eval & RAGAS, Guardrails That Actually Work - PII Leak Prevention, Red Team Your Own Copilot, Spend Less, Answer Faster, Ship It - Timed RAG Build, Explaining AI Risk Without Scaring the Room, Making Eval Numbers Mean Something to the Board.',
+        'deliverable': 'Production RAG customer copilot evaluated with RAGAS, protected by PII guardrails, and optimized for latency/token spend.'
+    },
+    {
+        'segment': 'Autonomous Agents & Protocols',
+        'type': 'Core',
+        'phase': 'From Answering to Acting — Agents & Enterprise Integration',
+        'duration': '1.25 Months',
+        'topics': 'From Chatbot to Coworker, Giving the Agent Real Tools, Orchestrating Agent Intelligence with LangGraph, Production Agent Patterns, When the Agent Breaks, MCP - The Universal Tool Protocol, The Agent Team - Multi-Agent & Human-in-the-Loop, Mapping the Client\'s System Landscape, Data Integration with Legacy Enterprise Systems, Wiring It Together - API Connectors & Webhooks, When the Integration Breaks, Ship Day - The Full Agentic Copilot Goes Live, Red-Team War Room, Explaining What the Agent Will and Won\'t Do Alone, Getting the Client\'s IT Team on Your Side.',
+        'deliverable': 'LangGraph multi-agent autonomous system integrated via Model Context Protocol (MCP) and enterprise webhooks.'
+    },
+    {
+        'segment': 'Distributed Systems & Scale',
+        'type': 'Core',
+        'phase': 'The Scale Question — System Design for Black Friday',
+        'duration': '1.25 Months',
+        'topics': 'The System Design Playbook, Spreading the Load, Cache Everything, Consistency vs Availability, When One Database Isn\'t Enough, Shard It and Build It, When Your Table Hits 10TB, The Event Backbone - Kafka at Scale, Search That Scales, Rate Limiting & Unique IDs, Monolith or Microservices, Distributed Transactions - Saga vs 2PC, Whiteboarding With the Client\'s Architects, System Design Under Pressure.',
+        'deliverable': 'Resilient, multi-region distributed system architecture capable of surviving 10x traffic spikes with zero data loss.'
+    },
+    {
+        'segment': 'AI Infrastructure & Architecture',
+        'type': 'Core',
+        'phase': 'Scaling the AI Layer — Enterprise AI Architecture',
+        'duration': '1 Month',
+        'topics': 'Serving AI at Scale, One Gateway, Many Models, GPU Math - Capacity Planning, When to Fine-Tune - And When Not To, Embedding Pipelines at Scale, Vector Search at Billion Scale, Evals as Infrastructure, Tracking Experiments - MLflow & Model Registries, Ship Without Breaking - Canary Rollouts for AI, Is the AI Drifting?, Defend Your AI Architecture, Selling the AI Stack to the Board.',
+        'deliverable': 'Billion-scale vector search and unified multi-model LLM gateway with canary deployment infrastructure.'
+    },
+    {
+        'segment': 'Systems & Linux Infrastructure',
+        'type': 'Core',
+        'phase': 'Prepping the Ground — Linux, Networking & Shell',
+        'duration': '1 Month',
+        'topics': 'Your First Server, Who Gets Access, What\'s Running and Why, Finding the Needle, How Packets Flow, Locking Down the Network, TCP vs. UDP: Below the Surface, Automate the Boring Stuff, Scripts That Keep the Lights On, The Log Parser, Write the Runbook the 3AM Engineer Will Thank You For.',
+        'deliverable': 'Hardened Linux operating environment, automated Bash maintenance runbooks, and locked-down network routing.'
+    },
+    {
+        'segment': 'Containers & Orchestration',
+        'type': 'Core',
+        'phase': 'Containerizing Meridian — Docker & Kubernetes',
+        'duration': '1.25 Months',
+        'topics': 'Containers 101, Slim, Fast and Secure Images in Production, Containers Talking to Each Other, Hardening Containers, Why You Need an Orchestrator, Deploy It, Wiring Services Together, Scale/Update Under Pressure, Lock It Down, Production K8s, The Pod Won\'t Start, Deploying AI Models on a Cluster, GitOps - Declarative Deployments with ArgoCD, Do We Really Need Kubernetes?, Coordinating the Rollout.',
+        'deliverable': 'Production Kubernetes deployment with ArgoCD declarative GitOps, zero-downtime rollouts, and secure container images.'
+    },
+    {
+        'segment': 'Cloud & Infrastructure as Code',
+        'type': 'Elective',
+        'phase': 'Going Live — AWS Production Deployment with Terraform',
+        'duration': '2.25 Months',
+        'topics': 'Designing Cloud Network, Compute on AWS, Load Balancing Across AZs, Object Storage, SQL & NoSQL in Cloud, Caching, Locking Down Cloud, Breach Drill, Kubernetes in Cloud (I, II, III), Securing Meridian\'s Cluster, Data & Application, Cert Manager & Route 53 (SSL + DNS), AWS Capstone Kickoff, EKS Capstone (Parts 1 & 2), Cloud Rosetta Stone (AWS ↔ GCP ↔ Azure), Boardroom Cloud Talk, War-Room 101, IaC - Terraform Fundamentals & In Action, CI Pipelines, Deploying Docker Image to EKS.',
+        'deliverable': '1-Click Terraform IaC cloud infrastructure on AWS EKS with multi-AZ load balancing, SSL, and automated CI pipelines.'
+    },
+    {
+        'segment': 'SRE & Disaster Recovery',
+        'type': 'Elective',
+        'phase': 'Making It Bulletproof — Reliability, HA & Disaster Recovery',
+        'duration': '1 Month',
+        'topics': 'SRE - When 99.9% Isn\'t Enough, Surviving Region Failure - HA Architecture, The DR Plan Nobody Tests (Until It\'s Too Late), Sharding in Production, Breaking to Ensure It Doesn\'t Break (Chaos Engineering), CRDs, Operators & Admission Webhooks in Kubernetes, Advanced AWS Networking, NoSQL & Caching on AWS, Load Testing at Scale - Proving It Before Black Friday, The Reliability Check, Selling Reliability to the CFO.',
+        'deliverable': 'Active-active multi-region Disaster Recovery plan, Kubernetes Operators, and Chaos Engineering verified reliability suite.'
+    },
+    {
+        'segment': 'Security & Governance',
+        'type': 'Elective',
+        'phase': 'Enterprise Sign-Off — Security Hardening & Incident Response',
+        'duration': '0.75 Months',
+        'topics': 'Threat Modeling - Where Will They Attack?, OWASP Top 10 - Hands-On Exploitation & Defence, Securing the AI Layer, Secrets, Keys & Certificates Lifecycle, Compliance Frameworks - SOC2, GDPR & What FDEs Actually Do, Penetration Testing Your Own Platform, The Incident Response Playbook, Incident Simulation - Full Red Team Exercise, The Security Briefing the Board Actually Needs.',
+        'deliverable': 'SOC2/GDPR compliance posture, automated threat defense, secrets rotation vault, and board-ready security clearance.'
+    },
+    {
+        'segment': 'Client Simulation Capstone',
+        'type': 'Elective',
+        'phase': 'Capstone & Hiring Readiness — New Client, Full Simulation',
+        'duration': '0.75 Months',
+        'topics': 'New Brief, Day One - The Capstone Kickoff, Build Sprint 1 (Data & Backend), Build Sprint 2 (Frontend & AI Feature), Red Team Day - Classmates Break Your Build, Portfolio Day - Packaging Meridian for Interviews, System Design Interview Prep, Behavioral & FDE Interview Prep, Capstone Demo Day - Graduation.',
+        'deliverable': 'End-to-end client engagement simulation (Meridian Platform) presented and defended before enterprise engineering directors.'
+    }
+]
+
 
 def resolve_program_code(prog_val):
     if not prog_val:
@@ -917,7 +1010,17 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
             'track_label': track_label
         }
 
-    # For other programs (P3, P4, P5), return their structured curriculum modules
+    # 4. Track-specific resolution for AI Forward Deployed Engineer (P3)
+    if p_code == 'P3_FDE':
+        return {
+            'program_name': p_data['program_name'],
+            'catalogue_url': p_data['catalogue_url'],
+            'top_hiring_companies': p_data.get('top_hiring_companies', []),
+            'curriculum_modules': P3_FDE_MODULES,
+            'track_label': str(track_name) if track_name else 'Enterprise AI Integration & Client Systems Track'
+        }
+
+    # For other programs (P4, P5), return their structured curriculum modules
     return {
         'program_name': p_data['program_name'],
         'catalogue_url': p_data['catalogue_url'],

@@ -1569,7 +1569,7 @@
               </div>
             </div>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <button id="btn-curr-primary" class="filter-tab active" onclick="switchCurriculumTab('primary')">★ Primary Track Modules</button>
+              <button id="btn-curr-primary" class="filter-tab active" onclick="switchCurriculumTab('primary')">Primary Track Modules</button>
               <button id="btn-curr-fallback" class="filter-tab" onclick="switchCurriculumTab('fallback')">Fallback Track Modules</button>
               <a id="modal-curriculum-catalogue-link" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue">
                 Official Program Brochure &amp; Syllabus &rarr;
@@ -1596,7 +1596,7 @@
             <div class="market-comp-header">
               <div>
                 <div class="market-comp-title">
-                  <span>⚖️ Scaler vs Other Market Programs: <span id="comp-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
+                  <span>Scaler vs Other Market Programs: <span id="comp-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
                 </div>
                 <div class="market-comp-sub">
                   Side-by-side architectural and pedagogical breakdown comparing this Scaler program against typical market alternatives (pre-recorded MOOCs, generic bootcamps, and executive diplomas).
@@ -1609,8 +1609,8 @@
                 <thead>
                   <tr>
                     <th class="col-dim">Evaluation Dimension</th>
-                    <th class="col-scaler" id="comp-th-scaler">✨ Scaler Advantage (Recommended Program)</th>
-                    <th class="col-market">⚠️ Typical Market Alternatives (MOOCs / Bootcamps)</th>
+                    <th class="col-scaler" id="comp-th-scaler">Scaler Advantage (Recommended Program)</th>
+                    <th class="col-market">Typical Market Alternatives (MOOCs / Bootcamps)</th>
                   </tr>
                 </thead>
                 <tbody id="market-comp-tbody">
@@ -1625,7 +1625,7 @@
             <div class="strategic-faq-header">
               <div>
                 <div class="strategic-faq-title">
-                  <span>💡 Strategic Career Advisory: <span id="faq-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
+                  <span>Strategic Career Advisory: <span id="faq-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
                 </div>
                 <div class="strategic-faq-sub">
                   Counseling playbook: Grounded real-world answers on career trajectory, compensation benchmarks, interview bars, and curriculum architecture for recommended programs.
@@ -2031,7 +2031,7 @@
 
       let html = `
         <button class="faq-prog-btn ${activeTab === 'primary' ? 'active' : ''}" id="faq-pill-primary" onclick="switchCurriculumTab('primary')">
-          ★ Primary: ${primName}
+          Primary: ${primName}
         </button>
       `;
 
@@ -2106,18 +2106,18 @@
         titleEl.innerText = data.name;
       }
       if (thScalerEl) {
-        thScalerEl.innerHTML = `✨ Scaler Advantage (${data.name.split(':')[1] ? data.name.split(':')[1].trim() : data.name})`;
+        thScalerEl.innerHTML = `Scaler Advantage (${data.name.split(':')[1] ? data.name.split(':')[1].trim() : data.name})`;
       }
       if (tbody && data.dimensions) {
         tbody.innerHTML = data.dimensions.map(d => `
           <tr>
             <td class="dim-cell">${d.dim}</td>
             <td class="scaler-cell">
-              <div class="comp-badge-scaler">✓ Scaler Advantage</div>
+              <div class="comp-badge-scaler">Scaler Advantage</div>
               <div>${d.scaler}</div>
             </td>
             <td class="market-cell">
-              <div class="comp-badge-market">⚠️ Market Limitation</div>
+              <div class="comp-badge-market">Market Limitation</div>
               <div>${d.market}</div>
             </td>
           </tr>
@@ -2460,16 +2460,16 @@
           </td>
           <td>
             <div style="min-width: 200px; max-width: 260px; font-size: 11px; line-height: 1.35;">
-              <div style="font-weight: 700; color: #1e3a8a; display: flex; align-items: flex-start; gap: 4px; margin-bottom: 2px;">
-                <span style="color: #2563eb; flex-shrink: 0;">🚀 Scaler:</span>
+              <div style="font-weight: 700; color: var(--color-text-tertiary); display: flex; align-items: flex-start; gap: 4px; margin-bottom: 2px;">
+                <span style="color: var(--scaler-blue); flex-shrink: 0; font-weight: 700;">Scaler:</span>
                 <span>${comp.shortScaler}</span>
               </div>
               <div style="color: #64748b; font-size: 10px; display: flex; align-items: flex-start; gap: 4px; margin-bottom: 3px;">
-                <span style="color: #dc2626; font-weight: 600; flex-shrink: 0;">⚠️ Others:</span>
+                <span style="color: #b91c1c; font-weight: 600; flex-shrink: 0;">Market:</span>
                 <span>${comp.shortMarket}</span>
               </div>
               <span style="display: inline-block; font-size: 9.5px; font-weight: 700; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 1px 6px; border-radius: 3px;">
-                ✓ ${comp.keyDiff}
+                ${comp.keyDiff}
               </span>
             </div>
           </td>

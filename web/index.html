@@ -1170,10 +1170,6 @@
             <div class="tp-item-label">Source & Channel</div>
             <div class="tp-item-val" id="modal-tp-channel">-</div>
           </div>
-          <div>
-            <div class="tp-item-label">Platform & Geography</div>
-            <div class="tp-item-val" id="modal-tp-platform">-</div>
-          </div>
         </div>
 
         <!-- RECOMMENDATION SIDE-BY-SIDE CARDS -->
@@ -1634,7 +1630,6 @@
       document.getElementById('modal-tp-attendance').innerText = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
       document.getElementById('modal-tp-sat').innerText = tp.sat_status || 'SAT Not Attempted';
       document.getElementById('modal-tp-channel').innerText = tp.channel || 'Direct Web';
-      document.getElementById('modal-tp-platform').innerText = `${tp.platform || 'Desktop'} | ${tp.geography || 'General'}`;
 
       // Primary
       const primTitle = prim.catalog_code ? `${prim.catalog_code}: ${prim.program}` : prim.program;

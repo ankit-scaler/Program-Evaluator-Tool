@@ -225,9 +225,31 @@ def generate_curriculum_grounded_why(
     1. The specific curriculum modules and technical milestones of the assigned track.
     2. The candidate's background, current role, and years of experience.
     3. Historical retention, completion rates, and dropout prevention guardrails.
+    4. Transition-aware reasoning for non-tech professionals entering tech for the first time.
     """
     p_lower = str(program_name).lower()
     t_lower = str(track_name).lower()
+    persona_lower = str(persona).lower()
+    
+    # Detect if this person is a non-tech / career-switcher
+    _is_non_tech_persona = persona_lower in [
+        'non_tech', 'non-tech', 'non_tech_career_switcher', 'career_break',
+        'non-tech / operations', 'non-tech / career switcher'
+    ] or any(k in str(raw_role).lower() for k in [
+        'nurse', 'nursing', 'doctor', 'hospital', 'physician', 'dentist', 'pharmacist', 'paramedic',
+        'security guard', 'guard', 'watchman', 'police', 'constable', 'army', 'military',
+        'teacher', 'professor', 'lecturer', 'tutor', 'faculty', 'educator',
+        'chef', 'cook', 'waiter', 'bartender', 'hotel', 'hospitality', 'cabin crew',
+        'electrician', 'plumber', 'carpenter', 'welder', 'mechanic',
+        'driver', 'chauffeur', 'delivery', 'pilot', 'warehouse',
+        'cashier', 'retail', 'shopkeeper',
+        'hr', 'human resource', 'recruiter', 'marketing', 'sales', 'bde', 'bda',
+        'finance', 'accounting', 'accountant', 'auditor', 'banking', 'insurance',
+        'operations', 'admin', 'consultant', 'legal', 'lawyer', 'procurement', 'logistics',
+        'bpo', 'kpo', 'customer support', 'call center',
+        'mechanical', 'civil', 'chemical', 'electrical', 'biotech',
+        'non-tech', 'non tech', 'non coder', 'non-coder', 'career break', 'homemaker'
+    ])
     
     # Extract top module phases from loaded curriculum modules
     module_names = []
@@ -238,7 +260,18 @@ def generate_curriculum_grounded_why(
                 module_names.append(p)
     module_text = ", ".join(f"<i>{h}</i>" for h in module_names[:3]) if module_names else "core engineering and production milestones"
 
+    # Build the transition context sentence used across all non-tech rationales
+    _transition_intro = ""
+    if _is_non_tech_persona:
+        _transition_intro = (
+            f"You are transitioning from <b>{raw_role}</b> (with {raw_exp} of professional experience) into the technology industry "
+            "with no prior coding or software engineering background. This is not a limitation - it is a starting point that "
+            "thousands of Scaler graduates have successfully navigated. "
+        )
+
+    # =========================================================================
     # 1. Scaler Academy (Program 1)
+    # =========================================================================
     if 'academy' in p_lower or 'software' in p_lower:
         if 'beginner' in t_lower or 'foundations' in t_lower:
             content_desc = (
@@ -246,10 +279,29 @@ def generate_curriculum_grounded_why(
                 "<i>Intermediate DSA (Prefix Sum, Bit Manipulation, 2D Matrices)</i>, and <i>AI & Agents: From Talking to AI to Building One</i>, "
                 "before advancing into <i>Advanced DSA</i> (Linear/Non-Linear Structures, Trees, Dynamic Programming, Graphs) and <i>System Design</i>."
             )
-            career_desc = (
-                f"As a {raw_role} with {raw_exp}, building systematic computational thinking and problem-solving habits from ground zero "
-                "is the single most decisive factor for cracking Tier-1 product company recruitment."
-            )
+            if _is_non_tech_persona:
+                career_desc = (
+                    f"{_transition_intro}"
+                    f"<b>Why This Program Solves Your Transition:</b> As a {raw_role}, you currently have zero exposure to programming syntax, "
+                    "algorithmic thinking, or software development workflows. This Beginner Track is purpose-built to take you from absolute zero "
+                    "to interview-ready software engineer. It starts with the fundamentals of computational thinking - how to break down any problem "
+                    "into logical steps (loops, conditionals, functions) - which is the exact skill that separates hired candidates from rejected ones "
+                    "at Tier-1 product companies like Google, Amazon, and Flipkart. "
+                    "Your professional discipline, structured thinking, and work ethic from your current career are transferable strengths "
+                    "that Scaler's pedagogy actively leverages through hands-on project-based learning, weekly mentor check-ins, and AI-assisted "
+                    "coding companions that accelerate your learning curve by 3x compared to self-study."
+                )
+            else:
+                career_desc = (
+                    f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, your biggest career gap right now is not knowledge of a specific "
+                    "language or framework - it is the absence of structured problem-solving and algorithmic thinking that Tier-1 product companies "
+                    "(Google, Amazon, Microsoft, Flipkart) test rigorously in every interview round. This Beginner Track is designed to build that "
+                    "foundation from ground zero: starting with computational thinking, progressing through data structures, and culminating in system design. "
+                    "Unlike self-study or YouTube tutorials, Scaler provides 1:1 mentorship from engineers at top product companies, weekly mock interviews "
+                    "that simulate real hiring rounds, and AI-assisted coding companions that provide instant feedback on your solutions. "
+                    "This structured approach ensures you don't just learn theory - you build the muscle memory and pattern recognition "
+                    "that converts into offer letters."
+                )
             historical_desc = (
                 f"Backed by an audited <b>{retention_rate}% completion rate</b> across {cohort_size}+ early-career and non-CS learners. "
                 "Historical cohort analytics demonstrate that beginners placed directly into intermediate algorithms face an elevated Day-14 "
@@ -262,8 +314,15 @@ def generate_curriculum_grounded_why(
                 "with an elective bridge into <i>Distributed High-Level System Design</i>."
             )
             career_desc = (
-                f"Calibrated for engineers working as {raw_role} with {raw_exp}. You don't need basic loop syntax - you need "
-                "interview-tested algorithmic optimization patterns and clean design principles to transition from service tasks to Tier-1 product SDE roles."
+                f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, you already know how to write code and build features - "
+                "but the gap between a service/IT company developer and a Tier-1 product company SDE is not coding ability, it is algorithmic depth "
+                "and design-first thinking. Most engineers in your position fail product company interviews not because they cannot code, but because "
+                "they have never systematically practiced optimization under constraints (time complexity, space trade-offs, edge-case reasoning). "
+                "This Intermediate Track skips the basics you already know and focuses 100% on the exact patterns tested in FAANG interviews: "
+                "sliding window, two-pointer, divide & conquer, dynamic programming, and graph traversal. "
+                "Scaler's live problem-solving sessions with instructors who have cracked Google/Meta interviews, combined with 500+ curated practice "
+                "problems and AI-powered code review, compress your interview preparation from 12+ months of self-study into a focused, structured 12-month sprint. "
+                "Additionally, Scaler's placement team actively connects you with hiring partners across 900+ product companies."
             )
             historical_desc = (
                 f"Supported by an empirical <b>{retention_rate}% completion rate</b> across {cohort_size}+ working technical professionals. "
@@ -275,15 +334,24 @@ def generate_curriculum_grounded_why(
                 "(Kafka event streaming, consistent hashing, caching at scale, database sharding, CAP/PACELC theorems) and <i>Concurrent Backend Microservices</i>."
             )
             career_desc = (
-                f"Tailored for senior engineers with {raw_exp} as a {raw_role}. Eliminates elementary coding tutorials to focus 100% on "
-                "large-scale distributed architecture, trade-off analysis, and executive technical communication."
+                f"<b>Why This Program Is Your Best Fit:</b> As a senior {raw_role} with {raw_exp}, you have already mastered coding and team "
+                "delivery - but the next career level (Staff Engineer, Principal Architect, Engineering Manager at a top-tier company) demands "
+                "expertise in large-scale distributed systems design, which is rarely taught in on-the-job work at most organizations. "
+                "This Advanced Track eliminates everything you already know and focuses exclusively on the architectural decision-making "
+                "that separates L5/L6 engineers from L7+ leadership: designing systems that handle millions of concurrent users, "
+                "making CAP theorem trade-offs, building event-driven architectures with Kafka, and implementing database sharding strategies. "
+                "Scaler's instructors for this track are Staff/Principal engineers from Google, Amazon, and Uber who bring real production war stories. "
+                "The curriculum includes live system design mock rounds that replicate the exact format used in senior hiring loops at FAANG companies, "
+                "giving you rehearsed confidence that no amount of reading system design blogs can provide."
             )
             historical_desc = (
                 f"Demonstrates an elite <b>{retention_rate}% completion rate</b> across senior cohorts. Historical retention shows that "
                 "senior candidates thrive when curriculum focuses on system-level architecture rather than repetitive syntax drills."
             )
 
+    # =========================================================================
     # 2. Modern Data Science & ML (Program 2)
+    # =========================================================================
     elif 'dsml' in p_lower or 'data science' in p_lower:
         if 'beginner' in t_lower or 'analytics' in t_lower:
             content_desc = (
@@ -291,10 +359,31 @@ def generate_curriculum_grounded_why(
                 "<i>Python Foundations + AI Coding Assistants</i>, and <i>Product Analytics with AI</i>, seamlessly progressing into "
                 "<i>Supervised Machine Learning with AI Workflows</i>."
             )
-            career_desc = (
-                f"For a {raw_role} with {raw_exp}, learning data analytics through business metrics and SQL dashboards leverages your existing "
-                "domain intuition directly into tech without wrestling with abstract software engineering."
-            )
+            if _is_non_tech_persona:
+                career_desc = (
+                    f"{_transition_intro}"
+                    f"<b>Why This Program Solves Your Transition:</b> As a {raw_role}, you do not have experience with coding, databases, "
+                    "or data analysis tools. However, you DO have years of real-world professional experience making decisions based on observations, "
+                    "patterns, and domain knowledge - which is exactly what data science formalizes into a systematic, high-paying career. "
+                    "This Beginner Track does NOT assume any coding background. It starts with Excel, SQL queries, and visual dashboards - tools "
+                    "you can grasp immediately - before gradually introducing Python programming with AI coding assistants that write code alongside you. "
+                    "Your domain expertise (e.g., understanding patient data, operational metrics, customer behavior) becomes a competitive advantage "
+                    "when combined with analytics skills, making you uniquely valuable in healthcare analytics, business intelligence, or product analytics roles. "
+                    "Scaler's structured mentorship, doubt-resolution sessions, and career coaching ensure you are never left behind during this transition."
+                )
+            else:
+                career_desc = (
+                    f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, you likely work with data in some form already - "
+                    "whether it is spreadsheets, reports, or business metrics - but you lack the structured analytical toolkit (SQL, Python, statistical modeling) "
+                    "that separates a reporting role from a high-paying Data Analyst or Data Scientist position. "
+                    "This Beginner Track bridges that gap by starting with tools you can relate to immediately (Excel, SQL queries, visual dashboards) "
+                    "before progressively introducing Python programming with AI coding assistants that write code alongside you, "
+                    "and culminating in supervised machine learning models that automate the pattern recognition you currently do manually. "
+                    "Unlike generic online courses, Scaler provides industry-grade capstone projects using real datasets, "
+                    "1:1 mentorship from data scientists at companies like Flipkart, Swiggy, and Razorpay, and a dedicated career coaching team "
+                    "that prepares you for data analytics interviews with mock case studies and portfolio reviews. "
+                    "Your existing domain knowledge becomes a competitive advantage when paired with these analytical skills."
+                )
             historical_desc = (
                 f"Proven by a <b>{retention_rate}% completion rate</b> across {cohort_size}+ learners. Historical cohort data reveals "
                 "this progressive ramp-up achieves the highest retention of any career pivot, virtually eliminating refund risk."
@@ -305,31 +394,59 @@ def generate_curriculum_grounded_why(
                 "<i>Supervised & Unsupervised Machine Learning</i>, <i>Deep Learning & Neural Networks</i>, and <i>Production MLOps on AWS</i>."
             )
             career_desc = (
-                f"Elevates your experience as a {raw_role} ({raw_exp}) from descriptive reporting into statistical hypothesis testing, "
-                "predictive modeling, and enterprise AI production pipelines."
+                f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, you already have the data intuition and SQL/analytics "
+                "foundation - but the career ceiling for descriptive reporting roles is well-documented. The highest-growth, highest-paying data roles "
+                "(ML Engineer, Applied Scientist, Senior Data Scientist) require skills you likely haven't built yet: statistical hypothesis testing, "
+                "predictive modeling with scikit-learn/XGBoost, deep learning with neural networks, and production MLOps on AWS. "
+                "This Core ML Track skips the basics and takes you directly into the applied machine learning pipeline - from feature engineering "
+                "to model deployment - using the same tools and frameworks used at companies like Netflix, Uber, and Airbnb. "
+                "Scaler's structured curriculum includes hands-on Kaggle-style competitions, real-world capstone projects with industry datasets, "
+                "and mentorship from ML engineers who have built production recommendation systems and fraud detection pipelines. "
+                "The dedicated career team provides ML-specific interview preparation including take-home assignment coaching and case study walkthroughs."
             )
             historical_desc = (
                 f"Validated by an audited <b>{retention_rate}% completion rate</b> across quantitative cohorts. Historical data confirms "
                 "analysts transitioning through applied predictive modeling experience rapid career acceleration into senior ML titles."
             )
 
+    # =========================================================================
     # 3. AI Forward Deployed Engineer (Program 3)
+    # =========================================================================
     elif 'fde' in p_lower or 'forward deployed' in p_lower:
         content_desc = (
             "Delivered entirely through enterprise client simulation (<i>Meridian Platform</i>), covering <i>The Ingestion Pipeline (Production Python)</i>, "
             "<i>Production RAG for Customer Support</i>, <i>Autonomous Agents & Enterprise Integration (LangGraph & MCP)</i>, "
             "<i>Docker & Kubernetes Orchestration</i>, and <i>1-Click AWS Production Deployment with Terraform</i>."
         )
-        career_desc = (
-            f"As a {raw_role} with {raw_exp}, this program bridges the Enterprise Deployment Gap - transforming backend and systems engineers "
-            "into high-leverage client-facing AI architects capable of deploying custom LLM systems directly inside Fortune 500 infrastructure."
-        )
+        if _is_non_tech_persona:
+            career_desc = (
+                f"{_transition_intro}"
+                f"<b>Why This Program Solves Your Transition:</b> As a {raw_role}, you have no prior exposure to software engineering, cloud deployment, "
+                "or AI systems. The FDE program is an intensive, project-driven bootcamp that trains you to deploy enterprise AI solutions end-to-end. "
+                "However, this program assumes foundational programming competency - which is why it is recommended as a fallback after completing "
+                "foundational coding preparation. Your professional communication skills and client-facing experience are highly valued in FDE roles."
+            )
+        else:
+            career_desc = (
+                f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, you have the engineering foundation but the industry "
+                "is rapidly shifting toward AI-native products - and the highest-leverage, highest-paid role in this new landscape is the Forward Deployed Engineer "
+                "who can build AND deploy custom LLM systems directly inside enterprise client infrastructure. "
+                "This program bridges the Enterprise Deployment Gap: unlike traditional SDE roles where you build features in isolation, "
+                "FDE training teaches you to architect production RAG pipelines, build autonomous AI agents with LangGraph, and deploy them "
+                "on client infrastructure using Docker, Kubernetes, and Terraform - all through a simulated enterprise client platform (Meridian). "
+                "Scaler's FDE program is uniquely positioned because it trains you on the exact workflow Fortune 500 companies demand: "
+                "client requirement gathering, rapid prototyping, production deployment, and iterative optimization. "
+                "FDE roles currently command a 2.5x compensation premium over traditional SDE roles due to extreme market demand and limited supply of engineers "
+                "who can both build AI systems and communicate with non-technical stakeholders."
+            )
         historical_desc = (
             f"Supported by an outstanding <b>{retention_rate}% completion rate</b> across software engineering cohorts. Historical placement analytics "
             "indicate that forward-deployed roles command a 2.5x compensation premium over traditional development due to high client demand."
         )
 
+    # =========================================================================
     # 4. AI & Machine Learning with Agentic AI (Program 4)
+    # =========================================================================
     elif 'agentic' in p_lower or 'aiml' in p_lower or 'program 4' in p_lower:
         if 'beginner' in t_lower or 'foundation' in t_lower:
             content_desc = (
@@ -337,9 +454,31 @@ def generate_curriculum_grounded_why(
                 "and 1-Month <i>Python Programming Fundamentals</i>, before advancing into <i>Data Foundations</i>, <i>Supervised/Unsupervised ML</i>, "
                 "<i>MLOps on AWS SageMaker</i>, and <i>LangGraph Agentic Orchestration</i>."
             )
-            career_desc = (
-                f"Provides a structured, supportive ramp-up for a {raw_role} ({raw_exp}), ensuring solid coding foundations before tackling advanced AI math and neural models."
-            )
+            if _is_non_tech_persona:
+                career_desc = (
+                    f"{_transition_intro}"
+                    f"<b>Why This Program Solves Your Transition:</b> As a {raw_role}, you have no prior experience with programming, machine learning, "
+                    "or AI development. This Beginner Track is specifically designed for career switchers - it starts with a 2-month Generative AI Foundations "
+                    "module where you learn to use AI tools (ChatGPT, no-code automation, prompt engineering) WITHOUT writing any code first. "
+                    "This builds your confidence and AI literacy before introducing Python programming with AI coding assistants. "
+                    "The progressive structure ensures you are never overwhelmed: you move from no-code AI tools to basic Python to supervised ML models "
+                    "to building autonomous AI agents - each step building on the previous one. "
+                    "Scaler's teaching assistants, live doubt sessions, and peer learning groups provide the support structure that self-learners lack, "
+                    "which is critical for someone making a complete career pivot."
+                )
+            else:
+                career_desc = (
+                    f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, you want to enter the AI/ML space but the gap between "
+                    "knowing how to code and actually building production AI systems is massive - and self-study in this domain has the highest dropout rate "
+                    "because concepts like gradient descent, backpropagation, and tensor operations require structured mathematical foundations. "
+                    "This Beginner Track solves this by starting with a 2-month Generative AI Foundations module (Prompt Engineering, no-code automation, "
+                    "AI tool literacy) that gives you immediate hands-on AI experience WITHOUT requiring advanced math first. "
+                    "It then progressively builds your Python programming, statistics, and ML foundations before advancing into deep learning and agentic AI. "
+                    "Scaler's AI/ML instructors include researchers and engineers from Google DeepMind, Amazon AI, and Microsoft Research who bring "
+                    "production AI experience into every session. The curriculum includes real-world AI capstone projects, "
+                    "and Scaler's career team specifically prepares you for the rapidly growing AI Engineer job market with portfolio reviews "
+                    "and AI-specific mock interviews."
+                )
             historical_desc = (
                 f"Enforces Catalog Rule 6: candidates without prior coding exposure face a 25.8% drop-off if pushed directly into tensor math; "
                 f"this foundational progression preserves high retention (<b>{retention_rate}% completion rate</b> across {cohort_size}+ learners)."
@@ -351,15 +490,25 @@ def generate_curriculum_grounded_why(
                 "<i>Advanced Cognitive Architectures (GraphRAG & Multimodal AI)</i>, and <i>PEFT/LoRA Fine-Tuning served via vLLM</i>."
             )
             career_desc = (
-                f"Capitalizes on your engineering foundation as a {raw_role} with {raw_exp}. You skip introductory coding to focus 100% on "
-                "model fine-tuning, autonomous agent loops, vector indexing, and token-economic model serving."
+                f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, you already have strong programming fundamentals - "
+                "but the AI landscape is evolving so rapidly that even experienced engineers struggle to keep up with LLM fine-tuning, "
+                "agentic orchestration patterns, and production-grade model serving. This Advanced Track skips everything you already know "
+                "and takes you directly into the frontier of AI engineering: PEFT/LoRA fine-tuning, multi-agent orchestration with LangGraph, "
+                "GraphRAG architectures, multimodal AI systems, and token-economic model serving via vLLM. "
+                "Unlike MOOCs that teach outdated ML theory, Scaler's Advanced AI track is updated quarterly to reflect the latest industry practices. "
+                "The instructors are practicing AI engineers building production LLM systems, and every module includes hands-on deployment "
+                "on AWS SageMaker so you build real, deployable AI products - not just Jupyter notebook experiments. "
+                "Scaler's hiring network includes AI-first companies actively looking for engineers who can build autonomous agent systems, "
+                "making this the fastest path from traditional SDE to AI Engineer."
             )
             historical_desc = (
                 f"Backed by an empirical <b>{retention_rate}% completion rate</b> across technical cohorts. Historical data verifies that "
                 "software developers thrive when immersed directly in modern generative AI architectures and scalable LLMOps."
             )
 
+    # =========================================================================
     # 5. DevOps, Cloud & AI Platform Engineering (Program 5)
+    # =========================================================================
     elif 'devops' in p_lower or 'cloud' in p_lower or 'platform' in p_lower or 'program 5' in p_lower:
         content_desc = (
             "Systematically covers the entire modern platform stack: <i>Python & Linux Shell Scripting (1 & 2)</i>, "
@@ -367,19 +516,51 @@ def generate_curriculum_grounded_why(
             "<i>DevOps Tools 2 (GitHub Actions CI/CD, ArgoCD GitOps, Ansible)</i>, and <i>AWS 1 & 2 (EKS, VPC, CloudFormation, Terraform IaC)</i>, "
             "with specialized electives in <i>MLOps & AI Observability</i>."
         )
-        career_desc = (
-            f"Complements your background as a {raw_role} ({raw_exp}), converting your existing development, testing, or systems experience "
-            "into high-availability cloud infrastructure and SRE engineering without requiring competitive algorithmic design."
-        )
+        if _is_non_tech_persona:
+            career_desc = (
+                f"{_transition_intro}"
+                f"<b>Why This Program Solves Your Transition:</b> As a {raw_role}, you currently have no experience with servers, cloud platforms, "
+                "or infrastructure automation. DevOps & Cloud Engineering is one of the fastest-growing and most accessible entry points into tech "
+                "because it focuses on tools and processes rather than competitive algorithmic problem-solving. "
+                "This program teaches you Linux, Docker, Kubernetes, and AWS from scratch - skills that are in massive demand and command "
+                "premium salaries. Your operational discipline, process orientation, and attention to detail from your current career directly "
+                "translate into the reliability and automation mindset that DevOps engineering demands."
+            )
+        else:
+            career_desc = (
+                f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, you have hands-on experience with development, testing, "
+                "or systems - but the industry's highest-growth infrastructure roles (Cloud Engineer, SRE, Platform Engineer, DevOps Architect) "
+                "require a specific toolkit that most developers never learn on the job: containerization (Docker), orchestration (Kubernetes), "
+                "CI/CD automation (GitHub Actions, ArgoCD), Infrastructure-as-Code (Terraform), and cloud-native architecture on AWS. "
+                "This program converts your existing engineering instincts into cloud-native infrastructure expertise without requiring "
+                "competitive algorithmic problem-solving - which means you can leverage your practical experience directly. "
+                "Scaler's DevOps curriculum is hands-on from Day 1: you build multi-node Kubernetes clusters, set up Prometheus/Grafana monitoring, "
+                "deploy ML models via Hugging Face, and automate everything with Terraform IaC - exactly what production teams do. "
+                "The career outcome is compelling: DevOps/Cloud roles consistently offer 30-50% higher compensation than equivalent SDE roles "
+                "because supply is critically low, and Scaler's placement team has direct partnerships with companies actively hiring for these roles."
+            )
         historical_desc = (
             f"Demonstrates an elite <b>{retention_rate}% completion rate</b> ({cohort_size}+ cohort). Historical transition data shows that "
             "infrastructure and platform engineering provides the highest retention and lowest refund rate among all technical career transitions."
         )
 
+    # =========================================================================
     # Generic Fallback
+    # =========================================================================
     else:
         content_desc = f"Curriculum structured around {module_text}."
-        career_desc = f"Calibrated for {raw_role} with {raw_exp} to support long-term technical growth."
+        if _is_non_tech_persona:
+            career_desc = (
+                f"{_transition_intro}"
+                f"This program provides a structured learning path calibrated for professionals like you who are entering tech for the first time."
+            )
+        else:
+            career_desc = (
+                f"<b>Why This Program Is Your Best Fit:</b> As a {raw_role} with {raw_exp}, this program is calibrated to address "
+                "the specific skill gaps in your profile and accelerate your career trajectory into high-demand tech roles. "
+                "Scaler's structured pedagogy - combining live instructor-led sessions, 1:1 mentorship from industry practitioners, "
+                "AI-assisted learning tools, and a dedicated career coaching team - ensures you build job-ready skills, not just theoretical knowledge."
+            )
         historical_desc = f"Supported by a {retention_rate}% completion rate across {cohort_size}+ learners."
 
     full_rationale = (

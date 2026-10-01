@@ -21,3 +21,4 @@ output/crm_evaluated_master.csv
 *.log
 .tempmediaStorage/
 .system_generated/
+scratch/

@@ -218,13 +218,13 @@ def classify_world_domain(role_str):
         return 'Early Career & Career Transitions'
 
     # 19. Technical Engineering Domains
-    if match_any(s, ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance']):
+    if match_any(s, ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance', 'automation engineer']):
         return 'Quality Assurance & SDET'
     elif match_any(s, ['data scientist', 'data analyst', 'data engineer', 'analytics', 'bi', 'business intelligence', 'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'deep learning']):
         return 'Data Science & Analytics'
-    elif match_any(s, ['devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer', 'terraform', 'sysadmin', 'system administrator', 'security engineer', 'cyber security', 'infosec', 'network engineer']):
+    elif match_any(s, ['devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer', 'terraform', 'sysadmin', 'system administrator', 'security engineer', 'cyber security', 'infosec', 'network engineer', 'network admin']):
         return 'DevOps & Cloud Platform'
-    elif match_any(s, ['embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver']):
+    elif match_any(s, ['systems engineer', 'system engineer', 'systems engineering', 'systems architect', 'embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver', 'soc design', 'asic', 'fpga', 'operating systems']):
         return 'Systems & Embedded Engineering'
     elif match_any(s, ['frontend', 'front-end', 'ui dev', 'react', 'angular', 'web developer', 'vue']):
         return 'Frontend Engineering'
@@ -234,9 +234,9 @@ def classify_world_domain(role_str):
         'director of engineering', 'chief technology officer'
     ]) or (match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and match_any(s, ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])):
         return 'Engineering Leadership'
-    elif match_any(s, ['it service', 'general it', 'app support', 'desktop support', 'production support']):
+    elif match_any(s, ['it service', 'general it', 'app support', 'desktop support', 'production support', 'database administrator', 'dba']):
         return 'IT Services & Maintenance'
-    elif match_any(s, ['software', 'developer', 'programmer', 'sde', 'swe', 'backend', 'back-end', 'fullstack', 'full-stack', 'java dev', 'python dev', 'golang', 'node', 'django', 'spring boot']):
+    elif match_any(s, ['software', 'developer', 'programmer', 'sde', 'swe', 'backend', 'back-end', 'fullstack', 'full-stack', 'java dev', 'python dev', 'golang', 'node', 'django', 'spring boot', 'ios', 'android', 'mobile dev', 'game dev', 'blockchain']):
         return 'Software Engineering (Backend/FullStack)'
 
     return 'Non-Tech / General Career Background'
@@ -354,13 +354,17 @@ def canonical_persona_key(persona_str):
     if any(match_token(s, k) for k in [
         'devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer',
         'terraform', 'sysadmin', 'system administrator', 'security', 'cyber security', 'infosec',
-        'soc analyst', 'penetration test', 'network engineer', 'cloud architect', 'systems engineer',
+        'soc analyst', 'penetration test', 'network engineer', 'cloud architect',
         'site reliability', 'it infrastructure'
     ]):
         return 'DEVOPS_CLOUD'
 
     # Systems & Embedded Engineering
-    if any(match_token(s, k) for k in ['embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver']):
+    if any(match_token(s, k) for k in [
+        'systems engineer', 'system engineer', 'systems engineering', 'systems architect',
+        'embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver',
+        'soc design', 'asic', 'fpga', 'operating systems'
+    ]):
         return 'SYSTEMS_ENG'
 
     # Technical Engineering Leadership

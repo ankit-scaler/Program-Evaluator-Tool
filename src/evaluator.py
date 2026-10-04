@@ -884,17 +884,22 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     is_career_break = any(k in raw_role.lower() for k in ['career break', 'break', 'sabbatical', 'gap', 'gap year', 'returning', 'homemaker', 'restart'])
     is_student = (exp_bracket == 'EXP_0_1') or any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
     
-    # 1. FIX: Allowlist for Tech Roles
+    # 1. Allowlist for Tech Roles
     tech_keywords = [
         'sde', 'swe', 'software', 'developer', 'frontend', 'backend', 'full stack', 'fullstack', 'programmer',
         'devops', 'cloud', 'sre', 'sysadmin', 'infrastructure', 'platform engineer',
         'data', 'analytics', 'analyst', 'bi', 'machine learning', 'ml', 'ai', 'artificial intelligence',
         'qa', 'sdet', 'testing', 'automation', 'embedded', 'firmware', 'linux kernel', 'architect',
+        'systems engineer', 'system engineer', 'systems', 'system', 'hardware', 'vlsi', 'network engineer',
+        'cyber security', 'security engineer', 'dba', 'database administrator', 'solutions engineer', 'fde',
         'engineering manager', 'tech lead', 'technical lead', 'cto', 'vp of engineering', 'director of engineering'
     ]
-    is_tech = any(match_token(raw_role.lower(), k) for k in tech_keywords)
-    # Exclude non-software engineering domains
-    if any(k in raw_role.lower() for k in ['mechanical', 'civil', 'chemical', 'electrical', 'biotech', 'aerospace', 'automobile', 'electronics']):
+    is_tech = (
+        persona in ['SYSTEMS_ENG', 'DEVOPS_CLOUD', 'DATA_ANALYST', 'QA_SDET', 'SWE_BACKEND', 'FRONTEND', 'LEADERSHIP'] or
+        any(match_token(raw_role.lower(), k) for k in tech_keywords)
+    )
+    # Exclude non-software engineering domains (unless explicitly classified as tech)
+    if persona == 'NON_TECH' and any(k in raw_role.lower() for k in ['mechanical', 'civil', 'chemical', 'biotech', 'aerospace', 'automobile']):
         is_tech = False
 
     is_non_tech = (

@@ -298,7 +298,8 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
             )
 
     # 0e. Transportation, Aviation & Maritime (Pilot, Sailor, Driver, Logistics)
-    if match_any(r_lower, ['pilot', 'mariner', 'sailor', 'merchant navy', 'ship captain', 'loco pilot', 'train driver', 'driver', 'courier', 'delivery partner']):
+    if (match_any(r_lower, ['pilot', 'mariner', 'sailor', 'merchant navy', 'ship captain', 'loco pilot', 'train driver', 'truck driver', 'cab driver', 'taxi driver', 'courier', 'delivery partner']) or
+        (match_token(r_lower, 'driver') and 'device' not in r_lower and 'software' not in r_lower and 'hardware' not in r_lower)):
         if 'devops' in p_lower or 'cloud' in p_lower:
             return (
                 f"As a <b>{raw_role}</b> ({raw_exp}), your checklist discipline and experience monitoring complex navigation and telemetry systems "
@@ -388,7 +389,8 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
             )
 
     # 3. Operations / Supply Chain / Logistics / Admin / Procurement
-    if any(k in r_lower for k in ['operation', 'logistics', 'supply chain', 'procurement', 'inventory', 'warehouse', 'admin', 'coordinator']):
+    if (any(k in r_lower for k in ['operation', 'logistics', 'supply chain', 'procurement', 'inventory', 'warehouse', 'coordinator']) or
+        (match_token(r_lower, 'admin') and not any(t in r_lower for t in ['database', 'dba', 'sysadmin', 'system', 'linux', 'network', 'cloud', 'azure', 'aws']))):
         if 'dsml' in p_lower or 'data' in p_lower:
             return (
                 f"As an <b>{raw_role}</b> ({raw_exp}), you already manage operational metrics, workflow pipelines, and inventory data daily. "
@@ -606,6 +608,90 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
             return (
                 f"As a <b>{raw_role}</b> with {raw_exp}, expanding into MLOps on AWS SageMaker and AI agent infrastructure makes you "
                 "an invaluable AI Infrastructure / LLMOps specialist."
+            )
+
+    # 11b. Systems & Embedded Engineering (Systems Engineer, Embedded, Firmware, Hardware, IoT, Device Driver)
+    if any(k in r_lower for k in ['system', 'embedded', 'firmware', 'hardware', 'vlsi', 'iot', 'kernel', 'device driver']):
+        if 'academy' in p_lower or 'software' in p_lower:
+            if 'advanced' in t_lower or 'leadership' in t_lower:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, your low-level hardware and memory control provide an exceptional foundation; "
+                    "this track focuses on High-Level Distributed System Design (HLD), event streaming, database sharding, and architectural scalability "
+                    "commanded in Principal Systems Architect and Staff Engineer roles."
+                )
+            else:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, your C/C++ memory management and low-level computing background "
+                    "give you an intuitive edge in mastering competitive Data Structures, Algorithms, and modern backend microservices."
+                )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your deep OS, Linux, and hardware experience translates directly into "
+                "bare-metal server orchestration, Kubernetes cluster operations, and high-performance cloud platform engineering."
+            )
+        elif 'fde' in p_lower or 'forward deployed' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your systems depth is crucial for deploying low-latency AI models, "
+                "optimizing inference pipelines on custom client hardware, and integrating enterprise agent architectures."
+            )
+        elif 'dsml' in p_lower or 'agentic' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your hardware and mathematical background lets you master "
+                "model quantization, edge AI deployment, and high-throughput machine learning feature pipelines."
+            )
+
+    # 11c. Cybersecurity, InfoSec & Network Security
+    if any(k in r_lower for k in ['cyber security', 'cybersecurity', 'security', 'infosec', 'soc analyst', 'penetration', 'appsec', 'network security']):
+        if 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your threat analysis and security governance background translates directly into "
+                "DevSecOps, automated vulnerability scanning, cloud IAM architecture, and secure Kubernetes deployment."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, adding core data structures, algorithms, and backend API engineering "
+                "qualifies you for high-paying Secure Software Engineering and Application Security (AppSec) architect roles."
+            )
+        elif 'agentic' in p_lower or 'aiml' in p_lower or 'fde' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your security mindset is crucial for securing enterprise LLM pipelines, "
+                "defending against prompt injection, and implementing robust multi-agent security guardrails."
+            )
+
+    # 11d. Database Administrator / DBA
+    if any(k in r_lower for k in ['dba', 'database administrator', 'database engineer', 'oracle dba', 'sql dba']):
+        if 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your deep relational database internals, query optimization, and storage indexing "
+                "give you an unfair advantage in High-Level System Design, distributed database sharding, and backend microservices architecture."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your database reliability and backup/recovery experience maps directly into "
+                "Cloud Database Operations, automated Terraform provisioning, and site reliability engineering."
+            )
+        elif 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, your SQL mastery enables an effortless transition into large-scale "
+                "Data Engineering, PySpark ETL pipelines, and predictive machine learning feature stores."
+            )
+
+    # 11e. Engineering Leadership & Technical Architects
+    if any(k in r_lower for k in ['tech lead', 'technical lead', 'team lead', 'engineering manager', 'director', 'cto', 'architect']):
+        if 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, this track sharpens your architectural authority - mastering distributed systems scalability, "
+                "event-driven microservices (Kafka), database sharding, and high-level design patterns commanded in Staff and Principal Architect roles."
+            )
+        elif 'fde' in p_lower or 'forward deployed' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, pairing your technical leadership and delivery governance with "
+                "client-facing AI deployment positions you as a high-compensation Forward Deployed Engineering leader."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, modernizing your infrastructure strategy with Kubernetes, multi-region cloud resilience, "
+                "and GitOps automation equips you to lead modern cloud engineering organizations."
             )
 
     # 12. Freshers / Students
@@ -891,11 +977,14 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         'data', 'analytics', 'analyst', 'bi', 'machine learning', 'ml', 'ai', 'artificial intelligence',
         'qa', 'sdet', 'testing', 'automation', 'embedded', 'firmware', 'linux kernel', 'architect',
         'systems engineer', 'system engineer', 'systems', 'system', 'hardware', 'vlsi', 'network engineer',
-        'cyber security', 'security engineer', 'dba', 'database administrator', 'solutions engineer', 'fde',
-        'engineering manager', 'tech lead', 'technical lead', 'cto', 'vp of engineering', 'director of engineering'
+        'cyber security', 'cybersecurity', 'security engineer', 'dba', 'database administrator', 'solutions engineer', 'fde',
+        'engineering manager', 'tech lead', 'technical lead', 'team lead', 'lead architect', 'software architect',
+        'solutions architect', 'enterprise architect', 'cto', 'vp of engineering', 'director of engineering',
+        'ui engineer', 'web engineer', 'mobile engineer', 'device driver', 'appsec', 'build and release',
+        'release engineer', 'computer vision', 'nlp', 'applied scientist', 'big data', 'etl'
     ]
     is_tech = (
-        persona in ['SYSTEMS_ENG', 'DEVOPS_CLOUD', 'DATA_ANALYST', 'QA_SDET', 'SWE_BACKEND', 'FRONTEND', 'LEADERSHIP'] or
+        persona in ['SYSTEMS_ENG', 'DEVOPS_CLOUD', 'DATA_ANALYST', 'QA_SDET', 'SWE_BACKEND', 'FRONTEND', 'LEADERSHIP', 'IT_SERVICES'] or
         any(match_token(raw_role.lower(), k) for k in tech_keywords)
     )
     # Exclude non-software engineering domains (unless explicitly classified as tech)
@@ -912,9 +1001,13 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     is_qa = (not is_non_tech) and (persona in ['QA_SDET', 'QA / SDET / Testing'] or any(k in raw_role.lower() for k in ['test', 'qa', 'sdet', 'automation']))
     is_data = (not is_non_tech) and (persona in ['DATA_ANALYST', 'Data & Analytics'] or any(k in raw_role.lower() for k in ['data', 'analyst', 'analytics', 'bi ']))
     is_systems = (not is_non_tech) and (persona in ['SYSTEMS_ENG', 'Systems & Embedded Engineering'] or any(k in raw_role.lower() for k in ['system', 'embedded', 'linux', 'hardware']))
+    is_devops = (not is_non_tech) and (
+        persona in ['DEVOPS_CLOUD', 'DevOps & Cloud Platform'] or
+        any(k in raw_role.lower() for k in ['devops', 'cloud', 'sre', 'platform engineer', 'sysadmin', 'system admin', 'infrastructure', 'kubernetes', 'docker', 'terraform', 'site reliability'])
+    )
     is_senior = (not is_student) and (not is_non_tech) and (
         exp_bracket in ['EXP_5_PLUS', '5-8 years', '8+ years', '5+ yrs (Senior / Lead)'] or 
-        any(k in raw_role.lower() for k in ['lead', 'senior', 'manager', 'leadership', 'director', 'founder', 'architect', 'vp'])
+        (exp_bracket == 'EXP_3_5' and any(k in raw_role.lower() for k in ['lead', 'senior', 'manager', 'leadership', 'director', 'founder', 'architect', 'vp']))
     )
 
     # 3. FIX: Strict FDE Eligibility (Must be tech & 2+ YOE)
@@ -1026,6 +1119,55 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 "Since you enquired about Academy, this track bridges your SQL foundation into large-scale Data Engineering, "
                 "distributed pipelines (Spark/Kafka), and backend API architecture."
             )
+        elif inbound_cat == 'P3_FDE':
+            if is_eligible_for_fde and any(k in raw_role.lower() for k in ['data engineer', 'pipeline', 'senior', 'lead', 'architect']):
+                primary['program'] = 'AI Forward Deployed Engineer (FDE)'
+                primary['catalog_code'] = 'Program 3'
+                primary['track'] = 'Enterprise AI Integration & Production RAG Track'
+                primary['fit_tier'] = 'Best Fit (Data Pipeline & Client AI Integration)'
+                primary['why'] = (
+                    f"As a {raw_role} with {raw_exp}, your data pipeline, PySpark, and database foundations translate directly "
+                    "into Program 3's core mission: client enterprise ingestion pipelines, production RAG architectures, and live AI deployment."
+                )
+                primary['guardrail'] = "Verified data engineering background matches FDE client integration requirements."
+
+                fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                fallback['catalog_code'] = 'Program 2'
+                fallback['track'] = 'Core Analytics & Machine Learning Track'
+                fallback['fit_tier'] = 'Alternative Core Analytics Track'
+                fallback['why'] = "Deep statistical modeling and predictive machine learning alternative."
+            else:
+                primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                primary['catalog_code'] = 'Program 2'
+                primary['track'] = 'Core Analytics & Machine Learning Track'
+                primary['fit_tier'] = 'Best Fit (Domain Native Foundation)'
+                primary['why'] = (
+                    f"While you enquired about FDE, Program 3 requires production deployment depth. "
+                    "Program 2 builds your predictive modeling, advanced analytics, and data pipeline fundamentals first."
+                )
+                primary['guardrail'] = "Catalog Gate: Data professionals routed to DSML core track before client-facing AI deployment."
+
+                fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
+                fallback['catalog_code'] = 'Program 3'
+                fallback['track'] = 'Enterprise AI Integration Track'
+                fallback['fit_tier'] = 'Aspirational Goal (Post-Analytics)'
+                fallback['why'] = "Target program once production data pipelines and machine learning workflows are mastered."
+        elif inbound_cat == 'P5_DEVOPS_CLOUD':
+            primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
+            primary['catalog_code'] = 'Program 5'
+            primary['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track' if is_senior else 'CI/CD Automation & Cloud Infrastructure Track'
+            primary['fit_tier'] = 'Best Fit (DataOps & Cloud Infrastructure)'
+            primary['why'] = (
+                f"Your background as a {raw_role} connects naturally into DataOps and cloud platform engineering - "
+                "managing distributed data pipelines, cloud databases, and Kubernetes clusters."
+            )
+            primary['guardrail'] = "Natural transition from data handling to cloud infrastructure and DataOps."
+
+            fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+            fallback['catalog_code'] = 'Program 2'
+            fallback['track'] = 'Core Analytics & Machine Learning Track'
+            fallback['fit_tier'] = 'Alternative Domain Native Track'
+            fallback['why'] = "Core statistical modeling and machine learning alternative."
         else:
             primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
             primary['catalog_code'] = 'Program 2'
@@ -1187,22 +1329,39 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['track'] = 'Intermediate Track (Core Software Engineering)'
             fallback['fit_tier'] = 'Alternative Product SDE'
             fallback['why'] = "If you want to pivot into application software, Academy teaches modern Java/C++ backend microservices."
-        elif inbound_cat == 'P3_FDE' and is_eligible_for_fde:
-            primary['program'] = 'AI Forward Deployed Engineer (FDE)'
-            primary['catalog_code'] = 'Program 3'
-            primary['track'] = 'Enterprise AI Integration & Client Systems Track'
-            primary['fit_tier'] = 'Best Fit (Enterprise Systems Depth)'
-            primary['why'] = (
-                f"Your low-level systems background fits Program 3's focus on deploying AI solutions live "
-                "inside enterprise environments, PySpark pipelines, and multi-agent enterprise infrastructure."
-            )
-            primary['guardrail'] = "Requires verified systems/backend foundation; passes prerequisite gate."
+        elif inbound_cat == 'P3_FDE':
+            if is_eligible_for_fde:
+                primary['program'] = 'AI Forward Deployed Engineer (FDE)'
+                primary['catalog_code'] = 'Program 3'
+                primary['track'] = 'Enterprise AI Integration & Client Systems Track'
+                primary['fit_tier'] = 'Best Fit (Enterprise Systems Depth)'
+                primary['why'] = (
+                    f"Your low-level systems background fits Program 3's focus on deploying AI solutions live "
+                    "inside enterprise environments, PySpark pipelines, and multi-agent enterprise infrastructure."
+                )
+                primary['guardrail'] = "Requires verified systems/backend foundation; passes prerequisite gate."
 
-            fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
-            fallback['catalog_code'] = 'Program 5'
-            fallback['track'] = 'Cloud Platform Track'
-            fallback['fit_tier'] = 'Alternative Infrastructure Track'
-            fallback['why'] = "Infrastructure alternative focusing on Kubernetes and platform scalability."
+                fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                fallback['catalog_code'] = 'Program 5'
+                fallback['track'] = 'Cloud Platform Track'
+                fallback['fit_tier'] = 'Alternative Infrastructure Track'
+                fallback['why'] = "Infrastructure alternative focusing on Kubernetes and platform scalability."
+            else:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Intermediate Track (Java/C++ with DSA Core)'
+                primary['fit_tier'] = 'Foundational Prerequisite for FDE'
+                primary['why'] = (
+                    f"While you showed high interest in Forward Deployed Engineering, Program 3 requires hands-on "
+                    "production backend systems and deployment experience (2+ years). Scaler Academy bridges your systems foundation into production microservices first."
+                )
+                primary['guardrail'] = "Catalog Gate: FDE requires software deployment depth and 2+ YOE; learner routed to foundational track."
+
+                fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
+                fallback['catalog_code'] = 'Program 3'
+                fallback['track'] = 'Enterprise AI Integration Track'
+                fallback['fit_tier'] = 'Aspirational Goal (Post-Foundations)'
+                fallback['why'] = "Target program once foundational data structures and software engineering are mastered."
         elif inbound_cat == 'P2_DSML':
             primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
             primary['catalog_code'] = 'Program 2'
@@ -1264,7 +1423,113 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['why'] = "Builds upon your OS and infrastructure background without requiring competitive algorithmic design."
 
     # =========================================================================
-    # SCENARIO 5: SOFTWARE ENGINEERS / DEVELOPERS (SDE / SWE)
+    # SCENARIO 5: DEVOPS, CLOUD, SRE & PLATFORM ENGINEERING
+    # =========================================================================
+    elif is_devops:
+        if inbound_cat == 'P1_ACADEMY':
+            primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+            primary['catalog_code'] = 'Program 1'
+            primary['track'] = 'Advanced Track (High-Level System Design & Scalability)' if is_senior else 'Intermediate Track (Data Structures, Algorithms & LLD)'
+            primary['fit_tier'] = 'Best Fit (Software Engineering Pivot)'
+            primary['why'] = (
+                f"As a {raw_role} with {raw_exp}, your infrastructure and deployment expertise is established. "
+                "Scaler Academy adds algorithmic problem-solving and distributed backend microservices architecture to transition into full-stack product development."
+            )
+            primary['guardrail'] = "Calibrated for platform engineers pivoting into core application development."
+
+            fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+            fallback['catalog_code'] = 'Program 5'
+            fallback['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track'
+            fallback['fit_tier'] = 'Alternative Domain Native Track'
+            fallback['why'] = "Advanced cloud orchestration and platform leadership alternative."
+
+        elif inbound_cat == 'P3_FDE':
+            if is_eligible_for_fde:
+                primary['program'] = 'AI Forward Deployed Engineer (FDE)'
+                primary['catalog_code'] = 'Program 3'
+                primary['track'] = 'Enterprise AI Integration & Production RAG Track'
+                primary['fit_tier'] = 'Best Fit (Cloud-Native AI Deployment)'
+                primary['why'] = (
+                    f"Your background as a {raw_role} in Docker, Kubernetes, and cloud infrastructure directly bridges the "
+                    "Enterprise Deployment Gap—containerizing autonomous AI agents and deploying RAG pipelines directly into customer cloud environments."
+                )
+                primary['guardrail'] = "Cloud and infrastructure expertise provides an ideal foundation for client-facing AI deployment."
+
+                fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                fallback['catalog_code'] = 'Program 5'
+                fallback['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track'
+                fallback['fit_tier'] = 'Alternative Cloud Platform Track'
+                fallback['why'] = "Platform engineering and infrastructure automation alternative."
+            else:
+                primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                primary['catalog_code'] = 'Program 5'
+                primary['track'] = 'CI/CD Automation & Cloud Infrastructure Track'
+                primary['fit_tier'] = 'Foundational Cloud Prerequisite for FDE'
+                primary['why'] = (
+                    f"While you enquired about Forward Deployed Engineering, Program 3 requires established "
+                    "production deployment experience (2+ years). Program 5 establishes your core containerization, CI/CD, and cloud infrastructure foundation first."
+                )
+                primary['guardrail'] = "Catalog Gate: FDE requires 2+ YOE in production deployment; learner routed to foundational cloud track."
+
+                fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
+                fallback['catalog_code'] = 'Program 3'
+                fallback['track'] = 'Enterprise AI Integration Track'
+                fallback['fit_tier'] = 'Aspirational Goal (Post-Cloud Foundations)'
+                fallback['why'] = "Target program once production containerization and cloud infrastructure are mastered."
+
+        elif inbound_cat == 'P2_DSML':
+            primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
+            primary['catalog_code'] = 'Program 2'
+            primary['track'] = 'Core Analytics & Machine Learning Track' if not is_student else 'Beginner Track (Data Analytics, Python & Business ML)'
+            primary['fit_tier'] = 'Best Fit (Cloud Infrastructure & MLOps Synergy)'
+            primary['why'] = (
+                f"As a {raw_role}, your cloud and infrastructure background provides an ideal foundation for MLOps, "
+                "data pipeline orchestration, and deploying scalable machine learning models into production."
+            )
+            primary['guardrail'] = "Synergistic pivot from cloud platform engineering to data science and production ML."
+
+            fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+            fallback['catalog_code'] = 'Program 5'
+            fallback['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track' if is_senior else 'CI/CD Automation & Cloud Infrastructure Track'
+            fallback['fit_tier'] = 'Alternative Cloud Platform Track'
+            fallback['why'] = "Core infrastructure and Kubernetes platform engineering path."
+
+        elif inbound_cat == 'P4_AIML_AGENTIC':
+            primary['program'] = 'AI & Machine Learning with Agentic AI'
+            primary['catalog_code'] = 'Program 4'
+            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
+            primary['fit_tier'] = 'Best Fit (LLMOps & AI Infrastructure)'
+            primary['why'] = (
+                f"As a {raw_role}, your cloud background is ideal for LLMOps, model serving (vLLM), "
+                "GPU cluster orchestration, and autonomous agent infrastructure."
+            )
+            primary['guardrail'] = "Synergistic pivot from cloud DevOps to LLMOps and AI infrastructure."
+
+            fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+            fallback['catalog_code'] = 'Program 5'
+            fallback['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track'
+            fallback['fit_tier'] = 'Alternative Cloud Platform Track'
+            fallback['why'] = "Core infrastructure and Kubernetes platform engineering path."
+
+        else:
+            primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
+            primary['catalog_code'] = 'Program 5'
+            primary['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track' if is_senior else 'CI/CD Automation & Cloud Infrastructure Track'
+            primary['fit_tier'] = 'Best Fit (Domain Native)'
+            primary['why'] = (
+                f"Directly accelerates your experience as a {raw_role} into advanced Kubernetes clustering, "
+                "Terraform GitOps, multi-region cloud resilience, and AI platform engineering."
+            )
+            primary['guardrail'] = "Domain native fit; highest completion rate and lowest refund rate in platform engineering."
+
+            fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
+            fallback['catalog_code'] = 'Program 1'
+            fallback['track'] = 'Advanced Track (High-Level System Design & Scalability)' if is_senior else 'Intermediate Track (Data Structures, Algorithms & LLD)'
+            fallback['fit_tier'] = 'Alternative Backend Software Path'
+            fallback['why'] = "Alternative path if you want to broaden your profile into core software engineering."
+
+    # =========================================================================
+    # SCENARIO 6: SOFTWARE ENGINEERS / DEVELOPERS (SDE / SWE)
     # =========================================================================
     else:
         if inbound_cat == 'P3_FDE':

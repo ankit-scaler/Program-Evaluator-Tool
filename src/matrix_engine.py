@@ -50,17 +50,20 @@ CANONICAL_PERSONA_NAMES = {
 
 def match_token(text, token):
     """
-    Matches a token safely inside text.
-    For short acronyms (<= 3 chars, e.g. swe, sde, qa, ml, ai, ca, hr, bi, ui, ux, pr)
-    or collision-prone terms ('defense', 'defence', 'mechanic', 'guard', 'lead', 'cleaner', 'sweeper', 'maid', 'cook'),
-    enforces strict regex word boundaries (\b) to prevent false substring collisions
-    (e.g., 'sweeper' matching 'swe', or 'waiter' matching 'ai').
+    Matches a token safely inside text using lookarounds to ensure strict word/token boundaries
+    across both letters and punctuation (e.g. c++, .net).
+    Prevents false substring collisions such as:
+    - 'automobile engineer' matching 'mobile engineer'
+    - 'sweeper' matching 'swe'
+    - 'waiter' matching 'ai'
     """
-    t = str(token).lower()
+    t = str(token).lower().strip()
     s = str(text).lower()
-    if len(t) <= 3 or t in ['defense', 'defence', 'mechanic', 'guard', 'lead', 'cleaner', 'sweeper', 'maid', 'cook']:
-        return bool(re.search(r'\b' + re.escape(t) + r'\b', s))
-    return t in s
+    if not t or not s:
+        return False
+    pattern = r'(?<![a-zA-Z0-9])' + re.escape(t) + r'(?![a-zA-Z0-9])'
+    return bool(re.search(pattern, s))
+
 
 def match_any(text, tokens):
     return any(match_token(text, t) for t in tokens)
@@ -138,9 +141,10 @@ def classify_world_domain(role_str):
     # 8. Transportation, Logistics & Aviation
     if match_any(s, [
         'pilot', 'commercial pilot', 'airline pilot', 'mariner', 'sailor', 'merchant navy', 'ship captain',
-        'loco pilot', 'train driver', 'truck driver', 'chauffeur', 'driver', 'delivery partner', 'delivery boy',
-        'delivery agent', 'courier', 'rider', 'warehouse', 'forklift', 'cargo', 'stevedore', 'logistics', 'supply chain'
-    ]):
+        'loco pilot', 'train driver', 'truck driver', 'chauffeur', 'cab driver', 'taxi driver', 'car driver',
+        'bus driver', 'delivery partner', 'delivery boy', 'delivery agent', 'courier', 'rider', 'warehouse',
+        'forklift', 'cargo', 'stevedore', 'logistics', 'supply chain'
+    ]) or (match_token(s, 'driver') and 'device' not in s and 'software' not in s and 'hardware' not in s):
         return 'Transportation & Logistics'
 
     # 9. Commerce, Category & Merchandising
@@ -218,25 +222,55 @@ def classify_world_domain(role_str):
         return 'Early Career & Career Transitions'
 
     # 19. Technical Engineering Domains
-    if match_any(s, ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance', 'automation engineer']):
+    if match_any(s, [
+        'test', 'tester', 'testing', 'qa', 'sdet', 'automation tester', 'manual tester', 'manual test',
+        'quality analyst', 'quality assurance', 'automation engineer', 'test engineer', 'qa engineer'
+    ]):
         return 'Quality Assurance & SDET'
-    elif match_any(s, ['data scientist', 'data analyst', 'data engineer', 'analytics', 'bi', 'business intelligence', 'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'deep learning']):
+    elif match_any(s, [
+        'data scientist', 'data analyst', 'data engineer', 'analytics', 'bi', 'business intelligence',
+        'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'deep learning',
+        'computer vision', 'nlp', 'applied scientist', 'big data engineer', 'etl developer', 'bi developer',
+        'bi engineer', 'analytics engineer'
+    ]):
         return 'Data Science & Analytics'
-    elif match_any(s, ['devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer', 'terraform', 'sysadmin', 'system administrator', 'security engineer', 'cyber security', 'infosec', 'network engineer', 'network admin']):
+    elif match_any(s, [
+        'devops', 'sre', 'site reliability', 'cloud', 'infrastructure', 'docker', 'kubernetes',
+        'platform engineer', 'terraform', 'sysadmin', 'system administrator', 'linux administrator', 'linux admin',
+        'security engineer', 'cyber security', 'cybersecurity', 'infosec', 'soc analyst', 'penetration test',
+        'appsec', 'network engineer', 'network admin', 'network administrator', 'network architect',
+        'azure administrator', 'aws engineer', 'build and release', 'release engineer'
+    ]):
         return 'DevOps & Cloud Platform'
-    elif match_any(s, ['systems engineer', 'system engineer', 'systems engineering', 'systems architect', 'embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver', 'soc design', 'asic', 'fpga', 'operating systems']):
+    elif match_any(s, [
+        'systems engineer', 'system engineer', 'systems engineering', 'systems architect', 'embedded',
+        'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver', 'soc design', 'asic',
+        'fpga', 'operating systems', 'embedded developer', 'firmware developer', 'kernel developer'
+    ]):
         return 'Systems & Embedded Engineering'
-    elif match_any(s, ['frontend', 'front-end', 'ui dev', 'react', 'angular', 'web developer', 'vue']):
+    elif match_any(s, [
+        'frontend', 'front-end', 'ui dev', 'ui engineer', 'web engineer', 'react', 'angular',
+        'web developer', 'vue', 'frontend engineer', 'frontend developer'
+    ]):
         return 'Frontend Engineering'
     elif match_any(s, [
-        'engineering manager', 'tech lead', 'technical lead', 'software manager', 'dev manager',
-        'technical architect', 'solutions architect', 'enterprise architect', 'cto', 'vp of engineering',
-        'director of engineering', 'chief technology officer'
+        'engineering manager', 'tech lead', 'technical lead', 'team lead', 'software manager', 'dev manager',
+        'technical architect', 'solutions architect', 'enterprise architect', 'lead architect',
+        'software architect', 'cloud architect', 'systems architect', 'data architect', 'cto',
+        'vp of engineering', 'director of engineering', 'chief technology officer'
     ]) or (match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and match_any(s, ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])):
         return 'Engineering Leadership'
-    elif match_any(s, ['it service', 'general it', 'app support', 'desktop support', 'production support', 'database administrator', 'dba']):
+    elif match_any(s, [
+        'it service', 'general it', 'app support', 'desktop support', 'production support',
+        'database administrator', 'dba', 'database engineer', 'oracle dba', 'sql dba', 'postgresql dba'
+    ]):
         return 'IT Services & Maintenance'
-    elif match_any(s, ['software', 'developer', 'programmer', 'sde', 'swe', 'backend', 'back-end', 'fullstack', 'full-stack', 'java dev', 'python dev', 'golang', 'node', 'django', 'spring boot', 'ios', 'android', 'mobile dev', 'game dev', 'blockchain']):
+    elif match_any(s, [
+        'software', 'developer', 'programmer', 'sde', 'swe', 'backend', 'back-end', 'fullstack',
+        'full-stack', 'full stack', 'application engineer', 'application developer', 'java dev',
+        'python dev', 'golang', 'node', 'django', 'spring boot', 'ios', 'android', 'mobile dev',
+        'mobile engineer', 'game dev', 'blockchain', 'ruby', 'rust', 'scala', 'php'
+    ]):
         return 'Software Engineering (Backend/FullStack)'
 
     return 'Non-Tech / General Career Background'
@@ -327,10 +361,14 @@ def canonical_persona_key(persona_str):
         # Protect dual-context roles like "Software Engineer at Hospital" or "Data Analyst in Healthcare"
         has_explicit_tech = any(match_token(s, t) for t in [
             'software engineer', 'software developer', 'backend developer', 'frontend developer',
-            'full stack', 'fullstack', 'data analyst', 'data scientist', 'devops engineer',
-            'cloud engineer', 'qa engineer', 'sdet', 'systems engineer', 'programmer', 'sde', 'swe',
-            'ml engineer', 'machine learning', 'ai engineer', 'cyber security', 'security engineer',
-            'security analyst', 'network engineer', 'cloud architect', 'devops', 'sre'
+            'full stack', 'fullstack', 'full-stack', 'application engineer', 'application developer',
+            'data analyst', 'data scientist', 'data engineer', 'devops engineer',
+            'cloud engineer', 'qa engineer', 'sdet', 'systems engineer', 'system engineer',
+            'programmer', 'sde', 'swe', 'ml engineer', 'machine learning', 'ai engineer',
+            'cyber security', 'cybersecurity', 'security engineer', 'security analyst',
+            'network engineer', 'cloud architect', 'devops', 'sre', 'embedded', 'firmware',
+            'device driver', 'database administrator', 'dba', 'ui engineer', 'web engineer',
+            'mobile engineer', 'solutions architect', 'software architect', 'enterprise architect'
         ])
         if not has_explicit_tech:
             return 'NON_TECH'
@@ -339,23 +377,29 @@ def canonical_persona_key(persona_str):
     # 2. TECHNICAL ROLE CLASSIFICATION
     # --------------------------------------------------------------------------
     # QA / SDET / Testing
-    if any(match_token(s, k) for k in ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance']):
+    if any(match_token(s, k) for k in [
+        'test', 'tester', 'testing', 'qa', 'sdet', 'automation tester', 'manual tester', 'manual test',
+        'quality analyst', 'quality assurance', 'test engineer', 'qa engineer'
+    ]):
         return 'QA_SDET'
 
     # Data Science & Machine Learning / Analytics
     if any(match_token(s, k) for k in [
         'data scientist', 'data analyst', 'data engineer', 'analytics', 'bi', 'business intelligence',
         'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'nlp',
-        'computer vision', 'deep learning', 'applied scientist', 'analytics engineer'
+        'computer vision', 'deep learning', 'applied scientist', 'analytics engineer', 'big data engineer',
+        'etl developer', 'bi developer', 'bi engineer', 'database engineer'
     ]):
         return 'DATA_ANALYST'
 
     # DevOps, Cloud, Security & Infrastructure Platform
     if any(match_token(s, k) for k in [
         'devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer',
-        'terraform', 'sysadmin', 'system administrator', 'security', 'cyber security', 'infosec',
-        'soc analyst', 'penetration test', 'network engineer', 'cloud architect',
-        'site reliability', 'it infrastructure'
+        'terraform', 'sysadmin', 'system administrator', 'security', 'cyber security', 'cybersecurity',
+        'infosec', 'soc analyst', 'penetration test', 'penetration tester', 'pen tester', 'network engineer',
+        'network admin', 'network administrator', 'network architect', 'cloud architect', 'site reliability',
+        'it infrastructure', 'linux administrator', 'linux admin', 'azure administrator',
+        'aws engineer', 'build and release', 'release engineer', 'appsec'
     ]):
         return 'DEVOPS_CLOUD'
 
@@ -363,31 +407,42 @@ def canonical_persona_key(persona_str):
     if any(match_token(s, k) for k in [
         'systems engineer', 'system engineer', 'systems engineering', 'systems architect',
         'embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver',
-        'soc design', 'asic', 'fpga', 'operating systems'
+        'soc design', 'asic', 'fpga', 'operating systems', 'embedded developer', 'firmware developer',
+        'kernel developer', 'driver developer'
     ]):
         return 'SYSTEMS_ENG'
 
     # Technical Engineering Leadership
     if any(match_token(s, k) for k in [
-        'engineering manager', 'tech lead', 'technical lead', 'software manager', 'development manager',
-        'technical architect', 'solutions architect', 'enterprise architect', 'cto', 'vp of engineering',
-        'director of engineering', 'chief technology officer'
+        'engineering manager', 'tech lead', 'technical lead', 'team lead', 'software manager',
+        'development manager', 'technical architect', 'solutions architect', 'enterprise architect',
+        'lead architect', 'software architect', 'systems architect', 'data architect', 'cto',
+        'vp of engineering', 'director of engineering', 'chief technology officer'
     ]):
         return 'LEADERSHIP'
 
     # Frontend Engineering
-    if any(match_token(s, k) for k in ['frontend', 'front-end', 'ui/ux', 'ui dev', 'react', 'angular', 'web developer']):
+    if any(match_token(s, k) for k in [
+        'frontend', 'front-end', 'ui/ux', 'ui dev', 'ui engineer', 'web engineer', 'react', 'angular',
+        'web developer', 'frontend engineer', 'frontend developer'
+    ]):
         return 'FRONTEND'
 
     # General IT Services & Maintenance
-    if any(match_token(s, k) for k in ['maintenance', 'support', 'it service', 'general it', 'service based', 'production support', 'app support', 'desktop support', 'service desk', 'helpdesk']):
+    if any(match_token(s, k) for k in [
+        'maintenance', 'support', 'it service', 'general it', 'service based', 'production support',
+        'app support', 'desktop support', 'service desk', 'helpdesk', 'database administrator', 'dba',
+        'oracle dba', 'sql dba', 'postgresql dba'
+    ]):
         return 'IT_SERVICES'
 
     # Core Software Engineering (Backend / Full Stack)
     if any(match_token(s, k) for k in [
         'software', 'developer', 'programmer', 'coding', 'coder', 'sde', 'swe',
-        'backend', 'back-end', 'fullstack', 'full-stack', 'java dev', 'python dev',
-        'c++', 'c#', '.net', 'golang', 'node', 'django', 'spring boot', 'android', 'ios'
+        'backend', 'back-end', 'fullstack', 'full-stack', 'full stack', 'application engineer',
+        'application developer', 'java dev', 'python dev', 'c++', 'c#', '.net', 'golang',
+        'node', 'django', 'spring boot', 'android', 'ios', 'mobile engineer', 'mobile dev',
+        'flutter', 'react native', 'ruby', 'rust', 'scala', 'php'
     ]):
         return 'SWE_BACKEND'
 

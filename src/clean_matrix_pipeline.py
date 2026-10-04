@@ -38,8 +38,9 @@ def parse_work_experience(val):
     match = re.search(r'[-+]?\d*\.\d+|\d+', s)
     if match:
         num = float(match.group())
-        # If number > 15, it's expressed in months
-        if num > 15:
+        has_month = any(m in s for m in ['month', 'mo', 'mth'])
+        has_year = any(y in s for y in ['year', 'yr'])
+        if (has_month and not has_year) or (num > 36 and not has_year):
             years = num / 12.0
         else:
             years = num

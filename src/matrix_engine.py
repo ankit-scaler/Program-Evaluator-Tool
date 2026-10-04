@@ -107,13 +107,14 @@ def classify_world_domain(role_str):
     ]):
         return 'Transportation & Logistics'
 
-    # 7. Retail, Commerce & Frontline Service
+    # 7. Retail, Commerce, Category & Merchandising
     if any(k in s for k in [
-        'cashier', 'store associate', 'retail', 'shopkeeper', 'counter sales', 'merchandiser',
+        'cashier', 'store associate', 'retail', 'shopkeeper', 'counter sales', 'merchandiser', 'merchandise',
+        'category manager', 'category lead', 'category head', 'category', 'catalog', 'pricing', 'e-commerce', 'ecommerce',
         'customer service', 'customer support', 'customer care', 'call center', 'bpo', 'kpo',
         'telecaller', 'tele-caller', 'telemarketing', 'receptionist'
     ]):
-        return 'Retail & Customer Services'
+        return 'Commerce, Category & Retail'
 
     # 8. HR, Talent & People Operations
     if any(k in s for k in [
@@ -184,12 +185,18 @@ def classify_world_domain(role_str):
         return 'Systems & Embedded Engineering'
     elif any(k in s for k in ['frontend', 'front-end', 'ui/ux', 'ui dev', 'react', 'angular']):
         return 'Frontend Engineering'
-    elif any(k in s for k in ['management', 'manager', 'leadership', 'director', 'founder', 'vp', 'cto', 'architect']):
+    elif any(k in s for k in [
+        'engineering manager', 'tech lead', 'technical lead', 'software manager', 'dev manager',
+        'technical architect', 'solutions architect', 'enterprise architect', 'cto', 'vp of engineering',
+        'director of engineering', 'chief technology officer'
+    ]) or (any(k in s for k in ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and any(k in s for k in ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])):
         return 'Engineering Leadership'
     elif any(k in s for k in ['support', 'service desk', 'helpdesk', 'it service', 'production support']):
         return 'IT Services & Maintenance'
     elif any(k in s for k in ['software', 'developer', 'programmer', 'sde', 'swe', 'backend', 'fullstack']):
         return 'Software Engineering (Backend/FullStack)'
+    elif any(k in s for k in ['operations manager', 'general manager', 'store manager', 'branch manager', 'restaurant manager', 'hotel manager', 'event manager', 'business manager', 'project manager', 'program manager', 'pmo', 'manager', 'management', 'leadership']):
+        return 'Business Operations & Management'
 
     return 'Non-Tech / General Career Background'
 
@@ -245,8 +252,9 @@ def canonical_persona_key(persona_str):
         'courier', 'rider', 'pilot', 'loco pilot', 'train driver', 'mariner', 'sailor', 'warehouse',
         'forklift', 'cargo', 'stevedore', 'logistics', 'supply chain',
 
-        # Retail & Customer Care
-        'cashier', 'store associate', 'retail', 'shopkeeper', 'counter sales', 'merchandiser',
+        # Retail, Commerce, Category & Merchandising
+        'cashier', 'store associate', 'retail', 'shopkeeper', 'counter sales', 'merchandiser', 'merchandise',
+        'category manager', 'category lead', 'category head', 'category', 'catalog', 'pricing', 'e-commerce', 'ecommerce',
         'customer service', 'customer support', 'customer care', 'call center', 'bpo', 'kpo',
         'telecaller', 'tele-caller', 'telemarketing', 'front desk', 'receptionist',
 

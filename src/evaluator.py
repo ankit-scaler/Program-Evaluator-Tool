@@ -283,6 +283,29 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
                 "gives you an intuitive grasp of algorithmic processes and backend system design."
             )
 
+    # 3b. Category Management / Merchandising / E-Commerce / Pricing
+    if any(k in r_lower for k in ['category', 'merchandis', 'catalog', 'pricing', 'e-commerce', 'ecommerce', 'retail manager', 'store manager']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), you already work with business KPIs, supply-demand metrics, pricing, and vendor data daily. "
+                "This program translates that commercial intuition into advanced SQL pipelines, product analytics dashboards, and predictive machine learning models "
+                "to accelerate you into Senior Product Analyst, Analytics Manager, and Business Data Science roles."
+            )
+        elif 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this program pairs your commercial problem-solving and business workflow acumen with "
+                "foundational programming syntax, algorithmic logic building, and computational thinking from ground zero."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this program provides an accessible technical pivot into cloud infrastructure, "
+                "Linux automation, and deployment pipelines without requiring abstract software design."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this track builds the technical foundation to bridge your commercial management experience into tech."
+            )
+
     # 4. Sales / Marketing / Growth / Business Development
     if any(k in r_lower for k in ['sales', 'marketing', 'bde', 'bda', 'growth', 'business dev', 'account manager']):
         if 'dsml' in p_lower or 'data' in p_lower:

@@ -498,10 +498,22 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
     # 8. QA / SDET / Testing
     if any(k in r_lower for k in ['qa', 'test', 'sdet', 'quality']):
         if 'academy' in p_lower or 'software' in p_lower:
+            if 'advanced' in t_lower or 'leadership' in t_lower:
+                return (
+                    f"As a senior <b>{raw_role}</b> with {raw_exp}, you have mastered quality lifecycles and enterprise systems; "
+                    "this track focuses on High-Level Distributed System Design (HLD), event streaming, and architectural scalability "
+                    "commanded in Principal Architect and Engineering Leadership roles."
+                )
+            else:
+                return (
+                    f"As a <b>{raw_role}</b> with {raw_exp}, you already understand software lifecycles and code structures; "
+                    "this track bridges the exact gap in algorithmic optimization, advanced DSA, and low-level object-oriented design (LLD) "
+                    "to transition into core Backend SDE roles."
+                )
+        elif 'fde' in p_lower or 'forward deployed' in p_lower:
             return (
-                f"As a <b>{raw_role}</b> with {raw_exp}, you already understand software lifecycles and code structures; "
-                "this track bridges the exact gap in algorithmic optimization, advanced DSA, and low-level object-oriented design (LLD) "
-                "to transition into core Backend SDE roles."
+                f"As a <b>{raw_role}</b> with {raw_exp}, your deep enterprise systems and quality assurance background translates directly "
+                "into deploying reliable, enterprise-grade AI applications, agent evaluation frameworks, and client systems integration."
             )
         elif 'devops' in p_lower or 'cloud' in p_lower:
             return (
@@ -1059,6 +1071,44 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['track'] = 'Intermediate Track (Backend SDE Transition)'
             fallback['fit_tier'] = 'Alternative Development Track'
             fallback['why'] = "Alternative path if you decide to pivot to core backend software engineering."
+        elif inbound_cat == 'P3_FDE':
+            if is_senior:
+                primary['program'] = 'AI Forward Deployed Engineer (FDE)'
+                primary['catalog_code'] = 'Program 3'
+                primary['track'] = 'Enterprise AI Integration & Production RAG Track'
+                primary['fit_tier'] = 'Best Fit (Enterprise AI Leadership & Architecture)'
+                primary['why'] = (
+                    f"As a {raw_role} with {raw_exp} of enterprise experience, your deep expertise in end-to-end software reliability, "
+                    "compliance governance, and client workflows translates directly into Program 3—deploying production-grade AI solutions, "
+                    "agent verification frameworks, and enterprise RAG pipelines directly into customer environments."
+                )
+                primary['guardrail'] = "Catalog Rule 6: Senior enterprise experience qualifies for enterprise AI integration."
+
+                fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
+                fallback['catalog_code'] = 'Program 1'
+                fallback['track'] = 'Advanced Track (High-Level System Design & Scalability)'
+                fallback['fit_tier'] = 'Alternative Core Engineering Leadership'
+                fallback['why'] = (
+                    "If you prefer solidifying enterprise backend architecture before client-facing AI deployment, "
+                    "Academy's Advanced Track focuses on microservice event streaming (Kafka), database sharding, and system scalability."
+                )
+            else:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Intermediate Track (Backend SDE Transition)'
+                primary['fit_tier'] = 'Foundational Prerequisite for FDE'
+                primary['why'] = (
+                    f"While you enquired about Forward Deployed Engineering, Program 3 requires hands-on backend development depth. "
+                    "Scaler Academy's Intermediate Track builds your core data structures and object-oriented design first."
+                )
+                primary['guardrail'] = "FDE Prerequisite Gate: QA professionals require backend engineering foundation first."
+
+                fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
+                fallback['catalog_code'] = 'Program 3'
+                fallback['track'] = 'Enterprise AI Integration Track'
+                fallback['fit_tier'] = 'Aspirational Goal (Post-Foundations)'
+                fallback['why'] = "Target program once foundational software engineering and data structures are mastered."
+
         elif inbound_cat == 'P4_AIML_AGENTIC':
             primary['program'] = 'AI & Machine Learning with Agentic AI'
             primary['catalog_code'] = 'Program 4'
@@ -1076,21 +1126,39 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['fit_tier'] = 'Alternative Infrastructure Track'
             fallback['why'] = "Automates testing and AI agent deployment through modern cloud pipelines."
         else:
-            primary['program'] = 'Software & AI Engineering (Scaler Academy)'
-            primary['catalog_code'] = 'Program 1'
-            primary['track'] = 'Intermediate Track (Backend SDE Transition)'
-            primary['fit_tier'] = 'Best Fit (Career Upgrade)'
-            primary['why'] = (
-                f"Transitioning from {raw_role} to a product company SDE requires strengthening Data Structures "
-                "and Low-Level Design (LLD). Intermediate Track skips syntax basics to focus on interview-ready engineering."
-            )
-            primary['guardrail'] = "Calibrated for SDET/QA transition; provides systematic problem-solving."
+            if is_senior:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Advanced Track (High-Level System Design & Scalability)'
+                primary['fit_tier'] = 'Best Fit (Engineering Leadership & System Architecture)'
+                primary['why'] = (
+                    f"With {raw_exp} as a {raw_role}, you have mastered software delivery and quality governance. "
+                    "This Advanced Track bypasses entry-level coding drills to focus 100% on High-Level System Design (HLD): "
+                    "distributed caching, database sharding, Kafka event streaming, and architectural scalability."
+                )
+                primary['guardrail'] = "Calibrated for senior technical leaders (5+ to 20+ YOE); skips junior DSA syntax."
 
-            fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
-            fallback['catalog_code'] = 'Program 5'
-            fallback['track'] = 'Cloud Platform & Infrastructure Track'
-            fallback['fit_tier'] = 'Alternative Infrastructure Path'
-            fallback['why'] = "A fast-track alternative that leverages your testing automation into cloud engineering."
+                fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                fallback['catalog_code'] = 'Program 5'
+                fallback['track'] = 'Cloud Platform & Infrastructure Track'
+                fallback['fit_tier'] = 'Alternative Cloud Platform Leadership'
+                fallback['why'] = "A strategic alternative leveraging your quality and infrastructure background into enterprise cloud architecture."
+            else:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Intermediate Track (Backend SDE Transition)'
+                primary['fit_tier'] = 'Best Fit (Career Upgrade)'
+                primary['why'] = (
+                    f"Transitioning from {raw_role} to a product company SDE requires strengthening Data Structures "
+                    "and Low-Level Design (LLD). Intermediate Track skips syntax basics to focus on interview-ready engineering."
+                )
+                primary['guardrail'] = "Calibrated for SDET/QA transition; provides systematic problem-solving."
+
+                fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                fallback['catalog_code'] = 'Program 5'
+                fallback['track'] = 'Cloud Platform & Infrastructure Track'
+                fallback['fit_tier'] = 'Alternative Infrastructure Path'
+                fallback['why'] = "A fast-track alternative that leverages your testing automation into cloud engineering."
 
     # =========================================================================
     # SCENARIO 4: SYSTEMS & EMBEDDED / HARDWARE / IT INFRASTRUCTURE
@@ -1161,15 +1229,26 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['fit_tier'] = 'Alternative Systems Infrastructure Path'
             fallback['why'] = "Alternative path focusing on infrastructure scaling and platform resilience."
         else:
-            primary['program'] = 'Software & AI Engineering (Scaler Academy)'
-            primary['catalog_code'] = 'Program 1'
-            primary['track'] = 'Intermediate Track (Java/C++ with DSA Core)'
-            primary['fit_tier'] = 'Best Fit (Product Company Bridge)'
-            primary['why'] = (
-                f"Engineers working as {raw_role} excel in Academy's Intermediate Track, "
-                "which bridges the gap between enterprise maintenance and Tier-1 product algorithmic standards."
-            )
-            primary['guardrail'] = "Calibrated for 2-5 YOE service engineers."
+            if is_senior:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Advanced Track (High-Level System Design & Scalability)'
+                primary['fit_tier'] = 'Best Fit (Senior Systems Architecture)'
+                primary['why'] = (
+                    f"With {raw_exp} in systems engineering as a {raw_role}, you already have deep OS and hardware fundamentals. "
+                    "The Advanced Track elevates this into large-scale distributed architectures, database sharding, and high-level design."
+                )
+                primary['guardrail'] = "Senior track calibrated for experienced systems architects."
+            else:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Intermediate Track (Java/C++ with DSA Core)'
+                primary['fit_tier'] = 'Best Fit (Product Company Bridge)'
+                primary['why'] = (
+                    f"Engineers working as {raw_role} excel in Academy's Intermediate Track, "
+                    "which bridges the gap between enterprise maintenance and Tier-1 product algorithmic standards."
+                )
+                primary['guardrail'] = "Calibrated for 2-5 YOE service engineers."
 
             fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
             fallback['catalog_code'] = 'Program 5'

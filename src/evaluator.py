@@ -1073,24 +1073,26 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['why'] = "Alternative path if you decide to pivot to core backend software engineering."
         elif inbound_cat == 'P3_FDE':
             if is_senior:
-                primary['program'] = 'AI Forward Deployed Engineer (FDE)'
-                primary['catalog_code'] = 'Program 3'
-                primary['track'] = 'Enterprise AI Integration & Production RAG Track'
-                primary['fit_tier'] = 'Best Fit (Enterprise AI Leadership & Architecture)'
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Advanced Track (High-Level System Design & Scalability)'
+                primary['fit_tier'] = 'Prerequisite Architecture Foundation for FDE'
                 primary['why'] = (
-                    f"As a {raw_role} with {raw_exp} of enterprise experience, your deep expertise in end-to-end software reliability, "
-                    "compliance governance, and client workflows translates directly into Program 3—deploying production-grade AI solutions, "
-                    "agent verification frameworks, and enterprise RAG pipelines directly into customer environments."
+                    f"While you enquired about Forward Deployed Engineering, Program 3 strictly mandates hands-on production backend systems "
+                    f"and API deployment capability. With {raw_exp} of enterprise QA experience, jumping straight into client AI code deployment "
+                    "without modern distributed systems depth risks severe pacing friction. Scaler Academy's Advanced Track equips you with "
+                    "High-Level Distributed System Design (Kafka, database sharding, microservices architecture) first, establishing the necessary "
+                    "systems engineering foundation before forward-deploying AI into enterprise client environments."
                 )
-                primary['guardrail'] = "Catalog Rule 6: Senior enterprise experience qualifies for enterprise AI integration."
+                primary['guardrail'] = "FDE Catalog Prerequisite: QA professionals require distributed systems & backend architecture foundations before client AI deployment."
 
-                fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
-                fallback['catalog_code'] = 'Program 1'
-                fallback['track'] = 'Advanced Track (High-Level System Design & Scalability)'
-                fallback['fit_tier'] = 'Alternative Core Engineering Leadership'
+                fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
+                fallback['catalog_code'] = 'Program 3'
+                fallback['track'] = 'Enterprise AI Integration & Production RAG Track'
+                fallback['fit_tier'] = 'Aspirational Goal (Post-System Design)'
                 fallback['why'] = (
-                    "If you prefer solidifying enterprise backend architecture before client-facing AI deployment, "
-                    "Academy's Advanced Track focuses on microservice event streaming (Kafka), database sharding, and system scalability."
+                    f"Target program once distributed systems architecture and backend foundations are mastered, "
+                    f"leveraging your {raw_exp} of enterprise quality governance into live enterprise AI deployment."
                 )
             else:
                 primary['program'] = 'Software & AI Engineering (Scaler Academy)'

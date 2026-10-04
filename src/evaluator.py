@@ -978,17 +978,21 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         'qa', 'sdet', 'testing', 'automation', 'embedded', 'firmware', 'linux kernel', 'architect',
         'systems engineer', 'system engineer', 'systems', 'system', 'hardware', 'vlsi', 'network engineer',
         'cyber security', 'cybersecurity', 'security engineer', 'dba', 'database administrator', 'solutions engineer', 'fde',
-        'engineering manager', 'tech lead', 'technical lead', 'team lead', 'lead architect', 'software architect',
+        'engineering manager', 'tech lead', 'technical lead', 'lead architect', 'software architect',
         'solutions architect', 'enterprise architect', 'cto', 'vp of engineering', 'director of engineering',
         'ui engineer', 'web engineer', 'mobile engineer', 'device driver', 'appsec', 'build and release',
         'release engineer', 'computer vision', 'nlp', 'applied scientist', 'big data', 'etl'
     ]
     is_tech = (
         persona in ['SYSTEMS_ENG', 'DEVOPS_CLOUD', 'DATA_ANALYST', 'QA_SDET', 'SWE_BACKEND', 'FRONTEND', 'LEADERSHIP', 'IT_SERVICES'] or
-        any(match_token(raw_role.lower(), k) for k in tech_keywords)
+        any(match_token(raw_role.lower(), k) for k in tech_keywords) or
+        (match_token(raw_role.lower(), 'team lead') and not any(op in raw_role.lower() for op in [
+            'operation', 'bpo', 'kpo', 'support', 'sales', 'marketing', 'hr', 'talent',
+            'retail', 'logistics', 'finance', 'non-tech', 'call center', 'process'
+        ]))
     )
     # Exclude non-software engineering domains (unless explicitly classified as tech)
-    if persona == 'NON_TECH' and any(k in raw_role.lower() for k in ['mechanical', 'civil', 'chemical', 'biotech', 'aerospace', 'automobile']):
+    if persona == 'NON_TECH':
         is_tech = False
 
     is_non_tech = (
@@ -1020,23 +1024,27 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     # SCENARIO 1: NON-TECH / ZERO-CODE (Strict Catalog Gate)
     # =========================================================================
     if is_non_tech:
-        # Check if the candidate's domain is Commercial / Business Management / People / Finance
+        # Check if the candidate's domain is Commercial / Business Management / People / Finance / Product Management
+        is_product_manager = any(k in raw_role.lower() for k in ['product manager', 'associate product manager', 'apm', 'tpm', 'product owner', 'scrum master'])
         is_commercial_business = (
-            any(d in role_domain for d in ['Marketing', 'Commerce', 'Finance', 'HR & People', 'Sales', 'Business Operations']) or
+            any(d in role_domain for d in ['Marketing', 'Commerce', 'Finance', 'HR & People', 'Sales', 'Business Operations', 'Product Management & Design']) or
+            is_product_manager or
             any(k in raw_role.lower() for k in [
                 'marketing', 'brand', 'growth', 'category', 'merchandis', 'pricing', 'e-commerce', 'ecommerce',
                 'finance', 'account', 'ca ', 'cpa', 'auditor', 'banking', 'bank officer', 'loan officer',
                 'hr', 'human resource', 'people ops', 'recruiter', 'talent', 'sales', 'bde', 'bda',
-                'business development', 'operations manager', 'supply chain', 'logistics'
+                'business development', 'operations manager', 'supply chain', 'logistics',
+                'team lead - operations', 'team lead operations', 'operations team lead', 'operations lead',
+                'operations supervisor', 'process associate', 'process lead', 'project coordinator'
             ])
         )
 
-        # Case 1: Inbound enquiry is directly DSML (or candidate is in commercial/business domain and enquired about advanced infrastructure/AI)
+        # Case 1: Inbound enquiry is directly DSML (or candidate is in commercial/business/product domain and enquired about advanced infrastructure/AI)
         if inbound_cat == 'P2_DSML' or (is_commercial_business and inbound_cat in ['P5_DEVOPS_CLOUD', 'P3_FDE', 'P4_AIML_AGENTIC']):
             primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
             primary['catalog_code'] = 'Program 2'
             primary['track'] = 'Beginner Track (Data Analytics, Python & Business ML)'
-            primary['fit_tier'] = 'Best Fit (Applied Business & Growth Analytics)'
+            primary['fit_tier'] = 'Best Fit (Applied AI & Product Analytics)' if is_product_manager else 'Best Fit (Applied Business & Growth Analytics)'
             
             if inbound_cat == 'P5_DEVOPS_CLOUD':
                 primary['why'] = (
@@ -1055,12 +1063,21 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 )
                 primary['guardrail'] = "Catalog Gate: Redirected from FDE client systems to DSML beginner track."
             elif inbound_cat == 'P4_AIML_AGENTIC':
-                primary['why'] = (
-                    f"While you enquired about Frontier Agentic AI, building production autonomous agents mandates coding foundations. "
-                    f"As a {raw_role} with {raw_exp}, Program 2 provides a high-retention onramp starting with data analytics, "
-                    "applied machine learning, and business intelligence."
-                )
-                primary['guardrail'] = "Catalog Gate: Foundation in data & ML required before autonomous agent design."
+                if is_product_manager:
+                    primary['why'] = (
+                        f"While you enquired about Agentic AI, building production autonomous agents mandates data querying and predictive modeling foundations. "
+                        f"As a {raw_role} with {raw_exp}, Program 2 directly empowers your product leadership with SQL data extraction, "
+                        "product experimentation metrics, and applied machine learning models to design, evaluate, and productize AI systems without "
+                        "getting bogged down in low-level compiler syntax drills."
+                    )
+                    primary['guardrail'] = "Catalog Gate: Product leader routed to applied analytics & ML before autonomous agent deployment."
+                else:
+                    primary['why'] = (
+                        f"While you enquired about Frontier Agentic AI, building production autonomous agents mandates coding foundations. "
+                        f"As a {raw_role} with {raw_exp}, Program 2 provides a high-retention onramp starting with data analytics, "
+                        "applied machine learning, and business intelligence."
+                    )
+                    primary['guardrail'] = "Catalog Gate: Foundation in data & ML required before autonomous agent design."
             else:
                 primary['why'] = (
                     f"With your background as a {raw_role}, Data Science & Analytics offers the smoothest, "
@@ -1198,21 +1215,44 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 fallback['fit_tier'] = 'Aspirational Goal (Post-Analytics)'
                 fallback['why'] = "Target program once production data pipelines and machine learning workflows are mastered."
         elif inbound_cat == 'P5_DEVOPS_CLOUD':
-            primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
-            primary['catalog_code'] = 'Program 5'
-            primary['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track' if is_senior else 'CI/CD Automation & Cloud Infrastructure Track'
-            primary['fit_tier'] = 'Best Fit (DataOps & Cloud Infrastructure)'
-            primary['why'] = (
-                f"Your background as a {raw_role} connects naturally into DataOps and cloud platform engineering - "
-                "managing distributed data pipelines, cloud databases, and Kubernetes clusters."
-            )
-            primary['guardrail'] = "Natural transition from data handling to cloud infrastructure and DataOps."
+            is_data_engineer = any(k in raw_role.lower() for k in ['data engineer', 'big data', 'etl', 'pipeline', 'database engineer'])
+            is_pure_analyst = any(k in raw_role.lower() for k in ['data analyst', 'bi analyst', 'business analyst', 'analytics consultant', 'tableau', 'power bi']) and not is_data_engineer
+            
+            if is_pure_analyst:
+                primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                primary['catalog_code'] = 'Program 2'
+                primary['track'] = 'Core Analytics & Machine Learning Track' if not is_student else 'Beginner Track (Data Analytics, Python & Business ML)'
+                primary['fit_tier'] = 'Best Fit (Domain Native Specialization)'
+                primary['why'] = (
+                    f"While you enquired about DevOps & Cloud Platform, Program 5 strictly requires operating systems, bash/Linux scripting, networking, "
+                    f"and server administration foundations. As a {raw_role} with {raw_exp}, your highest-leverage, highest-retention career progression "
+                    "is Program 2: Modern Data Science & Machine Learning. This track directly builds upon your existing SQL and analytical strengths into "
+                    "predictive modeling, machine learning, and scalable data engineering. Cloud platform engineering remains an aspirational future specialisation "
+                    "once infrastructure fundamentals are established."
+                )
+                primary['guardrail'] = "Catalog Gate: Data Analyst redirected to DSML; Linux/OS prerequisites required before SRE/Kubernetes."
 
-            fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
-            fallback['catalog_code'] = 'Program 2'
-            fallback['track'] = 'Core Analytics & Machine Learning Track'
-            fallback['fit_tier'] = 'Alternative Domain Native Track'
-            fallback['why'] = "Core statistical modeling and machine learning alternative."
+                fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                fallback['catalog_code'] = 'Program 5'
+                fallback['track'] = 'CI/CD Automation & Cloud Infrastructure Track'
+                fallback['fit_tier'] = 'Aspirational Infrastructure Pivot'
+                fallback['why'] = "Secondary path if you intend to transition into DataOps and cloud infrastructure, starting with foundational Linux & CI/CD."
+            else:
+                primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                primary['catalog_code'] = 'Program 5'
+                primary['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track' if is_senior else 'CI/CD Automation & Cloud Infrastructure Track'
+                primary['fit_tier'] = 'Best Fit (DataOps & Cloud Infrastructure)'
+                primary['why'] = (
+                    f"Your background as a {raw_role} connects naturally into DataOps and cloud platform engineering - "
+                    "managing distributed data pipelines, cloud databases, and Kubernetes clusters."
+                )
+                primary['guardrail'] = "Natural transition from data handling to cloud infrastructure and DataOps."
+
+                fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                fallback['catalog_code'] = 'Program 2'
+                fallback['track'] = 'Core Analytics & Machine Learning Track'
+                fallback['fit_tier'] = 'Alternative Domain Native Track'
+                fallback['why'] = "Core statistical modeling and machine learning alternative."
         else:
             primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
             primary['catalog_code'] = 'Program 2'
@@ -1231,16 +1271,17 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     # SCENARIO 3: QA / TEST AUTOMATION / SDET
     # =========================================================================
     elif is_qa:
+        is_manual_qa = any(k in raw_role.lower() for k in ['manual', 'black box', 'functional test', 'test associate'])
         if inbound_cat == 'P5_DEVOPS_CLOUD':
             primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
             primary['catalog_code'] = 'Program 5'
             primary['track'] = 'CI/CD Automation & Cloud Infrastructure Track'
             primary['fit_tier'] = 'Best Fit (Natural Synergistic Pivot)'
             primary['why'] = (
-                f"Your automation testing background as a {raw_role} connects seamlessly into DevOps - "
-                "expanding test automation suites into CI/CD pipelines, Docker containers, and Kubernetes orchestration."
+                f"Your testing background as a {raw_role} connects seamlessly into DevOps - "
+                "expanding test validation suites into CI/CD pipelines, Docker containers, and Kubernetes orchestration."
             )
-            primary['guardrail'] = "Catalog Tie-Breaker: Test automation skill naturally bridges to SRE & Cloud Engineering."
+            primary['guardrail'] = "Catalog Tie-Breaker: Test skill naturally bridges to SRE & Cloud Engineering."
 
             fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
             fallback['catalog_code'] = 'Program 1'
@@ -1264,7 +1305,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['fit_tier'] = 'Alternative Development Track'
             fallback['why'] = "Alternative path if you decide to pivot to core backend software engineering."
         elif inbound_cat == 'P3_FDE':
-            if is_senior:
+            if is_senior and not is_manual_qa:
                 primary['program'] = 'Software & AI Engineering (Scaler Academy)'
                 primary['catalog_code'] = 'Program 1'
                 primary['track'] = 'Advanced Track (High-Level System Design & Scalability)'
@@ -1320,7 +1361,34 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['fit_tier'] = 'Alternative Infrastructure Track'
             fallback['why'] = "Automates testing and AI agent deployment through modern cloud pipelines."
         else:
-            if is_senior:
+            if is_manual_qa:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                if is_senior:
+                    primary['track'] = 'Intermediate Track (Backend SDE Transition)'
+                    primary['fit_tier'] = 'Best Fit (SDE Transition & Coding Foundation)'
+                    primary['why'] = (
+                        f"As a {raw_role} with {raw_exp}, you possess deep functional software domain knowledge and defect lifecycle mastery. "
+                        "To successfully transition into engineering and automation roles, the critical gap is hands-on coding, data structures, "
+                        "and low-level object-oriented design (LLD). This track bypasses generic high-level theory to focus directly on core "
+                        "algorithmic problem-solving and clean code development."
+                    )
+                    primary['guardrail'] = "Manual QA Guardrail: Routed to Intermediate coding & LLD track; blocked from pure High-Level System Design until coding depth is established."
+                else:
+                    primary['track'] = 'Beginner Track (Foundations of Programming & Problem Solving)'
+                    primary['fit_tier'] = 'Best Fit (Foundational Bridge)'
+                    primary['why'] = (
+                        f"As a {raw_role} with {raw_exp}, this Beginner Track teaches programming syntax, algorithmic logic, "
+                        "and object-oriented development from ground zero to transition from manual testing into software engineering."
+                    )
+                    primary['guardrail'] = "Manual QA Guardrail: Routed to Beginner coding track to build algorithmic foundations."
+
+                fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                fallback['catalog_code'] = 'Program 5'
+                fallback['track'] = 'CI/CD Automation & Cloud Infrastructure Track'
+                fallback['fit_tier'] = 'Alternative Cloud Platform Path'
+                fallback['why'] = "An alternative route to build automated deployment and cloud infrastructure skills."
+            elif is_senior:
                 primary['program'] = 'Software & AI Engineering (Scaler Academy)'
                 primary['catalog_code'] = 'Program 1'
                 primary['track'] = 'Advanced Track (High-Level System Design & Scalability)'

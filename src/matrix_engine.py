@@ -203,7 +203,10 @@ def classify_world_domain(role_str):
     # 16. Consulting, Strategy & General Management
     if match_any(s, [
         'management consultant', 'strategy consultant', 'corporate strategy', 'operations manager',
-        'general manager', 'business manager', 'project manager', 'program manager', 'pmo', 'operations lead'
+        'general manager', 'business manager', 'project manager', 'program manager', 'pmo', 'operations lead',
+        'team lead - operations', 'team lead operations', 'operations team lead', 'operations supervisor',
+        'bpo team lead', 'support team lead', 'process team lead', 'process lead', 'process associate',
+        'operations associate', 'operations executive'
     ]):
         return 'Business Operations & Management'
 
@@ -249,16 +252,28 @@ def classify_world_domain(role_str):
     ]):
         return 'Systems & Embedded Engineering'
     elif match_any(s, [
-        'frontend', 'front-end', 'ui dev', 'ui engineer', 'web engineer', 'react', 'angular',
+        'frontend', 'front-end', 'ui dev', 'ui developer', 'ui engineer', 'web engineer', 'react', 'angular',
         'web developer', 'vue', 'frontend engineer', 'frontend developer'
-    ]):
+    ]) and not any(des in s for des in ['designer', 'design', 'ux designer', 'product designer']):
         return 'Frontend Engineering'
-    elif match_any(s, [
-        'engineering manager', 'tech lead', 'technical lead', 'team lead', 'software manager', 'dev manager',
-        'technical architect', 'solutions architect', 'enterprise architect', 'lead architect',
-        'software architect', 'cloud architect', 'systems architect', 'data architect', 'cto',
-        'vp of engineering', 'director of engineering', 'chief technology officer'
-    ]) or (match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and match_any(s, ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])):
+    elif (
+        match_any(s, [
+            'engineering manager', 'tech lead', 'technical lead', 'software manager', 'dev manager',
+            'technical architect', 'solutions architect', 'enterprise architect', 'lead architect',
+            'software architect', 'cloud architect', 'systems architect', 'data architect', 'cto',
+            'vp of engineering', 'director of engineering', 'chief technology officer'
+        ]) or 
+        (
+            match_token(s, 'team lead') and not any(op in s for op in [
+                'operation', 'bpo', 'kpo', 'support', 'sales', 'marketing', 'hr', 'talent',
+                'retail', 'logistics', 'finance', 'non-tech', 'call center', 'process'
+            ])
+        ) or
+        (
+            match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and 
+            match_any(s, ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])
+        )
+    ):
         return 'Engineering Leadership'
     elif match_any(s, [
         'it service', 'general it', 'app support', 'desktop support', 'production support',
@@ -328,11 +343,14 @@ def canonical_persona_key(persona_str):
         'courier', 'rider', 'pilot', 'loco pilot', 'train driver', 'mariner', 'sailor', 'warehouse',
         'forklift', 'cargo', 'stevedore', 'logistics', 'supply chain',
 
-        # Retail, Commerce, Category & Merchandising
+        # Retail, Commerce, Category & Merchandising & Operations
         'cashier', 'store associate', 'retail', 'shopkeeper', 'counter sales', 'merchandiser', 'merchandise',
         'category manager', 'category lead', 'category head', 'category', 'catalog', 'pricing', 'e-commerce', 'ecommerce',
         'customer service', 'customer support', 'customer care', 'call center', 'bpo', 'kpo',
         'telecaller', 'tele-caller', 'telemarketing', 'front desk', 'receptionist',
+        'operations manager', 'operations lead', 'team lead - operations', 'team lead operations',
+        'operations team lead', 'operations supervisor', 'bpo team lead', 'support team lead',
+        'process team lead', 'process lead', 'process associate', 'operations associate',
 
         # Corporate HR, Sales, Marketing, Finance, Legal
         'hr', 'human resource', 'recruiter', 'recruiting', 'talent acquisition', 'staffing',
@@ -351,7 +369,8 @@ def canonical_persona_key(persona_str):
         'mechanical', 'civil', 'chemical', 'petroleum', 'mining', 'metallurgy',
         'aerospace', 'aeronautical', 'biotech', 'biotechnology', 'biomedical', 'textile', 'automobile engineer',
 
-        # Media, Arts, Agriculture & Gaps
+        # Media, Design, Arts, Agriculture & Gaps
+        'ui/ux designer', 'ui designer', 'ux designer', 'product designer', 'interaction designer', 'ui/ux',
         'graphic designer', 'illustrator', 'photographer', 'videographer', 'video editor', 'animator',
         'interior designer', 'fashion designer', 'artist', 'musician', 'singer', 'actor', 'journalist', 'reporter',
         'farmer', 'farming', 'agriculture', 'agronomist', 'horticulturist', 'dairy', 'forestry', 'geologist',
@@ -413,19 +432,27 @@ def canonical_persona_key(persona_str):
         return 'SYSTEMS_ENG'
 
     # Technical Engineering Leadership
-    if any(match_token(s, k) for k in [
-        'engineering manager', 'tech lead', 'technical lead', 'team lead', 'software manager',
-        'development manager', 'technical architect', 'solutions architect', 'enterprise architect',
-        'lead architect', 'software architect', 'systems architect', 'data architect', 'cto',
-        'vp of engineering', 'director of engineering', 'chief technology officer'
-    ]):
+    if (
+        any(match_token(s, k) for k in [
+            'engineering manager', 'tech lead', 'technical lead', 'software manager',
+            'development manager', 'technical architect', 'solutions architect', 'enterprise architect',
+            'lead architect', 'software architect', 'systems architect', 'data architect', 'cto',
+            'vp of engineering', 'director of engineering', 'chief technology officer'
+        ]) or 
+        (
+            match_token(s, 'team lead') and not any(op in s for op in [
+                'operation', 'bpo', 'kpo', 'support', 'sales', 'marketing', 'hr', 'talent',
+                'retail', 'logistics', 'finance', 'non-tech', 'call center', 'process'
+            ])
+        )
+    ):
         return 'LEADERSHIP'
 
     # Frontend Engineering
     if any(match_token(s, k) for k in [
-        'frontend', 'front-end', 'ui/ux', 'ui dev', 'ui engineer', 'web engineer', 'react', 'angular',
+        'frontend', 'front-end', 'ui dev', 'ui developer', 'ui engineer', 'web engineer', 'react', 'angular',
         'web developer', 'frontend engineer', 'frontend developer'
-    ]):
+    ]) and not any(des in s for des in ['designer', 'design', 'ux designer', 'product designer']):
         return 'FRONTEND'
 
     # General IT Services & Maintenance

@@ -3,7 +3,7 @@ import json
 import re
 from .matrix_engine import (
     get_cohort_stats, normalize_persona, normalize_experience, normalize_program,
-    classify_world_domain, get_canonical_persona_name
+    classify_world_domain, get_canonical_persona_name, match_token, match_any
 )
 
 from .market_intelligence import get_market_intelligence
@@ -222,9 +222,119 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
     r_lower = str(raw_role).lower()
     p_lower = str(p_lower).lower()
     t_lower = str(t_lower).lower()
-    
+
+    # 0a. Security, Defense & Protective Services (Guard, Police, Military, etc.)
+    if match_any(r_lower, ['security guard', 'guard', 'watchman', 'chowkidar', 'bouncer', 'police', 'military', 'army', 'navy', 'air force', 'firefighter', 'defense', 'defence', 'constable', 'inspector']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your high vigilance, incident logging, and risk monitoring translate directly into "
+                "structured data reporting, threat intelligence metrics, and predictive analytics from ground zero."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your background in physical security, perimeter protection, and rigorous protocol execution "
+                "provides an intuitive transition into access management, system compliance, and cloud infrastructure monitoring."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this Beginner Track starts from absolute ground zero (syntax, logic, loops). "
+                "Your operational discipline and protocol compliance provide the consistency needed to build strong programming fundamentals without feeling overwhelmed."
+            )
+
+    # 0b. Hospitality, Facility & Cleaning Services (Sweeper, Cleaner, Janitor, Chef, Hotel Staff)
+    if match_any(r_lower, ['sweeper', 'cleaner', 'janitor', 'housekeep', 'sanitation', 'maid', 'chef', 'cook', 'baker', 'waiter', 'server', 'steward', 'hotel', 'hospitality']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this Beginner Track assumes zero prior technical knowledge. "
+                "It starts with Excel formulas and visual dashboarding before introducing Python, allowing you to transition into data reporting step-by-step."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this Beginner Track is engineered specifically for career pivoters with zero coding background. "
+                "It teaches problem-solving, basic syntax, and algorithmic logic from scratch with dedicated 1:1 mentorship, protecting you from pacing dropouts."
+            )
+
+    # 0c. Legal, Compliance & Judiciary (Lawyer, Advocate, Legal Counsel, Compliance)
+    if match_any(r_lower, ['lawyer', 'advocate', 'attorney', 'legal', 'paralegal', 'solicitor', 'barrister', 'judge', 'magistrate', 'compliance']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your deep expertise in evidence synthesis, case precedent analysis, and statutory interpretation "
+                "provides an analytical edge in structured SQL querying, legal compliance analytics, and NLP-driven document intelligence."
+            )
+        elif 'agentic' in p_lower or 'aiml' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), pairing your legal reasoning and contract structuring with Agentic AI and LegalTech LLM automation "
+                "positions you at the forefront of AI-driven legal intelligence."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), statutory law is fundamentally rule-based logic, conditionals (IF-THEN-ELSE), and exception handling. "
+                "This structured thinking maps directly into software engineering and algorithmic problem-solving."
+            )
+
+    # 0d. Education, Teaching & Academia
+    if match_any(r_lower, ['teacher', 'professor', 'lecturer', 'tutor', 'educator', 'faculty', 'instructor', 'academic', 'principal']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), your pedagogical training and ability to break down complex concepts into structured lessons "
+                "translate seamlessly into data storytelling, visual dashboards, and educational analytics."
+            )
+        else:
+            return (
+                f"As an <b>{raw_role}</b> ({raw_exp}), your habit of structured curriculum design and systematic lesson planning "
+                "gives you the patience and learning discipline to master programming logic, algorithms, and software development from ground up."
+            )
+
+    # 0e. Transportation, Aviation & Maritime (Pilot, Sailor, Driver, Logistics)
+    if match_any(r_lower, ['pilot', 'mariner', 'sailor', 'merchant navy', 'ship captain', 'loco pilot', 'train driver', 'driver', 'courier', 'delivery partner']):
+        if 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your checklist discipline and experience monitoring complex navigation and telemetry systems "
+                "translate naturally into SRE monitoring, cloud infrastructure operations, and automated CI/CD deployment pipelines."
+            )
+        elif 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your experience with route planning, telemetry data, and fuel/cargo metrics "
+                "provides practical domain intuition for predictive supply-chain analytics and operational machine learning."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your operational composure and systematic checklist execution "
+                "help you build reliable, disciplined software development and debugging habits."
+            )
+
+    # 0f. Product Management, UI/UX & Agile Delivery
+    if match_any(r_lower, ['product manager', 'apm', 'tpm', 'product owner', 'scrum master', 'agile', 'ui/ux', 'ux designer', 'product designer']):
+        if 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), you already define product requirements and track feature adoption metrics. "
+                "This track empowers you with SQL data extraction, cohort retention analytics, and A/B test predictive modeling to make data-driven product decisions."
+            )
+        elif 'fde' in p_lower or 'forward deployed' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), pairing your product leadership and stakeholder roadmap execution with "
+                "Enterprise AI deployment makes you an ideal Forward Deployed AI Engineer."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), learning software architecture, API design, and data structures bridges the technical communication gap with engineering teams."
+            )
+
+    # 0g. Skilled Trades & Construction Maintenance
+    if match_any(r_lower, ['electrician', 'plumber', 'welder', 'machinist', 'carpenter', 'mason', 'construction', 'builder', 'painter', 'hvac', 'tailor']):
+        if 'devops' in p_lower or 'cloud' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your practical troubleshooting and physical systems maintenance experience "
+                "translate naturally into cloud infrastructure management, server provisioning, and network cabling/hardware operations."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this Beginner Track teaches technical problem-solving and programming syntax "
+                "from ground zero, providing step-by-step guidance to build professional software skills."
+            )
+
     # 1. Finance / Accounting / Banking / Audit / CA
-    if any(k in r_lower for k in ['account', 'finance', 'auditor', 'banking', 'ca ', 'chartered', 'tax', 'bookkeeper', 'treasury', 'financial']):
+    if match_any(r_lower, ['account', 'finance', 'auditor', 'banking', 'ca', 'chartered', 'tax', 'bookkeeper', 'treasury', 'financial']):
         if 'dsml' in p_lower or 'data' in p_lower:
             return (
                 f"As an <b>{raw_role}</b> ({raw_exp}), you already work with numerical data, spreadsheets, and financial reports daily. "
@@ -747,12 +857,13 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     
     # 1. FIX: Allowlist for Tech Roles
     tech_keywords = [
-        'sde', 'software', 'developer', 'frontend', 'backend', 'full stack', 'programmer',
+        'sde', 'swe', 'software', 'developer', 'frontend', 'backend', 'full stack', 'fullstack', 'programmer',
         'devops', 'cloud', 'sre', 'sysadmin', 'infrastructure', 'platform engineer',
-        'data', 'analytics', 'analyst', 'bi ', 'machine learning', 'ml ', 'ai ', 'artificial intelligence',
-        'qa', 'sdet', 'testing', 'automation', 'system', 'embedded', 'linux', 'hardware', 'architect'
+        'data', 'analytics', 'analyst', 'bi', 'machine learning', 'ml', 'ai', 'artificial intelligence',
+        'qa', 'sdet', 'testing', 'automation', 'embedded', 'firmware', 'linux kernel', 'architect',
+        'engineering manager', 'tech lead', 'technical lead', 'cto', 'vp of engineering', 'director of engineering'
     ]
-    is_tech = any(k in raw_role.lower() for k in tech_keywords)
+    is_tech = any(match_token(raw_role.lower(), k) for k in tech_keywords)
     # Exclude non-software engineering domains
     if any(k in raw_role.lower() for k in ['mechanical', 'civil', 'chemical', 'electrical', 'biotech', 'aerospace', 'automobile', 'electronics']):
         is_tech = False

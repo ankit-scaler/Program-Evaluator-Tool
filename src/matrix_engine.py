@@ -48,26 +48,51 @@ CANONICAL_PERSONA_NAMES = {
     'SWE_BACKEND': 'Software Engineering (Backend/FullStack)',
 }
 
+def match_token(text, token):
+    """
+    Matches a token safely inside text.
+    For short acronyms (<= 3 chars, e.g. swe, sde, qa, ml, ai, ca, hr, bi, ui, ux, pr)
+    or collision-prone terms ('defense', 'defence', 'mechanic', 'guard', 'lead', 'cleaner', 'sweeper', 'maid', 'cook'),
+    enforces strict regex word boundaries (\b) to prevent false substring collisions
+    (e.g., 'sweeper' matching 'swe', or 'waiter' matching 'ai').
+    """
+    t = str(token).lower()
+    s = str(text).lower()
+    if len(t) <= 3 or t in ['defense', 'defence', 'mechanic', 'guard', 'lead', 'cleaner', 'sweeper', 'maid', 'cook']:
+        return bool(re.search(r'\b' + re.escape(t) + r'\b', s))
+    return t in s
+
+def match_any(text, tokens):
+    return any(match_token(text, t) for t in tokens)
+
 def classify_world_domain(role_str):
     """
     Identifies the real-world career domain / industry sector for any profession on Earth.
+    Covers 19 exhaustive global career families with exact token collision safeguards.
     """
     s = str(role_str).lower().strip()
     
-    # 1. Healthcare & Medicine
-    if any(k in s for k in [
+    # 1. Healthcare, Medicine & Clinical Services
+    if match_any(s, [
         'nurse', 'nursing', 'doctor', 'physician', 'surgeon', 'dentist', 'dental', 'pharmacist',
         'pharmacy', 'chemist', 'paramedic', 'emt', 'ambulance', 'physiotherapist', 'physiotherapy',
         'radiologist', 'radiology', 'sonographer', 'lab technician', 'pathologist', 'pathology',
         'clinical', 'clinic', 'hospital', 'healthcare', 'health care', 'optometrist', 'ophthalmologist',
         'veterinarian', 'dietitian', 'nutritionist', 'phlebotomist', 'caregiver', 'ward boy', 'orderly',
         'anesthesiologist', 'cardiologist', 'dermatologist', 'pediatrician', 'psychiatrist', 'psychologist',
-        'therapist', 'counselor', 'midwife'
+        'therapist', 'midwife'
     ]):
         return 'Healthcare & Medical Services'
 
-    # 2. Security, Defense & Protective Services
-    if any(k in s for k in [
+    # 2. Legal, Compliance & Judiciary (Evaluated before defense to catch 'Criminal Defense Lawyer')
+    if match_any(s, [
+        'lawyer', 'advocate', 'attorney', 'legal', 'paralegal', 'solicitor', 'barrister', 'notary',
+        'judge', 'magistrate', 'public prosecutor', 'legal counsel', 'compliance officer', 'law clerk'
+    ]):
+        return 'Legal, Compliance & Judiciary'
+
+    # 3. Security, Defense & Law Enforcement
+    if match_any(s, [
         'security guard', 'security officer', 'guard', 'watchman', 'chowkidar', 'bouncer', 'bodyguard',
         'police', 'cop', 'constable', 'inspector', 'sho', 'law enforcement', 'detective', 'investigator',
         'military', 'army', 'navy', 'air force', 'armed forces', 'defense', 'defence', 'paramilitary',
@@ -75,128 +100,144 @@ def classify_world_domain(role_str):
     ]):
         return 'Security & Protective Services'
 
-    # 3. Education, Teaching & Academia
-    if any(k in s for k in [
+    # 4. Education, Teaching & Academia
+    if match_any(s, [
         'teacher', 'school teacher', 'professor', 'lecturer', 'tutor', 'tuition', 'instructor',
         'educator', 'faculty', 'dean', 'principal', 'headmaster', 'headmistress', 'academic counselor',
-        'librarian', 'pedagogy', 'faculty'
+        'librarian', 'pedagogy', 'scholar', 'trainer'
     ]):
         return 'Education & Academia'
 
-    # 4. Hospitality, Food & Tourism
-    if any(k in s for k in [
-        'chef', 'cook', 'baker', 'bakery', 'barista', 'bartender', 'waiter', 'waitress', 'server',
-        'steward', 'restaurant', 'cafe', 'hotel', 'hospitality', 'concierge', 'housekeeper',
-        'housekeeping', 'travel agent', 'tour guide', 'flight attendant', 'cabin crew', 'air hostess', 'sommelier'
+    # 5. Hospitality, Facility & Cleaning Services (Catches Sweeper, Janitor, Chef, Hotel Staff)
+    if match_any(s, [
+        'sweeper', 'cleaner', 'janitor', 'housekeeper', 'housekeeping', 'sanitation', 'waste management',
+        'maid', 'laundry', 'chef', 'cook', 'baker', 'bakery', 'barista', 'bartender', 'waiter', 'waitress',
+        'server', 'steward', 'restaurant', 'cafe', 'hotel', 'hospitality', 'concierge', 'sommelier',
+        'tour guide', 'flight attendant', 'cabin crew', 'air hostess'
     ]):
-        return 'Hospitality & Food Services'
+        return 'Hospitality & Facility Services'
 
-    # 5. Skilled Trades, Crafts & Construction
-    if any(k in s for k in [
+    # 6. Traditional Engineering & Physical Sciences (Non-CS) (Evaluated before trades to catch Mechanical Engineer)
+    if match_any(s, [
+        'mechanical engineer', 'mechanical', 'civil engineer', 'civil', 'chemical engineer', 'chemical',
+        'petroleum', 'mining', 'metallurgy', 'aerospace', 'aeronautical', 'biotech', 'biotechnology',
+        'biomedical', 'textile', 'automobile engineer', 'automotive engineer', 'environmental engineer',
+        'structural engineer', 'physicist', 'chemist', 'geologist'
+    ]) or ('electrical' in s and 'hardware' not in s and 'software' not in s):
+        return 'Traditional Engineering (Non-CS)'
+
+    # 7. Skilled Trades, Crafts & Construction Maintenance
+    if match_any(s, [
         'electrician', 'plumber', 'carpenter', 'welder', 'machinist', 'mechanic', 'auto mechanic',
-        'fitter', 'turner', 'mason', 'masonry', 'construction', 'builder', 'painter', 'hvac',
-        'appliance repair', 'blacksmith', 'locksmith', 'tailor', 'cobbler', 'weaver', 'factory worker'
+        'car mechanic', 'motor mechanic', 'fitter', 'turner', 'mason', 'masonry', 'construction',
+        'builder', 'painter', 'hvac', 'appliance repair', 'blacksmith', 'locksmith', 'tailor', 'cobbler',
+        'weaver', 'factory worker'
     ]):
         return 'Trades, Crafts & Construction'
 
-    # 6. Transportation, Logistics & Aviation
-    if any(k in s for k in [
-        'driver', 'chauffeur', 'truck driver', 'delivery boy', 'delivery partner', 'delivery agent',
-        'courier', 'rider', 'pilot', 'loco pilot', 'train driver', 'mariner', 'sailor', 'warehouse',
-        'forklift', 'cargo', 'stevedore', 'logistics', 'supply chain'
+    # 8. Transportation, Logistics & Aviation
+    if match_any(s, [
+        'pilot', 'commercial pilot', 'airline pilot', 'mariner', 'sailor', 'merchant navy', 'ship captain',
+        'loco pilot', 'train driver', 'truck driver', 'chauffeur', 'driver', 'delivery partner', 'delivery boy',
+        'delivery agent', 'courier', 'rider', 'warehouse', 'forklift', 'cargo', 'stevedore', 'logistics', 'supply chain'
     ]):
         return 'Transportation & Logistics'
 
-    # 7. Retail, Commerce, Category & Merchandising
-    if any(k in s for k in [
-        'cashier', 'store associate', 'retail', 'shopkeeper', 'counter sales', 'merchandiser', 'merchandise',
-        'category manager', 'category lead', 'category head', 'category', 'catalog', 'pricing', 'e-commerce', 'ecommerce',
-        'customer service', 'customer support', 'customer care', 'call center', 'bpo', 'kpo',
-        'telecaller', 'tele-caller', 'telemarketing', 'receptionist'
+    # 9. Commerce, Category & Merchandising
+    if match_any(s, [
+        'category manager', 'category lead', 'category head', 'category', 'catalog', 'pricing', 'e-commerce',
+        'ecommerce', 'merchandiser', 'merchandise', 'store associate', 'cashier', 'retail', 'shopkeeper',
+        'counter sales', 'store manager'
     ]):
         return 'Commerce, Category & Retail'
 
-    # 8. HR, Talent & People Operations
-    if any(k in s for k in [
+    # 10. Sales, Commercial & Real Estate
+    if match_any(s, [
+        'sales', 'business development', 'bde', 'bda', 'inside sales', 'field sales', 'account executive',
+        'realtor', 'real estate', 'broker', 'relationship manager', 'telecaller', 'tele-caller', 'telesales', 'telemarketing'
+    ]):
+        return 'Sales & Business Development'
+
+    # 11. Marketing, Advertising, PR & Media
+    if match_any(s, [
+        'marketing', 'seo', 'sem', 'social media', 'content writer', 'copywriter', 'branding', 'pr executive',
+        'public relations', 'advertising', 'journalist', 'reporter', 'news anchor', 'video editor', 'photographer',
+        'animator', 'graphic designer', 'artist', 'musician', 'author', 'editor'
+    ]):
+        return 'Marketing, Media & Design'
+
+    # 12. Finance, Banking, Accounting & Audit
+    if match_any(s, [
+        'accountant', 'accounting', 'chartered accountant', 'ca', 'cpa', 'auditor', 'bookkeeper',
+        'taxation', 'tax consultant', 'billing', 'banking', 'bank officer', 'bank teller', 'bank manager',
+        'loan officer', 'insurance', 'underwriter', 'actuary', 'investment banker', 'wealth manager'
+    ]):
+        return 'Finance, Banking & Accounting'
+
+    # 13. Human Resources & Talent Acquisition
+    if match_any(s, [
         'hr', 'human resource', 'recruiter', 'recruiting', 'talent acquisition', 'staffing',
         'people partner', 'people ops', 'hrbp', 'payroll'
     ]):
         return 'HR & People Operations'
 
-    # 9. Sales, Commercial & Business Development
-    if any(k in s for k in [
-        'sales', 'business development', 'bde', 'bda', 'inside sales', 'field sales', 'account executive',
-        'realtor', 'real estate', 'broker', 'relationship manager'
+    # 14. Customer Experience, Support & Operations
+    if match_any(s, [
+        'customer service', 'customer support', 'customer care', 'call center', 'bpo', 'kpo',
+        'receptionist', 'front desk', 'helpdesk', 'service desk', 'customer success', 'csm', 'technical support'
     ]):
-        return 'Sales & Business Development'
+        return 'Customer Support & Operations'
 
-    # 10. Marketing, Content, PR & Media
-    if any(k in s for k in [
-        'marketing', 'seo', 'sem', 'social media', 'content writer', 'copywriter', 'branding', 'pr executive',
-        'advertising', 'journalist', 'reporter', 'news anchor', 'video editor', 'photographer', 'animator',
-        'graphic designer', 'artist', 'musician'
+    # 15. Product Management & UI/UX Design
+    if match_any(s, [
+        'product manager', 'associate product manager', 'apm', 'technical product manager', 'tpm',
+        'product owner', 'scrum master', 'agile coach', 'ui/ux', 'ux designer', 'product designer',
+        'ui designer', 'interaction designer'
     ]):
-        return 'Marketing, Media & Design'
+        return 'Product Management & Design'
 
-    # 11. Finance, Banking, Accounting & Audit
-    if any(k in s for k in [
-        'accountant', 'accounting', 'chartered accountant', 'ca ', 'cpa', 'auditor', 'bookkeeper',
-        'taxation', 'tax consultant', 'billing', 'banking', 'bank officer', 'bank teller', 'loan officer',
-        'insurance', 'underwriter', 'actuary'
+    # 16. Consulting, Strategy & General Management
+    if match_any(s, [
+        'management consultant', 'strategy consultant', 'corporate strategy', 'operations manager',
+        'general manager', 'business manager', 'project manager', 'program manager', 'pmo', 'operations lead'
     ]):
-        return 'Finance, Banking & Accounting'
+        return 'Business Operations & Management'
 
-    # 12. Legal, Compliance & Public Policy
-    if any(k in s for k in [
-        'lawyer', 'advocate', 'attorney', 'legal', 'paralegal', 'solicitor', 'barrister', 'notary',
-        'compliance', 'judge', 'magistrate', 'civil servant', 'ias', 'ips', 'upsc', 'government officer',
-        'govt officer'
-    ]):
-        return 'Legal & Public Administration'
-
-    # 13. Traditional Engineering (Non-CS)
-    if any(k in s for k in [
-        'mechanical', 'civil', 'chemical', 'petroleum', 'mining', 'metallurgy',
-        'aerospace', 'aeronautical', 'biotech', 'biotechnology', 'biomedical', 'textile', 'automobile engineer'
-    ]) or ('electrical' in s and 'hardware' not in s and 'software' not in s):
-        return 'Traditional Engineering (Non-CS)'
-
-    # 14. Agriculture & Environmental
-    if any(k in s for k in [
+    # 17. Public Administration, Civil Services & Agriculture
+    if match_any(s, [
+        'civil servant', 'ias', 'ips', 'upsc', 'government officer', 'govt officer', 'clerk',
         'farmer', 'farming', 'agriculture', 'agronomist', 'horticulturist', 'dairy', 'forestry', 'geologist'
     ]):
-        return 'Agriculture & Environmental'
+        return 'Public Administration & Agriculture'
 
-    # 15. Students, Freshers & Career Breaks
-    if any(k in s for k in [
+    # 18. Students, Freshers & Career Transitions
+    if match_any(s, [
         'student', 'learner', 'intern', 'fresher', 'non coder', 'non-coder', 'non-tech', 'non tech',
         'zero code', 'career break', 'break', 'sabbatical', 'gap year', 'homemaker', 'housewife', 'restart'
     ]):
         return 'Early Career & Career Transitions'
 
-    # 16. Technical Domains
-    if any(k in s for k in ['test', 'qa', 'sdet', 'automation']):
+    # 19. Technical Engineering Domains
+    if match_any(s, ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance']):
         return 'Quality Assurance & SDET'
-    elif any(k in s for k in ['data', 'analyst', 'analytics', 'bi ', 'tableau', 'power bi', 'machine learning']):
+    elif match_any(s, ['data scientist', 'data analyst', 'data engineer', 'analytics', 'bi', 'business intelligence', 'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'deep learning']):
         return 'Data Science & Analytics'
-    elif any(k in s for k in ['devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform']):
+    elif match_any(s, ['devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer', 'terraform', 'sysadmin', 'system administrator', 'security engineer', 'cyber security', 'infosec', 'network engineer']):
         return 'DevOps & Cloud Platform'
-    elif any(k in s for k in ['embedded', 'hardware', 'firmware', 'linux kernel', 'iot', 'system']):
+    elif match_any(s, ['embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver']):
         return 'Systems & Embedded Engineering'
-    elif any(k in s for k in ['frontend', 'front-end', 'ui/ux', 'ui dev', 'react', 'angular']):
+    elif match_any(s, ['frontend', 'front-end', 'ui dev', 'react', 'angular', 'web developer', 'vue']):
         return 'Frontend Engineering'
-    elif any(k in s for k in [
+    elif match_any(s, [
         'engineering manager', 'tech lead', 'technical lead', 'software manager', 'dev manager',
         'technical architect', 'solutions architect', 'enterprise architect', 'cto', 'vp of engineering',
         'director of engineering', 'chief technology officer'
-    ]) or (any(k in s for k in ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and any(k in s for k in ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])):
+    ]) or (match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and match_any(s, ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])):
         return 'Engineering Leadership'
-    elif any(k in s for k in ['support', 'service desk', 'helpdesk', 'it service', 'production support']):
+    elif match_any(s, ['it service', 'general it', 'app support', 'desktop support', 'production support']):
         return 'IT Services & Maintenance'
-    elif any(k in s for k in ['software', 'developer', 'programmer', 'sde', 'swe', 'backend', 'fullstack']):
+    elif match_any(s, ['software', 'developer', 'programmer', 'sde', 'swe', 'backend', 'back-end', 'fullstack', 'full-stack', 'java dev', 'python dev', 'golang', 'node', 'django', 'spring boot']):
         return 'Software Engineering (Backend/FullStack)'
-    elif any(k in s for k in ['operations manager', 'general manager', 'store manager', 'branch manager', 'restaurant manager', 'hotel manager', 'event manager', 'business manager', 'project manager', 'program manager', 'pmo', 'manager', 'management', 'leadership']):
-        return 'Business Operations & Management'
 
     return 'Non-Tech / General Career Background'
 
@@ -237,10 +278,11 @@ def canonical_persona_key(persona_str):
         'educator', 'faculty', 'dean', 'principal', 'headmaster', 'headmistress', 'academic counselor',
         'librarian', 'pedagogy',
 
-        # Hospitality & Culinary
+        # Hospitality, Facility & Cleaning Services
+        'sweeper', 'cleaner', 'janitor', 'housekeeper', 'housekeeping', 'sanitation', 'maid', 'laundry',
         'chef', 'cook', 'baker', 'bakery', 'barista', 'bartender', 'waiter', 'waitress', 'server',
-        'steward', 'restaurant', 'cafe', 'hotel', 'hospitality', 'concierge', 'housekeeper',
-        'housekeeping', 'travel agent', 'tour guide', 'flight attendant', 'cabin crew', 'air hostess', 'sommelier',
+        'steward', 'restaurant', 'cafe', 'hotel', 'hospitality', 'concierge',
+        'travel agent', 'tour guide', 'flight attendant', 'cabin crew', 'air hostess', 'sommelier',
 
         # Trades, Crafts & Construction
         'electrician', 'plumber', 'carpenter', 'welder', 'machinist', 'mechanic', 'auto mechanic',
@@ -283,7 +325,7 @@ def canonical_persona_key(persona_str):
         'zero code', 'career break', 'break', 'sabbatical', 'gap year', 'homemaker', 'housewife', 'restart'
     ]):
         # Protect dual-context roles like "Software Engineer at Hospital" or "Data Analyst in Healthcare"
-        has_explicit_tech = any(t in s for t in [
+        has_explicit_tech = any(match_token(s, t) for t in [
             'software engineer', 'software developer', 'backend developer', 'frontend developer',
             'full stack', 'fullstack', 'data analyst', 'data scientist', 'devops engineer',
             'cloud engineer', 'qa engineer', 'sdet', 'systems engineer', 'programmer', 'sde', 'swe',
@@ -297,19 +339,19 @@ def canonical_persona_key(persona_str):
     # 2. TECHNICAL ROLE CLASSIFICATION
     # --------------------------------------------------------------------------
     # QA / SDET / Testing
-    if any(k in s for k in ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance']):
+    if any(match_token(s, k) for k in ['test', 'qa', 'sdet', 'automation tester', 'manual test', 'quality analyst', 'quality assurance']):
         return 'QA_SDET'
 
     # Data Science & Machine Learning / Analytics
-    if any(k in s for k in [
-        'data scientist', 'data analyst', 'data engineer', 'analytics', 'bi ', 'business intelligence',
+    if any(match_token(s, k) for k in [
+        'data scientist', 'data analyst', 'data engineer', 'analytics', 'bi', 'business intelligence',
         'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'nlp',
         'computer vision', 'deep learning', 'applied scientist', 'analytics engineer'
     ]):
         return 'DATA_ANALYST'
 
     # DevOps, Cloud, Security & Infrastructure Platform
-    if any(k in s for k in [
+    if any(match_token(s, k) for k in [
         'devops', 'sre', 'cloud', 'infrastructure', 'docker', 'kubernetes', 'platform engineer',
         'terraform', 'sysadmin', 'system administrator', 'security', 'cyber security', 'infosec',
         'soc analyst', 'penetration test', 'network engineer', 'cloud architect', 'systems engineer',
@@ -318,11 +360,11 @@ def canonical_persona_key(persona_str):
         return 'DEVOPS_CLOUD'
 
     # Systems & Embedded Engineering
-    if any(k in s for k in ['embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver']):
+    if any(match_token(s, k) for k in ['embedded', 'hardware', 'firmware', 'vlsi', 'iot', 'linux kernel', 'device driver']):
         return 'SYSTEMS_ENG'
 
     # Technical Engineering Leadership
-    if any(k in s for k in [
+    if any(match_token(s, k) for k in [
         'engineering manager', 'tech lead', 'technical lead', 'software manager', 'development manager',
         'technical architect', 'solutions architect', 'enterprise architect', 'cto', 'vp of engineering',
         'director of engineering', 'chief technology officer'
@@ -330,15 +372,15 @@ def canonical_persona_key(persona_str):
         return 'LEADERSHIP'
 
     # Frontend Engineering
-    if any(k in s for k in ['frontend', 'front-end', 'ui/ux', 'ui dev', 'react', 'angular', 'web developer']):
+    if any(match_token(s, k) for k in ['frontend', 'front-end', 'ui/ux', 'ui dev', 'react', 'angular', 'web developer']):
         return 'FRONTEND'
 
     # General IT Services & Maintenance
-    if any(k in s for k in ['maintenance', 'support', 'it service', 'general it', 'service based', 'production support', 'app support', 'desktop support', 'service desk', 'helpdesk']):
+    if any(match_token(s, k) for k in ['maintenance', 'support', 'it service', 'general it', 'service based', 'production support', 'app support', 'desktop support', 'service desk', 'helpdesk']):
         return 'IT_SERVICES'
 
     # Core Software Engineering (Backend / Full Stack)
-    if any(k in s for k in [
+    if any(match_token(s, k) for k in [
         'software', 'developer', 'programmer', 'coding', 'coder', 'sde', 'swe',
         'backend', 'back-end', 'fullstack', 'full-stack', 'java dev', 'python dev',
         'c++', 'c#', '.net', 'golang', 'node', 'django', 'spring boot', 'android', 'ios'

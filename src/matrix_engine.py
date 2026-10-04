@@ -20,13 +20,13 @@ DEFAULT_FALLBACK = {
 
 def canonical_prog_key(prog_str):
     s = str(prog_str).lower()
-    if 'fde' in s or 'forward' in s:
+    if any(k in s for k in ['fde', 'forward', 'program 3']) or re.search(r'\bp3\b', s):
         return 'P3_FDE'
-    elif 'aiml' in s or 'agentic' in s or 'deep learning' in s:
+    elif any(k in s for k in ['aiml', 'agentic', 'deep learning', 'program 4']) or re.search(r'\bp4\b', s):
         return 'P4_AIML'
-    elif 'dsml' in s or 'data' in s:
+    elif any(k in s for k in ['dsml', 'data', 'analytics', 'program 2']) or re.search(r'\bp2\b', s):
         return 'P2_DSML'
-    elif 'devop' in s or 'cloud' in s:
+    elif any(k in s for k in ['devop', 'cloud', 'program 5']) or re.search(r'\bp5\b', s):
         return 'P5_DEVOPS'
     return 'P1_ACADEMY'
 
@@ -417,13 +417,31 @@ def canonical_exp_key(exp_str):
         else:
             return 'EXP_5_PLUS'
 
-    # 2. Numeric extraction for actual YOE (handles 8.0 yrs, 2.5 years, 0 years)
+    # 2. Check compound years and months like "5 years 6 months", "3 yrs 4 mos"
+    compound = re.search(r'(\d+(?:\.\d+)?)\s*(?:yrs|yr|years?)\s*(?:and\s*)?(\d+(?:\.\d+)?)\s*(?:mos|mo|months?)', s)
+    if compound:
+        try:
+            val = float(compound.group(1)) + float(compound.group(2)) / 12.0
+            if val < 1.0:
+                return 'EXP_0_1'
+            elif val < 3.0:
+                return 'EXP_1_3'
+            elif val < 5.0:
+                return 'EXP_3_5'
+            else:
+                return 'EXP_5_PLUS'
+        except Exception:
+            pass
+
+    # Numeric extraction for actual YOE (handles 8.0 yrs, 2.5 years, 0 years, 18 months)
     match = re.search(r'[-+]?\d*\.?\d+', s.replace(',', ''))
     if match and match.group():
         try:
             val = float(match.group())
-            # Convert months if explicitly indicated in text (e.g. 24 months = 2 years)
-            if any(m in s for m in ['month', 'mo', 'mth']):
+            # Convert months ONLY if text has month indicators AND does NOT have year indicators
+            has_month = any(m in s for m in ['month', 'mo', 'mth'])
+            has_year = any(y in s for y in ['year', 'yr'])
+            if has_month and not has_year:
                 val = val / 12.0
             if val < 1.0:
                 return 'EXP_0_1'

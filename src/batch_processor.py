@@ -141,21 +141,34 @@ def process_leads_dataframe(df):
         exp_display = ""
 
         if raw_exp is not None:
-            m_exp = re.search(r'[-+]?\d*\.?\d+', str(raw_exp).replace(',', ''))
-            if m_exp:
+            raw_exp_str = str(raw_exp).lower().replace(',', '')
+            # 1. Compound years and months e.g. "5 yrs 6 mos", "3 years 4 months"
+            m_comp = re.search(r'(\d+(?:\.\d+)?)\s*(?:yrs|yr|years?)\s*(?:and\s*)?(\d+(?:\.\d+)?)\s*(?:mos|mo|months?)', raw_exp_str)
+            if m_comp:
                 try:
-                    num_val = float(m_exp.group())
-                    if num_val > 0:
-                        if num_val > 15:
-                            exp_years = round(num_val / 12.0, 1)
-                            exp_display = f"{exp_years} yrs ({int(num_val)} mos)"
-                        else:
-                            exp_years = num_val
-                            exp_display = f"{num_val} yrs"
-                    elif num_val == 0:
-                        exp_years = 0.0
+                    exp_years = round(float(m_comp.group(1)) + float(m_comp.group(2)) / 12.0, 1)
+                    exp_display = f"{exp_years} yrs"
                 except Exception:
                     pass
+            else:
+                m_exp = re.search(r'[-+]?\d*\.?\d+', raw_exp_str)
+                if m_exp:
+                    try:
+                        num_val = float(m_exp.group())
+                        has_month = any(m in raw_exp_str for m in ['month', 'mo', 'mth'])
+                        has_year = any(y in raw_exp_str for y in ['year', 'yr'])
+                        if num_val > 0:
+                            # Only divide by 12 if explicitly stated in months, or if num_val > 36 without explicit year
+                            if (has_month and not has_year) or (num_val > 36 and not has_year):
+                                exp_years = round(num_val / 12.0, 1)
+                                exp_display = f"{exp_years} yrs ({int(num_val)} mos)"
+                            else:
+                                exp_years = num_val
+                                exp_display = f"{num_val} yrs"
+                        elif num_val == 0:
+                            exp_years = 0.0
+                    except Exception:
+                        pass
 
         # If experience is 0 or missing, consult orgyear (graduation year), role, or event
         event_str = str(row[col_event]).strip() if col_event and pd.notna(row[col_event]) else ""
@@ -197,7 +210,7 @@ def process_leads_dataframe(df):
             if exp_years == 0.0:
                 raw_role = "College Student / Fresher"
             else:
-                raw_role = "Software Engineer / IT Professional"
+                raw_role = "General Professional / Career Switcher"
 
         # 6. Inbound Program Synthesis (event_name + program_type)
         prog_str = str(row[col_prog]).strip() if col_prog and pd.notna(row[col_prog]) else ""

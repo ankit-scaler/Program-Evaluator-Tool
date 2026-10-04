@@ -1020,19 +1020,55 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     # SCENARIO 1: NON-TECH / ZERO-CODE (Strict Catalog Gate)
     # =========================================================================
     if is_non_tech:
-        # If candidate enquired about DSML, respect their intent: DSML Beginner Track is the #1 natural business transition!
-        if inbound_cat == 'P2_DSML':
+        # Check if the candidate's domain is Commercial / Business Management / People / Finance
+        is_commercial_business = (
+            any(d in role_domain for d in ['Marketing', 'Commerce', 'Finance', 'HR & People', 'Sales', 'Business Operations']) or
+            any(k in raw_role.lower() for k in [
+                'marketing', 'brand', 'growth', 'category', 'merchandis', 'pricing', 'e-commerce', 'ecommerce',
+                'finance', 'account', 'ca ', 'cpa', 'auditor', 'banking', 'bank officer', 'loan officer',
+                'hr', 'human resource', 'people ops', 'recruiter', 'talent', 'sales', 'bde', 'bda',
+                'business development', 'operations manager', 'supply chain', 'logistics'
+            ])
+        )
+
+        # Case 1: Inbound enquiry is directly DSML (or candidate is in commercial/business domain and enquired about advanced infrastructure/AI)
+        if inbound_cat == 'P2_DSML' or (is_commercial_business and inbound_cat in ['P5_DEVOPS_CLOUD', 'P3_FDE', 'P4_AIML_AGENTIC']):
             primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
             primary['catalog_code'] = 'Program 2'
             primary['track'] = 'Beginner Track (Data Analytics, Python & Business ML)'
-            primary['fit_tier'] = 'Best Fit (Applied Business Analytics)'
-            primary['why'] = (
-                f"With your background as a {raw_role}, Data Science & Analytics offers the smoothest, "
-                "highest-retention path into tech. Rather than wrestling with abstract software architecture, "
-                "this track leverages your business domain experience into People/Business Analytics, SQL dashboards, "
-                "and applied Predictive Machine Learning from ground zero."
-            )
-            primary['guardrail'] = "Catalog Fit: Non-tech professional routed to DSML Beginner Track to build data fundamentals."
+            primary['fit_tier'] = 'Best Fit (Applied Business & Growth Analytics)'
+            
+            if inbound_cat == 'P5_DEVOPS_CLOUD':
+                primary['why'] = (
+                    f"While you enquired about DevOps & Cloud Platform, Program 5 strictly requires existing operating systems, "
+                    f"networking, and Linux infrastructure foundations. With {raw_exp} as a {raw_role}, your highest-leverage, "
+                    "highest-retention upskilling path is Program 2: Modern Data Science & Machine Learning. Rather than wrestling with "
+                    "cloud infrastructure automation from scratch, this track directly empowers your commercial leadership with SQL data pipelines, "
+                    "growth analytics dashboards, and predictive machine learning models."
+                )
+                primary['guardrail'] = "Catalog Gate: Commercial professional redirected from DevOps/Kubernetes to high-retention DSML track."
+            elif inbound_cat == 'P3_FDE':
+                primary['why'] = (
+                    f"While you showed high interest in Forward Deployed Engineering, Program 3 requires hands-on software "
+                    f"deployment depth. As a {raw_role} with {raw_exp}, Program 2 equips you with data querying, Python analytics, "
+                    "and predictive modeling to build technical data capability natively within your business domain."
+                )
+                primary['guardrail'] = "Catalog Gate: Redirected from FDE client systems to DSML beginner track."
+            elif inbound_cat == 'P4_AIML_AGENTIC':
+                primary['why'] = (
+                    f"While you enquired about Frontier Agentic AI, building production autonomous agents mandates coding foundations. "
+                    f"As a {raw_role} with {raw_exp}, Program 2 provides a high-retention onramp starting with data analytics, "
+                    "applied machine learning, and business intelligence."
+                )
+                primary['guardrail'] = "Catalog Gate: Foundation in data & ML required before autonomous agent design."
+            else:
+                primary['why'] = (
+                    f"With your background as a {raw_role}, Data Science & Analytics offers the smoothest, "
+                    "highest-retention path into tech. Rather than wrestling with abstract software architecture, "
+                    "this track leverages your business domain experience into People/Business Analytics, SQL dashboards, "
+                    "and applied Predictive Machine Learning from ground zero."
+                )
+                primary['guardrail'] = "Catalog Fit: Non-tech professional routed to DSML Beginner Track to build data fundamentals."
 
             fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
             fallback['catalog_code'] = 'Program 1'
@@ -1073,6 +1109,15 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 fallback['why'] = (
                     f"You enquired about AI, but Catalog Rule 6 strictly mandates coding aptitude. "
                     "Non-tech learners face a 25.8% drop-off in advanced AI modules unless preceded by intensive programming prep."
+                )
+            elif inbound_cat == 'P5_DEVOPS_CLOUD':
+                fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                fallback['catalog_code'] = 'Program 2'
+                fallback['track'] = 'Beginner Track (Data Analytics Foundation)'
+                fallback['fit_tier'] = 'Alternative Analytics Path'
+                fallback['why'] = (
+                    "While you enquired about DevOps, cloud infrastructure requires deep Linux and networking fundamentals. "
+                    "DSML offers a high-retention data analytics alternative."
                 )
             else:
                 fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'

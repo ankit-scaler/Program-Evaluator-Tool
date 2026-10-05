@@ -807,6 +807,99 @@
       border-left: 3px solid var(--scaler-blue);
     }
 
+    /* CAREER OPTIONS & REAL-WORLD PATHWAYS */
+    .rec-career-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-xs);
+      padding: var(--space-5) var(--space-6);
+      margin-bottom: var(--space-5);
+    }
+
+    .primary-rec .rec-career-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .fallback-rec .rec-career-box {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+    }
+
+    .rec-career-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .rec-career-title {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--color-text-tertiary);
+    }
+
+    .rec-career-salary-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #047857;
+      background: #d1fae5;
+      border: 1px solid #a7f3d0;
+      padding: 1px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .fallback-rec .rec-career-salary-tag {
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+    }
+
+    .rec-career-roles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
+
+    .career-role-pill {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #ffffff;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .primary-rec .career-role-pill {
+      border-color: #86efac;
+      color: #14532d;
+      background: #ffffff;
+    }
+
+    .fallback-rec .career-role-pill {
+      border-color: #fde68a;
+      color: #78350f;
+      background: #ffffff;
+    }
+
+    .rec-career-desc {
+      font-size: 11px;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+    }
 
     /* CURRICULUM MODULE LIST */
     .curriculum-module-list {
@@ -1538,6 +1631,23 @@
               <div class="rec-why-box" id="modal-primary-why">
                 <b>Why This Program:</b> -
               </div>
+
+              <!-- TARGET CAREER OUTCOMES & JOB ROLES -->
+              <div class="rec-career-box" id="modal-primary-career-box">
+                <div class="rec-career-header">
+                  <div class="rec-career-title">
+                    <span>💼</span> <span>Target Career Outcomes &amp; Job Roles</span>
+                  </div>
+                  <span class="rec-career-salary-tag" id="modal-primary-career-salary">₹16 LPA – ₹32 LPA</span>
+                </div>
+                <div class="rec-career-roles" id="modal-primary-career-roles">
+                  <!-- Dynamically populated role badges -->
+                </div>
+                <div class="rec-career-desc" id="modal-primary-career-desc">
+                  <!-- Dynamically populated transition summary -->
+                </div>
+              </div>
+
               <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
                 <a id="modal-primary-catalogue" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
                   View Brochure &amp; Syllabus &rarr;
@@ -1561,6 +1671,23 @@
               <div class="rec-why-box" style="border-left-color: var(--accent-amber);" id="modal-fallback-why">
                 <b>Why Fallback:</b> -
               </div>
+
+              <!-- TARGET CAREER OUTCOMES & JOB ROLES -->
+              <div class="rec-career-box" id="modal-fallback-career-box">
+                <div class="rec-career-header">
+                  <div class="rec-career-title">
+                    <span>💼</span> <span>Target Career Outcomes &amp; Job Roles</span>
+                  </div>
+                  <span class="rec-career-salary-tag" id="modal-fallback-career-salary">₹10 LPA – ₹22 LPA</span>
+                </div>
+                <div class="rec-career-roles" id="modal-fallback-career-roles">
+                  <!-- Dynamically populated role badges -->
+                </div>
+                <div class="rec-career-desc" id="modal-fallback-career-desc">
+                  <!-- Dynamically populated transition summary -->
+                </div>
+              </div>
+
               <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
                 <a id="modal-fallback-catalogue" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/210/531/original/DSML_Brochure_2026_%282%29.pdf?1783928557" target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
                   View Brochure &amp; Syllabus &rarr;
@@ -2523,6 +2650,123 @@
       return 'https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291';
     }
 
+    function resolveCareerPathways(progStr, trackStr) {
+      const p = String(progStr || '').toLowerCase();
+      const t = String(trackStr || '').toLowerCase();
+
+      // Program 1: Scaler Academy
+      if (p.includes('academy') || p.includes('software') || p.includes('program 1') || p.includes('p1')) {
+        if (t.includes('advanced') || t.includes('high-level') || t.includes('system design') || t.includes('scalability')) {
+          return {
+            roles: ['Senior SDE (SDE 3)', 'Staff Software Engineer', 'Technical Lead / Tech Lead', 'Distributed Systems Architect', 'Engineering Manager'],
+            salary_range: '₹28 LPA – ₹65+ LPA',
+            transition_summary: 'High-Level System Design (HLD), distributed caching, Kafka event streaming, and architectural leadership for large-scale enterprise microservices.'
+          };
+        } else if (t.includes('intermediate') || t.includes('backend') || t.includes('algorithms') || t.includes('lld') || t.includes('transition')) {
+          return {
+            roles: ['Software Development Engineer II (SDE 2)', 'Backend Microservices Engineer', 'Full-Stack SDE', 'Java / C++ / Go Software Engineer'],
+            salary_range: '₹16 LPA – ₹32 LPA',
+            transition_summary: 'Core product-company transition mastering Advanced DSA, Low-Level Object-Oriented Design (LLD), and scalable backend architectures.'
+          };
+        } else {
+          return {
+            roles: ['Junior Software Engineer (SDE 1)', 'Associate Software Developer', 'Full-Stack Developer', 'Backend Developer'],
+            salary_range: '₹8 LPA – ₹18 LPA',
+            transition_summary: 'Ground-zero algorithmic problem-solving and software development foundations designed for non-tech switchers, freshers, and non-CS graduates.'
+          };
+        }
+      }
+
+      // Program 2: DSML
+      if (p.includes('dsml') || p.includes('data science') || (p.includes('machine learning') && !p.includes('agentic') && !p.includes('p4'))) {
+        if (t.includes('advanced') || t.includes('production ml')) {
+          return {
+            roles: ['Senior Data Scientist', 'Machine Learning Engineer (MLE)', 'MLOps Engineer', 'Computer Vision / NLP Specialist', 'Lead Data Scientist'],
+            salary_range: '₹25 LPA – ₹55+ LPA',
+            transition_summary: 'Deep learning neural architectures, transformer models, enterprise recommendation engines, and production MLOps deployment.'
+          };
+        } else if (t.includes('core') || t.includes('intermediate') || t.includes('applied') || t.includes('analytics & machine')) {
+          return {
+            roles: ['Applied Machine Learning Engineer', 'Data Scientist', 'Statistical Modeler', 'Quantitative Analyst', 'Data Science Consultant'],
+            salary_range: '₹15 LPA – ₹30 LPA',
+            transition_summary: 'Statistical hypothesis testing, applied supervised/unsupervised ML algorithms, and end-to-end data science pipelines.'
+          };
+        } else {
+          return {
+            roles: ['Data Analyst', 'Product Analyst', 'Business Intelligence Engineer (BIE)', 'Growth Analytics Lead', 'Analytics Consultant'],
+            salary_range: '₹8 LPA – ₹20 LPA',
+            transition_summary: 'SQL, Python data manipulation, Tableau dashboards, and business ML modeling translating business domain knowledge into analytical leadership.'
+          };
+        }
+      }
+
+      // Program 3: FDE
+      if (p.includes('fde') || p.includes('forward deployed') || p.includes('program 3') || p.includes('p3')) {
+        return {
+          roles: ['AI Forward Deployed Engineer (FDE)', 'Enterprise AI Solutions Architect', 'Production RAG & LLM Integration Specialist', 'Client AI Systems Engineer', 'Technical AI Engagement Lead'],
+          salary_range: '₹25 LPA – ₹60+ LPA',
+          transition_summary: 'High-impact customer-facing engineering deploying production RAG, vector search, custom fine-tuning, and enterprise autonomous agent workflows.'
+        };
+      }
+
+      // Program 4: AI & ML with Agentic AI
+      if (p.includes('agentic') || p.includes('program 4') || p.includes('p4')) {
+        if (t.includes('beginner') || t.includes('foundation')) {
+          return {
+            roles: ['AI Application Developer', 'Applied AI Solutions Specialist', 'Prompt & Agentic Workflow Engineer'],
+            salary_range: '₹12 LPA – ₹24 LPA',
+            transition_summary: 'Foundational machine learning, AI coding assistants, and prompt-driven autonomous workflow development.'
+          };
+        } else {
+          return {
+            roles: ['Agentic AI Systems Engineer', 'Autonomous Multi-Agent Architect', 'Foundation Model & LLMOps Engineer', 'Generative AI R&D Specialist', 'Deep Learning Architect'],
+            salary_range: '₹28 LPA – ₹70+ LPA',
+            transition_summary: 'Multi-agent swarm orchestration (LangGraph, CrewAI), fine-tuning frontier models, and autonomous tool-calling systems.'
+          };
+        }
+      }
+
+      // Program 5: DevOps, Cloud & AI Platform Engineering
+      if (p.includes('devops') || p.includes('cloud') || p.includes('platform') || p.includes('program 5') || p.includes('p5')) {
+        if (t.includes('sre') || t.includes('reliability') || t.includes('kubernetes')) {
+          return {
+            roles: ['Site Reliability Engineer (SRE)', 'DevSecOps Engineer', 'Kubernetes & Platform Architect', 'MLOps Infrastructure Engineer', 'Principal Cloud Architect'],
+            salary_range: '₹20 LPA – ₹48+ LPA',
+            transition_summary: 'Multi-node Kubernetes clustering, distributed observability (Prometheus/Grafana), DevSecOps governance, and AI infrastructure.'
+          };
+        } else {
+          return {
+            roles: ['Cloud Infrastructure Engineer', 'DevOps Engineer', 'Cloud Automation Specialist', 'AWS / Cloud Platform Engineer'],
+            salary_range: '₹10 LPA – ₹22 LPA',
+            transition_summary: 'Automated CI/CD pipelines, Docker containerization, Infrastructure as Code (Terraform), and enterprise cloud deployments.'
+          };
+        }
+      }
+
+      return {
+        roles: ['Software Engineer', 'Technical Specialist', 'Engineering Lead'],
+        salary_range: '₹12 LPA – ₹30 LPA',
+        transition_summary: 'Industry-aligned technical skill enhancement and high-growth technology career acceleration.'
+      };
+    }
+
+    function populateCareerBox(prefix, careerData) {
+      const elBox = document.getElementById(`${prefix}-career-box`);
+      if (!elBox || !careerData) return;
+      const elSal = document.getElementById(`${prefix}-career-salary`);
+      const elRoles = document.getElementById(`${prefix}-career-roles`);
+      const elDesc = document.getElementById(`${prefix}-career-desc`);
+
+      if (elSal) elSal.innerText = careerData.salary_range || 'Industry Competitive';
+      if (elRoles) {
+        const roles = careerData.roles || [];
+        elRoles.innerHTML = roles.map(r => `<span class="career-role-pill">🎯 ${r}</span>`).join('');
+      }
+      if (elDesc) {
+        elDesc.innerText = careerData.transition_summary || '';
+      }
+    }
+
     let currentModalLead = null;
     let currentCurriculumTab = 'primary';
 
@@ -2676,6 +2920,13 @@
           elFallConf.style.color = '#b91c1c'; elFallConf.style.background = '#fee2e2'; elFallConf.style.borderColor = '#fca5a5';
         }
       }
+
+      // Populate Target Career Outcomes & Real-World Job Roles
+      const primCareer = prim.career_options || (prim.market_intelligence && prim.market_intelligence.career_options) || resolveCareerPathways(prim.program, prim.track);
+      populateCareerBox('modal-primary', primCareer);
+
+      const fallCareer = fall.career_options || (fall.market_intelligence && fall.market_intelligence.career_options) || resolveCareerPathways(fall.program, fall.track);
+      populateCareerBox('modal-fallback', fallCareer);
 
       // Program Official Catalogue & Syllabus Links
       const mkt = prim.market_intelligence || lead.market_intelligence || {};

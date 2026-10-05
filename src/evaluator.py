@@ -1981,10 +1981,12 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     primary['market_intelligence'] = prim_market
     primary['catalogue_url'] = prim_market.get('catalogue_url', 'https://www.scaler.com/')
     primary['curriculum_modules'] = prim_market.get('curriculum_modules', [])
+    primary['career_options'] = prim_market.get('career_options', {})
 
     fallback['market_intelligence'] = fall_market
     fallback['catalogue_url'] = fall_market.get('catalogue_url', 'https://www.scaler.com/')
     fallback['curriculum_modules'] = fall_market.get('curriculum_modules', [])
+    fallback['career_options'] = fall_market.get('career_options', {})
 
     # Synthesize comprehensive, curriculum-grounded reasons for Primary and Fallback
     primary['why'] = generate_curriculum_grounded_why(

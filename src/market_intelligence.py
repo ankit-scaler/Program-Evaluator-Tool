@@ -1227,9 +1227,105 @@ def resolve_program_code(prog_val):
     return 'P1_ACADEMY'
 
 
+def get_program_career_pathways(program_name, track_name=None):
+    """
+    Returns real-world and catalog-grounded career pathways, job roles, salary bands,
+    and transition context tailored to each Scaler program and track.
+    """
+    p_low = str(program_name or '').lower()
+    t_low = str(track_name or '').lower()
+    
+    # 1. Program 1: Scaler Academy (Software & AI Engineering)
+    if 'academy' in p_low or 'software' in p_low or 'p1' in p_low:
+        if 'advanced' in t_low or 'high-level' in t_low or 'system design' in t_low or 'scalability' in t_low or 'architecture' in t_low:
+            return {
+                'roles': ['Senior SDE (SDE 3)', 'Staff Software Engineer', 'Technical Lead / Tech Lead', 'Distributed Systems Architect', 'Engineering Manager'],
+                'salary_range': '₹28 LPA – ₹65+ LPA',
+                'transition_summary': 'High-Level System Design (HLD), distributed caching, Kafka event streaming, and engineering leadership for large-scale production architectures.'
+            }
+        elif 'intermediate' in t_low or 'backend' in t_low or 'algorithms' in t_low or 'lld' in t_low or 'transition' in t_low or 'dsa' in t_low:
+            return {
+                'roles': ['Software Development Engineer II (SDE 2)', 'Backend Microservices Engineer', 'Full-Stack SDE', 'Java / C++ / Go Software Engineer'],
+                'salary_range': '₹16 LPA – ₹32 LPA',
+                'transition_summary': 'Core product-company transition mastering Advanced DSA, Low-Level Object-Oriented Design (LLD), and scalable backend architectures.'
+            }
+        else:
+            return {
+                'roles': ['Junior Software Engineer (SDE 1)', 'Associate Software Developer', 'Full-Stack Developer', 'Backend Developer'],
+                'salary_range': '₹8 LPA – ₹18 LPA',
+                'transition_summary': 'Ground-zero algorithmic problem-solving and software development foundations designed for non-tech switchers, freshers, and non-CS graduates.'
+            }
+
+    # 2. Program 2: DSML (Modern Data Science & Machine Learning)
+    elif 'dsml' in p_low or 'data science' in p_low or ('machine learning' in p_low and 'agentic' not in p_low and 'p4' not in p_low):
+        if 'advanced' in t_low or 'production ml' in t_low:
+            return {
+                'roles': ['Senior Data Scientist', 'Machine Learning Engineer (MLE)', 'MLOps Engineer', 'Computer Vision / NLP Specialist', 'Lead Data Scientist'],
+                'salary_range': '₹25 LPA – ₹55+ LPA',
+                'transition_summary': 'Deep learning neural architectures, transformer models, enterprise recommendation engines, and production MLOps deployment.'
+            }
+        elif 'core' in t_low or 'intermediate' in t_low or 'applied' in t_low or 'analytics & machine' in t_low:
+            return {
+                'roles': ['Applied Machine Learning Engineer', 'Data Scientist', 'Statistical Modeler', 'Quantitative Analyst', 'Data Science Consultant'],
+                'salary_range': '₹15 LPA – ₹30 LPA',
+                'transition_summary': 'Statistical hypothesis testing, applied supervised/unsupervised ML algorithms, and end-to-end data science pipelines.'
+            }
+        else:
+            return {
+                'roles': ['Data Analyst', 'Product Analyst', 'Business Intelligence Engineer (BIE)', 'Growth Analytics Lead', 'Analytics Consultant'],
+                'salary_range': '₹8 LPA – ₹20 LPA',
+                'transition_summary': 'SQL, Python data manipulation, Tableau dashboards, and business ML modeling translating business domain knowledge into analytical leadership.'
+            }
+
+    # 3. Program 3: AI Forward Deployed Engineer (FDE)
+    elif 'fde' in p_low or 'forward deployed' in p_low or 'p3' in p_low:
+        return {
+            'roles': ['AI Forward Deployed Engineer (FDE)', 'Enterprise AI Solutions Architect', 'Production RAG & LLM Integration Specialist', 'Client AI Systems Engineer', 'Technical AI Engagement Lead'],
+            'salary_range': '₹25 LPA – ₹60+ LPA',
+            'transition_summary': 'High-impact customer-facing engineering deploying production RAG, vector search, custom fine-tuning, and enterprise autonomous agent workflows.'
+        }
+
+    # 4. Program 4: AI & Machine Learning with Agentic AI
+    elif 'agentic' in p_low or 'p4' in p_low:
+        if 'beginner' in t_low or 'foundation' in t_low:
+            return {
+                'roles': ['AI Application Developer', 'Applied AI Solutions Specialist', 'Prompt & Agentic Workflow Engineer'],
+                'salary_range': '₹12 LPA – ₹24 LPA',
+                'transition_summary': 'Foundational machine learning, AI coding assistants, and prompt-driven autonomous workflow development.'
+            }
+        else:
+            return {
+                'roles': ['Agentic AI Systems Engineer', 'Autonomous Multi-Agent Architect', 'Foundation Model & LLMOps Engineer', 'Generative AI R&D Specialist', 'Deep Learning Architect'],
+                'salary_range': '₹28 LPA – ₹70+ LPA',
+                'transition_summary': 'Multi-agent swarm orchestration (LangGraph, CrewAI), fine-tuning frontier models, and autonomous tool-calling systems.'
+            }
+
+    # 5. Program 5: DevOps, Cloud & AI Platform Engineering
+    elif 'devops' in p_low or 'cloud' in p_low or 'platform' in p_low or 'p5' in p_low:
+        if 'sre' in t_low or 'reliability' in t_low or 'kubernetes' in t_low:
+            return {
+                'roles': ['Site Reliability Engineer (SRE)', 'DevSecOps Engineer', 'Kubernetes & Platform Architect', 'MLOps Infrastructure Engineer', 'Principal Cloud Architect'],
+                'salary_range': '₹20 LPA – ₹48+ LPA',
+                'transition_summary': 'Multi-node Kubernetes clustering, distributed observability (Prometheus/Grafana), DevSecOps governance, and AI infrastructure.'
+            }
+        else:
+            return {
+                'roles': ['Cloud Infrastructure Engineer', 'DevOps Engineer', 'Cloud Automation Specialist', 'AWS / Cloud Platform Engineer'],
+                'salary_range': '₹10 LPA – ₹22 LPA',
+                'transition_summary': 'Automated CI/CD pipelines, Docker containerization, Infrastructure as Code (Terraform), and enterprise cloud deployments.'
+            }
+
+    # Default fallback
+    return {
+        'roles': ['Software Engineer', 'Technical Specialist', 'Engineering Lead'],
+        'salary_range': '₹12 LPA – ₹30 LPA',
+        'transition_summary': 'Industry-aligned technical skill enhancement and high-growth technology career acceleration.'
+    }
+
+
 def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
     """
-    Returns official catalogue URLs and track-tailored curriculum modules.
+    Returns official catalogue URLs, track-tailored curriculum modules, and career options.
     If Scaler Academy (P1) or DSML (P2) is selected, returns the precise modules for
     the candidate's assigned track (Beginner, Intermediate, or Advanced).
     """
@@ -1274,12 +1370,14 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
                 selected_modules = P1_ACADEMY_BEGINNER_MODULES
                 track_label = 'Beginner Track'
 
+        resolved_track = str(track_name) if track_name else track_label
         return {
             'program_name': p_data['program_name'],
             'catalogue_url': p_data['catalogue_url'],
             'top_hiring_companies': p_data.get('top_hiring_companies', []),
             'curriculum_modules': selected_modules,
-            'track_label': track_label
+            'track_label': resolved_track,
+            'career_options': get_program_career_pathways(p_data['program_name'], resolved_track)
         }
 
     # 3. Track-specific resolution for Modern Data Science & ML (P2)
@@ -1307,22 +1405,26 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
                 selected_modules = P2_DSML_BEGINNER_MODULES
                 track_label = 'Beginner Track (Data Analytics, Python & Business ML)'
 
+        resolved_track = str(track_name) if track_name else track_label
         return {
             'program_name': p_data['program_name'],
             'catalogue_url': p_data['catalogue_url'],
             'top_hiring_companies': p_data.get('top_hiring_companies', []),
             'curriculum_modules': selected_modules,
-            'track_label': track_label
+            'track_label': resolved_track,
+            'career_options': get_program_career_pathways(p_data['program_name'], resolved_track)
         }
 
     # 4. Track-specific resolution for AI Forward Deployed Engineer (P3)
     if p_code == 'P3_FDE':
+        resolved_track = str(track_name) if track_name else 'Enterprise AI Integration & Client Systems Track'
         return {
             'program_name': p_data['program_name'],
             'catalogue_url': p_data['catalogue_url'],
             'top_hiring_companies': p_data.get('top_hiring_companies', []),
             'curriculum_modules': P3_FDE_MODULES,
-            'track_label': str(track_name) if track_name else 'Enterprise AI Integration & Client Systems Track'
+            'track_label': resolved_track,
+            'career_options': get_program_career_pathways(p_data['program_name'], resolved_track)
         }
 
     # 5. Track-specific resolution for AI & Machine Learning with Agentic AI (P4)
@@ -1350,31 +1452,37 @@ def get_market_intelligence(arg1="", arg2="", arg3="", arg4="", track_name=""):
                 selected_modules = P4_AIML_BEGINNER_MODULES
                 track_label = 'Beginner Track (AI & Machine Learning Foundations)'
 
+        resolved_track = str(track_name) if track_name else track_label
         return {
             'program_name': p_data['program_name'],
             'catalogue_url': p_data['catalogue_url'],
             'top_hiring_companies': p_data.get('top_hiring_companies', []),
             'curriculum_modules': selected_modules,
-            'track_label': track_label
+            'track_label': resolved_track,
+            'career_options': get_program_career_pathways(p_data['program_name'], resolved_track)
         }
 
     # 6. Track-specific resolution for DevOps, Cloud & AI Platform Engineering (P5)
     if p_code == 'P5_DEVOPS_CLOUD':
+        resolved_track = str(track_name) if track_name else 'Cloud Architecture, SRE & AI Platform Track'
         return {
             'program_name': p_data['program_name'],
             'catalogue_url': p_data['catalogue_url'],
             'top_hiring_companies': p_data.get('top_hiring_companies', []),
             'curriculum_modules': P5_DEVOPS_MODULES,
-            'track_label': str(track_name) if track_name else 'Cloud Architecture, SRE & AI Platform Track'
+            'track_label': resolved_track,
+            'career_options': get_program_career_pathways(p_data['program_name'], resolved_track)
         }
 
     # Fallback return
+    resolved_track = str(track_name) if track_name else 'Standard Track'
     return {
         'program_name': p_data['program_name'],
         'catalogue_url': p_data['catalogue_url'],
         'top_hiring_companies': p_data.get('top_hiring_companies', []),
         'curriculum_modules': p_data.get('curriculum_modules', []),
-        'track_label': str(track_name) if track_name else 'Standard Track'
+        'track_label': resolved_track,
+        'career_options': get_program_career_pathways(p_data['program_name'], resolved_track)
     }
 
 def get_all_curricula_catalog():

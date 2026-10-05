@@ -1458,8 +1458,8 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
                 fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
                 fallback['catalog_code'] = 'Program 5'
-                fallback['track'] = 'Cloud Platform Track'
-                fallback['fit_tier'] = 'Alternative Infrastructure Track'
+                fallback['track'] = 'Site Reliability Engineering (SRE) & Kubernetes Track' if is_senior else 'CI/CD Automation & Cloud Infrastructure Track'
+                fallback['fit_tier'] = 'Alternative Cloud Platform Leadership' if is_senior else 'Alternative Infrastructure Track'
                 fallback['why'] = "Infrastructure alternative focusing on Kubernetes and platform scalability."
             else:
                 primary['program'] = 'Software & AI Engineering (Scaler Academy)'

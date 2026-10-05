@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,9 @@
   <link rel="icon" type="image/png" href="scaler_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       /* Style Foundations Tokens */
@@ -146,7 +149,8 @@
       width: 100%;
     }
 
-    .nav-filter-input, .nav-filter-select {
+    .nav-filter-input,
+    .nav-filter-select {
       background: #ffffff;
       border: 1px solid var(--color-surface-raised);
       border-radius: var(--radius-xs);
@@ -160,7 +164,8 @@
       transition: border-color var(--motion-duration-instant);
     }
 
-    .nav-filter-input:focus, .nav-filter-select:focus {
+    .nav-filter-input:focus,
+    .nav-filter-select:focus {
       border-color: var(--scaler-blue);
       box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
     }
@@ -458,15 +463,37 @@
     }
 
     @keyframes pulseBlue {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
-      70% { transform: scale(1.1); box-shadow: 0 0 0 7px rgba(37, 99, 235, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+      }
+
+      70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 7px rgba(37, 99, 235, 0);
+      }
+
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+      }
     }
 
     @keyframes pulseGreen {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
-      70% { transform: scale(1.1); box-shadow: 0 0 0 7px rgba(5, 150, 105, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7);
+      }
+
+      70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 7px rgba(5, 150, 105, 0);
+      }
+
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
+      }
     }
 
     .eval-progress-pct {
@@ -607,7 +634,8 @@
       }
     }
 
-    .filter-input, .filter-select {
+    .filter-input,
+    .filter-select {
       background: var(--color-surface-muted);
       border: 1px solid var(--color-surface-raised);
       border-radius: var(--radius-xs);
@@ -620,7 +648,8 @@
       transition: border-color var(--motion-duration-instant);
     }
 
-    .filter-input:focus, .filter-select:focus {
+    .filter-input:focus,
+    .filter-select:focus {
       border-color: var(--scaler-blue);
       box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
     }
@@ -1183,7 +1212,7 @@
       border: 1px solid #cbd5e1;
       display: inline-flex;
       align-items: center;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 
     .primary-rec .career-role-pill {
@@ -1498,7 +1527,8 @@
       flex-wrap: wrap;
     }
 
-    .faq-prog-btn, .filter-tab {
+    .faq-prog-btn,
+    .filter-tab {
       font-family: var(--font-family-stack);
       font-size: var(--font-size-xs);
       font-weight: 600;
@@ -1517,18 +1547,58 @@
       text-decoration: none;
     }
 
-    .faq-prog-btn:hover, .filter-tab:hover {
+    .faq-prog-btn:hover,
+    .filter-tab:hover {
       background: #eff6ff;
       color: var(--scaler-blue);
       border-color: #bfdbfe;
     }
 
-    .faq-prog-btn.active, .filter-tab.active {
+    .faq-prog-btn.active,
+    .filter-tab.active {
       background: var(--scaler-blue);
       color: #ffffff;
       border-color: var(--scaler-blue);
       font-weight: 700;
       box-shadow: 0 1px 4px rgba(30, 58, 138, 0.25);
+    }
+
+    /* EVALUATION MODE SWITCHER (BULK CSV vs LIVE EMAIL SEARCH) */
+    .evaluation-mode-switcher {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .mode-tab-btn {
+      font-family: var(--font-family-stack);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #475569;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .mode-tab-btn:hover {
+      background: #eff6ff;
+      color: var(--scaler-blue);
+      border-color: #bfdbfe;
+    }
+
+    .mode-tab-btn.active {
+      background: var(--scaler-blue);
+      color: #ffffff;
+      border-color: var(--scaler-blue);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
     }
 
     .faq-accordion-list {
@@ -1641,6 +1711,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- TOP NAVBAR -->
@@ -1654,33 +1725,44 @@
         </a>
 
         <!-- VIEW BACK & FORWARD NAVIGATION ARROWS (ONLY SHOWN WHEN CSV IS UPLOADED) -->
-        <div id="nav-history-controls" class="nav-history-controls" style="display: none; align-items: center; gap: 5px;">
+        <div id="nav-history-controls" class="nav-history-controls"
+          style="display: none; align-items: center; gap: 5px;">
           <button id="nav-btn-back" class="nav-arrow-btn" onclick="navigateView('back')" title="Back to Upload Screen">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
             <span>Upload</span>
           </button>
-          <button id="nav-btn-forward" class="nav-arrow-btn" onclick="navigateView('forward')" title="Forward to Analysis Dashboard">
+          <button id="nav-btn-forward" class="nav-arrow-btn" onclick="navigateView('forward')"
+            title="Forward to Analysis Dashboard">
             <span>Dashboard</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </button>
         </div>
       </div>
 
       <div class="nav-actions">
         <!-- Dynamic CRM Email/Phone Lookup Bar -->
-        <div style="display:flex; align-items:center; background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:var(--space-2) var(--space-4); width:320px; box-shadow:var(--shadow-3);">
-          <input 
-            type="text" 
-            id="nav-crm-search-input" 
-            placeholder="Lookup lead by email, phone, or name..." 
+        <div
+          style="display:flex; align-items:center; background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:var(--space-2) var(--space-4); width:320px; box-shadow:var(--shadow-3);">
+          <input type="text" id="nav-crm-search-input" placeholder="Lookup lead by email, phone, or name..."
             style="border:none; outline:none; font-family:var(--font-family-stack); font-size:var(--font-size-xs); width:100%; padding:4px; color:var(--color-text-tertiary); background:transparent;"
-            onkeydown="if(event.key === 'Enter') executeCrmLookup()"
-          >
-          <button onclick="executeCrmLookup()" style="background:var(--color-text-tertiary); color:var(--color-surface-muted); border:none; border-radius:var(--radius-xs); padding:4px 10px; font-family:var(--font-family-stack); font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; transition:background var(--motion-duration-fast);" onmouseover="this.style.background='var(--color-surface-base)'" onmouseout="this.style.background='var(--color-text-tertiary)'">
+            onkeydown="if(event.key === 'Enter') executeCrmLookup()">
+          <button onclick="executeCrmLookup()"
+            style="background:var(--color-text-tertiary); color:var(--color-surface-muted); border:none; border-radius:var(--radius-xs); padding:4px 10px; font-family:var(--font-family-stack); font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; transition:background var(--motion-duration-fast);"
+            onmouseover="this.style.background='var(--color-surface-base)'"
+            onmouseout="this.style.background='var(--color-text-tertiary)'">
             Search
           </button>
         </div>
-        <button class="btn-sm" onclick="syncMetabaseLeads()" id="btn-sync-metabase" style="display:flex; align-items:center; gap:5px; font-weight:700;">
+        <button class="btn-sm" onclick="syncMetabaseLeads()" id="btn-sync-metabase"
+          style="display:flex; align-items:center; gap:5px; font-weight:700;">
           <span>&#8635;</span> Sync Metabase
         </button>
         <span class="status-badge" id="leads-count-status">Active Leads: <b id="stat-total">0</b></span>
@@ -1693,20 +1775,19 @@
     <!-- COMPACT FILTERS STRIP IN NAVBAR (VISIBLE IN ANALYSIS TAB) -->
     <div id="nav-filter-strip" class="nav-filter-strip" style="display: none;">
       <div class="nav-filter-label">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--scaler-blue);"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" style="color:var(--scaler-blue);">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        </svg>
         <span>Filters:</span>
       </div>
       <div class="nav-filters-grid">
-        <input 
-          type="text" 
-          id="filter-search" 
-          class="nav-filter-input" 
-          placeholder="Search Name, Email, Role, Company..." 
-          style="flex: 1.4; min-width: 170px;"
-          oninput="applyFilters()"
-        >
+        <input type="text" id="filter-search" class="nav-filter-input"
+          placeholder="Search Name, Email, Role, Company..." style="flex: 1.4; min-width: 170px;"
+          oninput="applyFilters()">
 
-        <select id="filter-program" class="nav-filter-select" style="flex: 1; min-width: 135px;" onchange="applyFilters()">
+        <select id="filter-program" class="nav-filter-select" style="flex: 1; min-width: 135px;"
+          onchange="applyFilters()">
           <option value="ALL">All Programs (1 to 5)</option>
           <option value="Program 1">Program 1: Scaler Academy</option>
           <option value="Program 2">Program 2: DSML</option>
@@ -1715,14 +1796,16 @@
           <option value="Program 5">Program 5: DevOps & Cloud</option>
         </select>
 
-        <select id="filter-track" class="nav-filter-select" style="flex: 0.9; min-width: 115px;" onchange="applyFilters()">
+        <select id="filter-track" class="nav-filter-select" style="flex: 0.9; min-width: 115px;"
+          onchange="applyFilters()">
           <option value="ALL">All Track Levels</option>
           <option value="Beginner">Beginner Track</option>
           <option value="Intermediate">Intermediate Track</option>
           <option value="Advanced">Advanced Track</option>
         </select>
 
-        <select id="filter-persona" class="nav-filter-select" style="flex: 1; min-width: 130px;" onchange="applyFilters()">
+        <select id="filter-persona" class="nav-filter-select" style="flex: 1; min-width: 130px;"
+          onchange="applyFilters()">
           <option value="ALL">All Role Personas</option>
           <option value="Non-Tech">Non-Tech / Switcher</option>
           <option value="Healthcare">Healthcare & Medical</option>
@@ -1744,18 +1827,20 @@
           <option value="Software">Software Engineering</option>
         </select>
 
-        <select id="filter-retention" class="nav-filter-select" style="flex: 0.85; min-width: 120px;" onchange="applyFilters()">
+        <select id="filter-retention" class="nav-filter-select" style="flex: 0.85; min-width: 120px;"
+          onchange="applyFilters()">
           <option value="ALL">All Retention</option>
           <option value="HIGH">High (>=80%)</option>
           <option value="MODERATE">Moderate (75 - 79%)</option>
-          <option value="RISK">Pacing Risk (<75%)</option>
+          <option value="RISK">Pacing Risk (<75%)< /option>
         </select>
 
-        <select id="filter-confidence" class="nav-filter-select" style="flex: 0.85; min-width: 115px;" onchange="applyFilters()">
+        <select id="filter-confidence" class="nav-filter-select" style="flex: 0.85; min-width: 115px;"
+          onchange="applyFilters()">
           <option value="ALL">All Confidence</option>
           <option value="HIGH">High (>=75%)</option>
           <option value="MID">Mid (55 - 74%)</option>
-          <option value="LOW">Low (<55%)</option>
+          <option value="LOW">Low (<55%)< /option>
         </select>
 
         <button class="nav-filter-reset" onclick="resetFilters()" title="Reset all filters to default">
@@ -1776,36 +1861,96 @@
             Program Recommendation &amp; <span>Sales Intelligence</span> Desk
           </h1>
           <p class="hero-tagline">
-            Upload inbound leads CSV to evaluate academic eligibility, track leveling, and empirical retention benchmarks against catalog rules.
+            Upload inbound leads CSV to evaluate academic eligibility, track leveling, and empirical retention
+            benchmarks against catalog rules.
           </p>
         </div>
 
-        <!-- CSV UPLOAD DROPZONE -->
+        <!-- EVALUATION MODE SWITCHER TABS -->
+        <div class="evaluation-mode-switcher">
+          <button type="button" id="tab-mode-csv" class="mode-tab-btn active" onclick="switchEvaluationMode('csv')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Upload Bulk Leads CSV</span>
+          </button>
+          <button type="button" id="tab-mode-email" class="mode-tab-btn" onclick="switchEvaluationMode('email')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Search &amp; Fetch Live Lead by Email</span>
+          </button>
+        </div>
+
+        <!-- MAIN CARD CONTAINER -->
         <div class="upload-card">
-          <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
-          <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
-            <div style="margin-bottom: 14px;">
-              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="background: #eff6ff; padding: 10px; border-radius: 50%; border: 1px solid #bfdbfe;">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-              </svg>
+          
+          <!-- MODE 1: BULK CSV UPLOAD -->
+          <div id="mode-content-csv">
+            <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
+            <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
+              <div style="margin-bottom: 14px;">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  style="background: #eff6ff; padding: 10px; border-radius: 50%; border: 1px solid #bfdbfe;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <div class="dropzone-title" id="dropzone-status-title">Choose or Drag &amp; Drop Leads CSV File</div>
+              <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience,
+                Organization, Inbound Program). Evaluates automatically upon upload.</div>
+              <div style="margin-top: 16px;">
+                <button type="button" class="btn-sm"
+                  style="background: var(--scaler-blue); color: #ffffff; border-color: var(--scaler-blue); font-weight: 700; padding: 8px 22px; font-size: 13px; border-radius: 4px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);">
+                  Browse CSV File
+                </button>
+              </div>
             </div>
-            <div class="dropzone-title" id="dropzone-status-title">Choose or Drag &amp; Drop Leads CSV File</div>
-            <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience, Organization, Inbound Program). Evaluates automatically upon upload.</div>
-            <div style="margin-top: 16px;">
-              <button type="button" class="btn-sm" style="background: var(--scaler-blue); color: #ffffff; border-color: var(--scaler-blue); font-weight: 700; padding: 8px 22px; font-size: 13px; border-radius: 4px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);">
-                Browse CSV File
-              </button>
+          </div>
+
+          <!-- MODE 2: FETCH LIVE LEAD BY EMAIL SEARCH -->
+          <div id="mode-content-email" style="display: none;">
+            <div class="dropzone-box" style="cursor: default;">
+              <div style="margin-bottom: 14px;">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  style="background: #e0f2fe; padding: 10px; border-radius: 50%; border: 1px solid #bae6fd;">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <div class="dropzone-title" style="color: #0f172a;">Fetch Live Lead &amp; Generate Recommendation</div>
+              <div class="dropzone-sub" style="max-width: 480px; margin: 6px auto 16px auto;">
+                Search candidate database by Lead Email ID, Phone Number, or Candidate Name to fetch live profile data and evaluate program eligibility instantly.
+              </div>
+
+              <div style="display: flex; gap: 8px; max-width: 520px; margin: 0 auto; align-items: center;" onclick="event.stopPropagation()">
+                <input 
+                  type="text" 
+                  id="home-live-search-input" 
+                  placeholder="Enter candidate email ID (e.g. priya.yadav@gmail.com)..."
+                  style="flex: 1; padding: 10px 14px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; background: #ffffff; color: #0f172a;"
+                  onkeydown="if(event.key === 'Enter') handleLiveLeadSearch()"
+                >
+                <button 
+                  type="button" 
+                  onclick="handleLiveLeadSearch()"
+                  style="background: #0284c7; color: #ffffff; font-weight: 700; border: none; padding: 10px 20px; font-size: 13px; border-radius: 6px; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);"
+                >
+                  Fetch &amp; Evaluate Lead
+                </button>
+              </div>
+              <div id="live-search-status-msg" style="margin-top: 10px; font-size: 11.5px; color: #dc2626; font-weight: 600; display: none;"></div>
             </div>
           </div>
 
           <!-- RESUME DASHBOARD BANNER IF LEADS ALREADY LOADED -->
-          <div id="upload-existing-leads-banner" style="display: none; margin-top: 14px; padding: 10px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; align-items: center; justify-content: space-between; gap: 10px;">
+          <div id="upload-existing-leads-banner"
+            style="display: none; margin-top: 14px; padding: 10px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; align-items: center; justify-content: space-between; gap: 10px;">
             <div style="font-size: 12px; color: #166534;">
-              <span>&#10003;</span> Currently evaluated: <b id="existing-leads-count" style="color: #14532d;">0</b> leads in memory.
+              <span>&#10003;</span> Currently evaluated: <b id="existing-leads-count" style="color: #14532d;">0</b>
+              leads in memory.
             </div>
-            <button type="button" onclick="showAnalysisView()" class="btn-sm" style="font-weight: 700; color: #ffffff; background: var(--scaler-blue); border-color: var(--scaler-blue); padding: 5px 14px; font-size: 11.5px; border-radius: 4px;">
+            <button type="button" onclick="showAnalysisView()" class="btn-sm"
+              style="font-weight: 700; color: #ffffff; background: var(--scaler-blue); border-color: var(--scaler-blue); padding: 5px 14px; font-size: 11.5px; border-radius: 4px;">
               View Dashboard &rarr;
             </button>
           </div>
@@ -1860,7 +2005,8 @@
             Evaluated Leads (<span id="table-display-count">0</span> / <span id="table-total-count">0</span>)
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-sm" onclick="showUploadView()" style="display: inline-flex; align-items: center; gap: 4px;">
+            <button class="btn-sm" onclick="showUploadView()"
+              style="display: inline-flex; align-items: center; gap: 4px;">
               <span>&larr;</span> Upload Another CSV
             </button>
             <button class="btn-sm" onclick="downloadMasterCsv()">
@@ -1890,18 +2036,19 @@
               </tr>
             </tbody>
           </table>
-      </div>
+        </div>
 
-      <!-- PAGINATION BAR -->
-      <div class="pagination-bar" id="pagination-bar">
-        <div id="pagination-info">Showing 0 of 0 leads</div>
-        <div class="pagination-controls">
-          <button class="btn-sm" id="btn-prev-page" onclick="changePage(-1)" disabled>Previous</button>
-          <span style="font-weight:600; color:var(--text-heading); font-size:12px;">Page <span id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
-          <button class="btn-sm" id="btn-next-page" onclick="changePage(1)" disabled>Next</button>
+        <!-- PAGINATION BAR -->
+        <div class="pagination-bar" id="pagination-bar">
+          <div id="pagination-info">Showing 0 of 0 leads</div>
+          <div class="pagination-controls">
+            <button class="btn-sm" id="btn-prev-page" onclick="changePage(-1)" disabled>Previous</button>
+            <span style="font-weight:600; color:var(--text-heading); font-size:12px;">Page <span
+                id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
+            <button class="btn-sm" id="btn-next-page" onclick="changePage(1)" disabled>Next</button>
+          </div>
         </div>
       </div>
-    </div>
     </div> <!-- end view-analysis -->
 
   </div> <!-- end app-container -->
@@ -1909,16 +2056,17 @@
   <!-- POP-UP SALES DOSSIER MODAL -->
   <div class="modal-overlay" id="lead-modal" onclick="handleOverlayClick(event)">
     <div class="modal-container">
-      
+
       <!-- MODAL BODY -->
       <div class="modal-body">
-        
+
         <!-- CANDIDATE DOSSIER HERO (AVATAR ON LEFT, DETAILS BOX ON RIGHT) -->
         <div class="candidate-dossier-hero">
           <!-- AVATAR COLUMN (LEFT) -->
           <div class="candidate-avatar-col">
             <div class="candidate-avatar-wrapper">
-              <img id="modal-candidate-avatar" src="avatar_male.png" alt="Candidate Avatar" class="candidate-avatar-img">
+              <img id="modal-candidate-avatar" src="avatar_male.png" alt="Candidate Avatar"
+                class="candidate-avatar-img">
             </div>
           </div>
 
@@ -1933,17 +2081,29 @@
 
               <!-- PREV & NEXT CANDIDATE CONTROLS + CLOSE -->
               <div style="display: flex; align-items: center; gap: 10px;">
-                <div class="modal-candidate-nav" style="display: flex; align-items: center; gap: 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 3px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                  <button id="modal-btn-prev-candidate" onclick="navigateCandidate(-1)" title="Previous Candidate (Left Arrow)" class="modal-nav-arrow-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <div class="modal-candidate-nav"
+                  style="display: flex; align-items: center; gap: 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 3px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                  <button id="modal-btn-prev-candidate" onclick="navigateCandidate(-1)"
+                    title="Previous Candidate (Left Arrow)" class="modal-nav-arrow-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
                     <span>Prev</span>
                   </button>
-                  <span id="modal-candidate-counter" style="font-size: 11px; font-weight: 700; color: #475569; padding: 0 8px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; white-space: nowrap;">
+                  <span id="modal-candidate-counter"
+                    style="font-size: 11px; font-weight: 700; color: #475569; padding: 0 8px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; white-space: nowrap;">
                     1 / 200
                   </span>
-                  <button id="modal-btn-next-candidate" onclick="navigateCandidate(1)" title="Next Candidate (Right Arrow)" class="modal-nav-arrow-btn">
+                  <button id="modal-btn-next-candidate" onclick="navigateCandidate(1)"
+                    title="Next Candidate (Right Arrow)" class="modal-nav-arrow-btn">
                     <span>Next</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
                   </button>
                 </div>
 
@@ -1978,7 +2138,8 @@
               </div>
               <div class="dossier-tile">
                 <div class="dossier-tile-label">Inbound Enquiry</div>
-                <div class="dossier-tile-val" id="modal-inbound" style="color:var(--scaler-red); font-weight:700;">-</div>
+                <div class="dossier-tile-val" id="modal-inbound" style="color:var(--scaler-red); font-weight:700;">-
+                </div>
               </div>
               <div class="dossier-tile">
                 <div class="dossier-tile-label">Masterclass / Event</div>
@@ -2002,14 +2163,16 @@
 
         <!-- RECOMMENDATION SIDE-BY-SIDE CARDS -->
         <div class="rec-grid">
-          
+
           <!-- PRIMARY RECOMMENDATION CARD -->
           <div class="rec-box primary-rec">
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                 <div style="display:flex; gap:6px; align-items:center;">
                   <div class="rec-badge-pill pill-primary">Primary Recommendation</div>
-                  <div id="modal-primary-confidence" style="font-size:11px; font-weight:700; color:#15803d; background:#dcfce7; border:1px solid #bbf7d0; border-radius:4px; padding:2px 8px;">High Confidence (85%)</div>
+                  <div id="modal-primary-confidence"
+                    style="font-size:11px; font-weight:700; color:#15803d; background:#dcfce7; border:1px solid #bbf7d0; border-radius:4px; padding:2px 8px;">
+                    High Confidence (85%)</div>
                 </div>
               </div>
               <div class="rec-program-name" id="modal-primary-prog">-</div>
@@ -2036,7 +2199,9 @@
               </div>
 
               <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
-                <a id="modal-primary-catalogue" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
+                <a id="modal-primary-catalogue"
+                  href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291"
+                  target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
                   View Brochure &amp; Syllabus &rarr;
                 </a>
               </div>
@@ -2049,7 +2214,9 @@
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                 <div style="display:flex; gap:6px; align-items:center;">
                   <div class="rec-badge-pill pill-fallback">Fallback / Next Program</div>
-                  <div id="modal-fallback-confidence" style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:4px; padding:2px 8px;">Mid Confidence (65%)</div>
+                  <div id="modal-fallback-confidence"
+                    style="font-size:11px; font-weight:700; color:#b45309; background:#fef3c7; border:1px solid #fde68a; border-radius:4px; padding:2px 8px;">
+                    Mid Confidence (65%)</div>
                 </div>
               </div>
               <div class="rec-program-name" id="modal-fallback-prog">-</div>
@@ -2076,7 +2243,9 @@
               </div>
 
               <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
-                <a id="modal-fallback-catalogue" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/210/531/original/DSML_Brochure_2026_%282%29.pdf?1783928557" target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
+                <a id="modal-fallback-catalogue"
+                  href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/210/531/original/DSML_Brochure_2026_%282%29.pdf?1783928557"
+                  target="_blank" class="btn-catalogue" style="font-size:11px; padding:3px 8px;">
                   View Brochure &amp; Syllabus &rarr;
                 </a>
               </div>
@@ -2087,9 +2256,11 @@
 
         <!-- COMPLETE CURRICULUM & PRODUCTION MILESTONES -->
         <div style="margin-top:var(--space-7);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div>
-              <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);" id="curriculum-prog-title">
+              <div style="font-size:13.5px; font-weight:700; color:var(--color-text-tertiary);"
+                id="curriculum-prog-title">
                 Curriculum Structure &amp; Production Milestones
               </div>
               <div style="font-size:11px; color:var(--color-text-inverse);" id="curriculum-prog-sub">
@@ -2097,9 +2268,13 @@
               </div>
             </div>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <button id="btn-curr-primary" class="filter-tab active" onclick="switchCurriculumTab('primary')">Primary Track Modules</button>
-              <button id="btn-curr-fallback" class="filter-tab" onclick="switchCurriculumTab('fallback')">Fallback Track Modules</button>
-              <a id="modal-curriculum-catalogue-link" href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291" target="_blank" class="btn-catalogue">
+              <button id="btn-curr-primary" class="filter-tab active" onclick="switchCurriculumTab('primary')">Primary
+                Track Modules</button>
+              <button id="btn-curr-fallback" class="filter-tab" onclick="switchCurriculumTab('fallback')">Fallback Track
+                Modules</button>
+              <a id="modal-curriculum-catalogue-link"
+                href="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/218/970/original/Academy_brochure_2026_%281%29.pdf?1787132291"
+                target="_blank" class="btn-catalogue">
                 Official Program Brochure &amp; Syllabus &rarr;
               </a>
             </div>
@@ -2110,8 +2285,10 @@
           </div>
 
           <!-- HIRING PARTNER NETWORK -->
-          <div style="background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:12px; box-shadow:var(--shadow-3); margin-top:12px;">
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--color-text-inverse); margin-bottom:8px;">
+          <div
+            style="background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:12px; box-shadow:var(--shadow-3); margin-top:12px;">
+            <div
+              style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--color-text-inverse); margin-bottom:8px;">
               Top Companies Hiring for this Specialization
             </div>
             <div id="mkt-companies-list" style="display:flex; flex-wrap:wrap; gap:6px;">
@@ -2124,10 +2301,12 @@
             <div class="market-comp-header">
               <div>
                 <div class="market-comp-title">
-                  <span>Scaler vs Other Market Programs: <span id="comp-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
+                  <span>Scaler vs Other Market Programs: <span id="comp-active-program-name"
+                      style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
                 </div>
                 <div class="market-comp-sub">
-                  Side-by-side architectural and pedagogical breakdown comparing this Scaler program against typical market alternatives (pre-recorded MOOCs, generic bootcamps, and executive diplomas).
+                  Side-by-side architectural and pedagogical breakdown comparing this Scaler program against typical
+                  market alternatives (pre-recorded MOOCs, generic bootcamps, and executive diplomas).
                 </div>
               </div>
             </div>
@@ -2153,10 +2332,12 @@
             <div class="strategic-faq-header">
               <div>
                 <div class="strategic-faq-title">
-                  <span>Strategic Career Advisory: <span id="faq-active-program-name" style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
+                  <span>Strategic Career Advisory: <span id="faq-active-program-name"
+                      style="color: var(--scaler-blue); font-weight: 800;">Recommended Program</span></span>
                 </div>
                 <div class="strategic-faq-sub">
-                  Counseling playbook: Grounded real-world answers on career trajectory, compensation benchmarks, interview bars, and curriculum architecture for recommended programs.
+                  Counseling playbook: Grounded real-world answers on career trajectory, compensation benchmarks,
+                  interview bars, and curriculum architecture for recommended programs.
                 </div>
               </div>
               <div class="strategic-faq-selector" id="faq-program-selector">
@@ -2180,7 +2361,7 @@
 
 
 
-  </div>
+    </div>
   </div>
 
   <script>
@@ -2794,7 +2975,7 @@
             setEvalStage(i, 'completed');
           }
           setEvalProgress(100, `Evaluation Complete: ${(data.total || data.leads.length).toLocaleString()} Leads Successfully Loaded & Ready for Live Recommendation!`);
-          
+
           const pulse = document.getElementById('eval-pulse');
           const pctEl = document.getElementById('eval-progress-pct');
           if (pulse) pulse.classList.add('success');
@@ -2805,7 +2986,7 @@
             ? `Successfully loaded ${data.total.toLocaleString()} leads (${data.leads.length.toLocaleString()} active in memory). Live recommendations ready below.`
             : `Successfully evaluated ${data.total || data.leads.length} leads. Live recommendations ready below.`;
           document.getElementById('dropzone-status-sub').innerText = countNotice;
-          
+
           document.getElementById('stat-total').innerText = (data.total || data.leads.length).toLocaleString();
           document.getElementById('table-total-count').innerText = (data.total || data.leads.length).toLocaleString();
 
@@ -3311,7 +3492,7 @@
         elCurrTitle.innerText = `${catPrefix}${target.program} — ${target.track}`;
       }
       if (elCurrSub) {
-        elCurrSub.innerText = which === 'primary' 
+        elCurrSub.innerText = which === 'primary'
           ? `Primary Recommendation Track Outline & Deep Dive (Learner Tailored)`
           : `Alternative / Fallback Recommendation Track Outline & Deep Dive`;
       }
@@ -3324,7 +3505,7 @@
         if (modules.length > 0) {
           elCurrContainer.innerHTML = modules.map(m => {
             const segTag = m.segment ? `<span style="font-size:10.5px; font-weight:700; color:var(--scaler-red); background:#ffe4e6; border:1px solid #fecdd3; border-radius:4px; padding:2px 8px; margin-right:6px; display:inline-block; margin-bottom:4px;">${m.segment}</span>` : '';
-            
+
             let typeStyle = 'background:#e0e7ff; color:#3730a3; border:1px solid #c7d2fe;';
             if (m.type === 'Specialisation') {
               typeStyle = 'background:#fae8ff; color:#86198f; border:1px solid #f5d0fe;';
@@ -3359,7 +3540,7 @@
     function guessGenderByName(fullName) {
       if (!fullName) return 'MALE';
       const nameClean = fullName.trim().toLowerCase();
-      
+
       // Honorifics
       if (nameClean.startsWith('ms.') || nameClean.startsWith('mrs.') || nameClean.startsWith('miss ')) {
         return 'FEMALE';
@@ -3367,9 +3548,9 @@
       if (nameClean.startsWith('mr.')) {
         return 'MALE';
       }
-      
+
       const firstName = nameClean.split(/\s+/)[0].replace(/[^a-z]/g, '');
-      
+
       const FEMALE_NAMES = new Set([
         'yamini', 'priya', 'pooja', 'ananya', 'neha', 'sneha', 'shreya', 'divya', 'swati', 'tanvi',
         'ritu', 'megha', 'kavita', 'deepa', 'sunita', 'anita', 'pallavi', 'riya', 'anjali', 'aayushi',
@@ -3383,15 +3564,15 @@
         'kanika', 'shikha', 'shalini', 'shilpa', 'deepali', 'roshni', 'gunjan', 'mona', 'vidya',
         'varsha', 'surabhi', 'surbhi', 'bhavya', 'urvashi', 'sonali', 'chetna', 'tripti', 'upasana'
       ]);
-      
+
       if (FEMALE_NAMES.has(firstName)) {
         return 'FEMALE';
       }
-      
+
       if (nameClean.includes(' kaur') || nameClean.includes(' devi') || nameClean.includes(' kumari') || nameClean.includes(' begum')) {
         return 'FEMALE';
       }
-      
+
       return 'MALE';
     }
 
@@ -3559,7 +3740,7 @@
     function renderFactorBars(containerId, bk) {
       const container = document.getElementById(containerId);
       if (!container) return;
-      
+
       const factors = [
         { name: 'Cohort Sample Size (N)', pts: bk.cohort_pts !== undefined ? bk.cohort_pts : 0, max: bk.cohort_max || 35, desc: bk.cohort_desc || '', colorClass: 'factor-fill-blue' },
         { name: 'Track Retention Rate', pts: bk.ret_pts !== undefined ? bk.ret_pts : 0, max: bk.ret_max || 25, desc: bk.ret_desc || '', colorClass: 'factor-fill-green' },
@@ -3601,6 +3782,64 @@
       }
     }
 
+    function switchEvaluationMode(mode) {
+      const tabCsv = document.getElementById('tab-mode-csv');
+      const tabEmail = document.getElementById('tab-mode-email');
+      const contentCsv = document.getElementById('mode-content-csv');
+      const contentEmail = document.getElementById('mode-content-email');
+
+      if (mode === 'csv') {
+        if (tabCsv) tabCsv.classList.add('active');
+        if (tabEmail) tabEmail.classList.remove('active');
+        if (contentCsv) contentCsv.style.display = 'block';
+        if (contentEmail) contentEmail.style.display = 'none';
+      } else {
+        if (tabEmail) tabEmail.classList.add('active');
+        if (tabCsv) tabCsv.classList.remove('active');
+        if (contentEmail) contentEmail.style.display = 'block';
+        if (contentCsv) contentCsv.style.display = 'none';
+      }
+    }
+
+    async function handleLiveLeadSearch() {
+      const inputEl = document.getElementById('home-live-search-input');
+      const q = inputEl ? inputEl.value.trim() : '';
+      const msgEl = document.getElementById('live-search-status-msg');
+      if (!q) {
+        if (msgEl) {
+          msgEl.innerText = 'Please enter a candidate email ID, phone number, or Lead ID.';
+          msgEl.style.display = 'block';
+        }
+        return;
+      }
+      if (msgEl) msgEl.style.display = 'none';
+
+      try {
+        const res = await fetch(`/api/lookup?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data.status === 'success' && data.lead) {
+          if (!allLeads.some(l => l.lead_id === data.lead.lead_id)) {
+            allLeads.unshift(data.lead);
+            filteredLeads = [...allLeads];
+            document.getElementById('stat-total').innerText = allLeads.length;
+            try { localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads)); } catch (e) { }
+          }
+          activeLeadData = data.lead;
+          openModalWithLead(data.lead);
+        } else {
+          if (msgEl) {
+            msgEl.innerText = `No candidate found matching "${q}". Please check the email ID or upload a bulk CSV.`;
+            msgEl.style.display = 'block';
+          }
+        }
+      } catch (err) {
+        if (msgEl) {
+          msgEl.innerText = 'Server search error: ' + err.message;
+          msgEl.style.display = 'block';
+        }
+      }
+    }
+
     async function executeCrmLookup() {
       const q = document.getElementById('nav-crm-search-input').value.trim();
       if (!q) {
@@ -3616,7 +3855,7 @@
             allLeads.unshift(data.lead);
             filteredLeads = [...allLeads];
             document.getElementById('stat-total').innerText = allLeads.length;
-            try { localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads)); } catch(e){}
+            try { localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads)); } catch (e) { }
             showAnalysisView();
             renderTable();
           }
@@ -3645,7 +3884,7 @@
             filteredLeads = [...allLeads];
             document.getElementById('stat-total').innerText = data.total_synced;
             document.getElementById('table-total-count').innerText = data.total_synced;
-            try { localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads)); } catch(e){}
+            try { localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads)); } catch (e) { }
             showAnalysisView();
             renderTable();
           }
@@ -3668,4 +3907,5 @@
     }
   </script>
 </body>
+
 </html>

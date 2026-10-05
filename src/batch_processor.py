@@ -48,14 +48,14 @@ def process_leads_dataframe(df):
     col_utm_campaign = find_col(df, ['utm_campaign', 'campaign'])
     col_landing = find_col(df, ['landing_page_url', 'landing_url', 'url', 'page_url'])
     col_platform = find_col(df, ['platform', 'device', 'device_type'])
-    col_test_launched = find_col(df, ['test_launched_flag', 'attempted_sat', 'attempted sat', 'sat_attempted', 'test_launched'])
-    col_test_passed = find_col(df, ['test_passed_flag', 'test_passed', 'sat_passed'])
+    col_test_launched = find_col(df, ['test_launched_flag', 'diagnostic set status', 'diagnostic sat status', 'attempted_set', 'attempted_sat', 'attempted set', 'attempted sat', 'set_attempted', 'sat_attempted', 'test_launched'])
+    col_test_passed = find_col(df, ['test_passed_flag', 'test_passed', 'set_passed', 'sat_passed'])
     col_lead_score = find_col(df, ['lead_score', 'score', 'activity_score', 'lsq_score'])
     col_stage = find_col(df, ['current_lead_stage', 'lead_stage', 'stage', 'last_lead_stage'])
     col_country = find_col(df, ['country_type', 'country', 'region', 'entity'])
     col_signup = find_col(df, ['signed_up_date', 'signup_date', 'created_at', 'lead_created_at', 'registration_date1', 'registration_date', 'onboarding date'])
     col_edu = find_col(df, ['education', 'degree', 'qualification', 'highest_qualification', 'stream', 'branch', 'graduation', 'college_degree', 'course_degree', 'academic_qualification', 'highest qualification', 'college_name'])
-    col_sat_score = find_col(df, ['sat_score', 'sat_marks', 'test_score', 'coding_test_score', 'diagnostic_score', 'assessment_score', 'test_marks', 'sat_result'])
+    col_sat_score = find_col(df, ['diagnostic set score', 'diagnostic sat score', 'set_score', 'sat_score', 'set_marks', 'sat_marks', 'test_score', 'coding_test_score', 'diagnostic_score', 'assessment_score', 'test_marks', 'set_result', 'sat_result'])
 
     evaluated_records = []
     enriched_rows = []
@@ -250,14 +250,17 @@ def process_leads_dataframe(df):
             sat_score_display = f"{sat_score_clean}/100" if sat_score_clean.isdigit() and int(sat_score_clean) <= 100 else sat_score_clean
             sat_status = f"Score: {sat_score_display}"
         elif test_passed_val is not None and str(test_passed_val).strip() in ['1', '1.0', 'true', 'True']:
-            sat_status = "SAT Passed"
+            sat_status = "SET Passed"
             sat_score_display = "Passed (Cleared)"
         elif test_val is not None and str(test_val).strip() in ['1', '1.0', 'true', 'True']:
-            sat_status = "SAT Attempted"
+            sat_status = "SET Attempted"
             sat_score_display = "Attempted (Evaluation Pending)"
         else:
-            sat_status = "SAT Not Attempted"
+            sat_status = "SET Not Attempted"
             sat_score_display = "Not Attempted"
+
+        if 'sat' in str(sat_status).lower():
+            sat_status = str(sat_status).replace('SAT', 'SET').replace('Sat', 'Set').replace('sat', 'set')
 
         src_val = str(row[col_utm_source]).strip() if col_utm_source and pd.notna(row[col_utm_source]) else ""
         med_val = str(row[col_utm_medium]).strip() if col_utm_medium and pd.notna(row[col_utm_medium]) else ""
@@ -338,8 +341,8 @@ def process_leads_dataframe(df):
             'Event Name': touchpoint_dict['event_name'],
             'Attended Status': touchpoint_dict['attended'],
             'Watch Duration': touchpoint_dict['duration'],
-            'Diagnostic SAT Status': touchpoint_dict['sat_status'],
-            'Diagnostic SAT Score': touchpoint_dict['sat_score'],
+            'Diagnostic SET Status': touchpoint_dict['sat_status'],
+            'Diagnostic SET Score': touchpoint_dict['sat_score'],
             'Acquisition Channel': touchpoint_dict['channel'],
             'Device Platform': touchpoint_dict['platform'],
             'Signup Date': touchpoint_dict['signup_date'],

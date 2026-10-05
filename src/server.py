@@ -78,8 +78,10 @@ class SingleLeadInput(BaseModel):
     company_type: Optional[str] = "IT Services / Technology"
     previous_org: Optional[str] = "Current Company"
     program: Optional[str] = "Academy"
+    set_score: Optional[str] = None
+    set_status: Optional[str] = None
     sat_score: Optional[str] = "N/A"
-    sat_status: Optional[str] = "SAT Not Attempted"
+    sat_status: Optional[str] = "SET Not Attempted"
 
 class CRMWebhookLead(BaseModel):
     name: Optional[str] = "Prospective Learner"
@@ -94,8 +96,10 @@ class CRMWebhookLead(BaseModel):
     event_name: Optional[str] = "Direct CRM Inbound Registration"
     attended: Optional[str] = "Attended"
     duration: Optional[str] = "N/A"
+    set_score: Optional[str] = None
+    set_status: Optional[str] = None
     sat_score: Optional[str] = "N/A"
-    sat_status: Optional[str] = "SAT Attempted"
+    sat_status: Optional[str] = "SET Attempted"
     channel: Optional[str] = "CRM Webhook / Inbound"
 
 @app.get("/", response_class=HTMLResponse)
@@ -194,8 +198,10 @@ async def crm_webhook(lead: CRMWebhookLead):
         'company type': lead.company_type or "IT Services / Technology",
         'previous org name': lead.previous_org or "Current Company",
         'program': lead.program or "Academy",
-        'sat_score': lead.sat_score or "N/A",
-        'sat_status': lead.sat_status or "SAT Not Attempted"
+        'set_score': lead.set_score or lead.sat_score or "N/A",
+        'set_status': (lead.set_status or lead.sat_status or "SET Not Attempted").replace('SAT', 'SET').replace('sat', 'set'),
+        'sat_score': lead.set_score or lead.sat_score or "N/A",
+        'sat_status': (lead.set_status or lead.sat_status or "SET Not Attempted").replace('SAT', 'SET').replace('sat', 'set')
     }
     
     eval_res = evaluate_lead_profile(lead_dict)
@@ -207,8 +213,10 @@ async def crm_webhook(lead: CRMWebhookLead):
         'event_name': lead.event_name,
         'attended': lead.attended,
         'duration': lead.duration,
-        'sat_status': lead.sat_status,
-        'sat_score': lead.sat_score or "N/A",
+        'sat_status': lead_dict['sat_status'],
+        'sat_score': lead_dict['sat_score'],
+        'set_status': lead_dict['set_status'],
+        'set_score': lead_dict['set_score'],
         'channel': lead.channel,
         'campaign': "Live CRM Inbound",
         'platform': "Web / CRM API",
@@ -237,6 +245,8 @@ async def evaluate_single(lead_input: SingleLeadInput):
     Evaluates a single lead entered directly by the sales counselor on the UI.
     """
     global CACHED_LEADS, CACHED_DF
+    single_set_status = (lead_input.set_status or lead_input.sat_status or "SET Not Attempted").replace('SAT', 'SET').replace('sat', 'set')
+    single_set_score = lead_input.set_score or lead_input.sat_score or "N/A"
     lead_dict = {
         'name': lead_input.name or "Prospective Learner",
         'email': lead_input.email or "unspecified@lead.com",
@@ -247,8 +257,10 @@ async def evaluate_single(lead_input: SingleLeadInput):
         'company type': lead_input.company_type or "IT Services / Technology",
         'previous org name': lead_input.previous_org or "Current Organization",
         'program': lead_input.program or "Academy",
-        'sat_score': lead_input.sat_score or "N/A",
-        'sat_status': lead_input.sat_status or "SAT Not Attempted"
+        'set_score': single_set_score,
+        'set_status': single_set_status,
+        'sat_score': single_set_score,
+        'sat_status': single_set_status
     }
     
     eval_res = evaluate_lead_profile(lead_dict)
@@ -260,8 +272,10 @@ async def evaluate_single(lead_input: SingleLeadInput):
         'event_name': "Direct Counselor Intake",
         'attended': "Phone Inbound",
         'duration': "N/A",
-        'sat_status': lead_input.sat_status or "SAT Not Attempted",
-        'sat_score': lead_input.sat_score or "N/A",
+        'sat_status': single_set_status,
+        'sat_score': single_set_score,
+        'set_status': single_set_status,
+        'set_score': single_set_score,
         'channel': "Sales Inbound Desk",
         'campaign': "Direct Counselor Inquiry",
         'platform': "Counselor Console",
@@ -318,8 +332,10 @@ async def lookup_lead(q: str):
                 'event_name': mb_row.get('event_name', mb_row.get('Event Name', 'Metabase Lead Query')),
                 'attended': mb_row.get('attended', mb_row.get('Attended', 'Registered')),
                 'duration': str(mb_row.get('duration', 'N/A')),
-                'sat_status': mb_row.get('sat_status', 'SAT Pending'),
-                'sat_score': str(mb_row.get('sat_score', 'N/A')),
+                'sat_status': mb_row.get('set_status', mb_row.get('sat_status', 'SET Pending')),
+                'sat_score': str(mb_row.get('set_score', mb_row.get('sat_score', 'N/A'))),
+                'set_status': mb_row.get('set_status', mb_row.get('sat_status', 'SET Pending')),
+                'set_score': str(mb_row.get('set_score', mb_row.get('sat_score', 'N/A'))),
                 'channel': mb_row.get('channel', 'Metabase Data Warehouse'),
                 'campaign': mb_row.get('campaign', 'Metabase Query Sync'),
                 'platform': "Metabase API",

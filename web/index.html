@@ -1604,7 +1604,7 @@
             <div class="tp-item-val" id="modal-tp-attendance">-</div>
           </div>
           <div>
-            <div class="tp-item-label">Diagnostic Coding SAT</div>
+            <div class="tp-item-label">Diagnostic Coding SET Score</div>
             <div class="tp-item-val" id="modal-tp-sat">-</div>
           </div>
           <div>
@@ -2580,7 +2580,7 @@
             </div>
             <div style="font-size:10.5px; margin-top:2px;">
               <span style="color:${tp.attended === 'Attended' ? 'var(--accent-green)' : 'var(--text-muted)'}; font-weight:700;">${tp.attended || 'Registered'}</span>
-              <span style="color:var(--text-muted);">${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''} | ${tp.sat_status || 'SAT Pending'}</span>
+              <span style="color:var(--text-muted);">${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''} | ${tp.set_status || tp.sat_status || 'SET Pending'}</span>
             </div>
           </td>
           <td>
@@ -2588,7 +2588,7 @@
             <div style="font-size:11px; color:#475569; margin-top:2px;">Track: <b>${prim.track.split('(')[0]}</b></div>
             <div style="margin-top:3px; display:flex; gap:4px; flex-wrap:wrap; align-items:center;">
               <span style="display:inline-block; font-size:10px; font-weight:700; background:#e0f2fe; color:#0369a1; padding:1px 6px; border-radius:3px; border:1px solid #bae6fd;">Duration: ${prim.duration || '12 Months'}</span>
-              <span style="display:inline-block; font-size:10px; font-weight:700; ${(tp.sat_status && (tp.sat_status.includes('Passed') || tp.sat_status.includes('Score'))) ? 'background:#dcfce7; color:#15803d; border:1px solid #bbf7d0;' : ((tp.sat_status && tp.sat_status.includes('Attempted')) ? 'background:#fef3c7; color:#b45309; border:1px solid #fde68a;' : 'background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;')} padding:1px 6px; border-radius:3px;">SAT: ${tp.sat_score || tp.sat_status || 'Pending'}</span>
+              <span style="display:inline-block; font-size:10px; font-weight:700; ${((tp.set_status || tp.sat_status) && ((tp.set_status || tp.sat_status).includes('Passed') || (tp.set_status || tp.sat_status).includes('Score'))) ? 'background:#dcfce7; color:#15803d; border:1px solid #bbf7d0;' : (((tp.set_status || tp.sat_status) && (tp.set_status || tp.sat_status).includes('Attempted')) ? 'background:#fef3c7; color:#b45309; border:1px solid #fde68a;' : 'background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;')} padding:1px 6px; border-radius:3px;">SET: ${tp.set_score || tp.sat_score || tp.set_status || tp.sat_status || 'Pending'}</span>
             </div>
           </td>
           <td>
@@ -2874,7 +2874,7 @@
       document.getElementById('modal-tp-event').innerText = tp.event_name || '-';
       document.getElementById('modal-tp-event').title = tp.event_name || '';
       document.getElementById('modal-tp-attendance').innerText = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
-      document.getElementById('modal-tp-sat').innerText = tp.sat_status || 'SAT Not Attempted';
+      document.getElementById('modal-tp-sat').innerText = tp.set_status || tp.sat_status || 'SET Not Attempted';
       document.getElementById('modal-tp-channel').innerText = tp.channel || 'Direct Web';
 
       // Primary
@@ -2964,7 +2964,7 @@
         { name: 'Cohort Sample Size (N)', pts: bk.cohort_pts !== undefined ? bk.cohort_pts : 0, max: bk.cohort_max || 35, desc: bk.cohort_desc || '', colorClass: 'factor-fill-blue' },
         { name: 'Track Retention Rate', pts: bk.ret_pts !== undefined ? bk.ret_pts : 0, max: bk.ret_max || 25, desc: bk.ret_desc || '', colorClass: 'factor-fill-green' },
         { name: 'Inbound Intent Synergy', pts: bk.intent_pts !== undefined ? bk.intent_pts : 0, max: bk.intent_max || 25, desc: bk.intent_desc || '', colorClass: 'factor-fill-purple' },
-        { name: 'Diagnostic SAT & Degree', pts: bk.apt_pts !== undefined ? bk.apt_pts : 0, max: bk.apt_max || 15, desc: bk.apt_desc || '', colorClass: 'factor-fill-amber' }
+        { name: 'Diagnostic SET & Degree', pts: bk.apt_pts !== undefined ? bk.apt_pts : 0, max: bk.apt_max || 15, desc: bk.apt_desc || '', colorClass: 'factor-fill-amber' }
       ];
 
       container.innerHTML = factors.map(f => {

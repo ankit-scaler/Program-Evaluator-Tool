@@ -188,10 +188,10 @@ def calculate_confidence(program_name, inbound_cat, cohort_size, retention_rate,
         apt_desc = "verified coding/academic foundations"
     elif 'attempted' in sat_status_clean or edu_level == 'GRAD_GENERAL':
         apt_pts = 10
-        apt_desc = "degree verified, SAT pending"
+        apt_desc = "degree verified, SET pending"
     else:
         apt_pts = 5
-        apt_desc = "diagnostic SAT not yet attempted"
+        apt_desc = "diagnostic SET not yet attempted"
 
     total_score = cohort_pts + ret_pts + intent_pts + apt_pts
     total_score = min(100, max(0, total_score))
@@ -869,8 +869,10 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     raw_exp = clean_str(lead_dict.get('experience'), '2 years')
     inbound_prog_raw = clean_str(lead_dict.get('program'), 'Academy')
     raw_edu = clean_str(lead_dict.get('education') or lead_dict.get('degree') or lead_dict.get('qualification'), 'Graduated / Degree')
-    raw_sat_status = clean_str(lead_dict.get('sat_status'), 'SAT Not Attempted')
-    raw_sat_score = clean_str(lead_dict.get('sat_score'), 'Not Attempted')
+    raw_sat_status = clean_str(lead_dict.get('set_status') or lead_dict.get('sat_status'), 'SET Not Attempted')
+    if 'sat' in raw_sat_status.lower():
+        raw_sat_status = raw_sat_status.replace('SAT', 'SET').replace('Sat', 'Set').replace('sat', 'set')
+    raw_sat_score = clean_str(lead_dict.get('set_score') or lead_dict.get('sat_score'), 'Not Attempted')
     
     # Normalized taxonomy & education
     persona = normalize_persona('', raw_role)
@@ -1833,13 +1835,17 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['fit_tier'] = fallback_tier
             fallback['why'] = fallback_why
 
-    # Assign official program track durations & diagnostic SAT scores
+    # Assign official program track durations & diagnostic SET scores
     primary['duration'] = get_track_duration(primary.get('program', ''), primary.get('track', ''))
     fallback['duration'] = get_track_duration(fallback.get('program', ''), fallback.get('track', ''))
     primary['sat_score'] = raw_sat_score
     primary['sat_status'] = raw_sat_status
+    primary['set_score'] = raw_sat_score
+    primary['set_status'] = raw_sat_status
     fallback['sat_score'] = raw_sat_score
     fallback['sat_status'] = raw_sat_status
+    fallback['set_score'] = raw_sat_score
+    fallback['set_status'] = raw_sat_status
 
     # -------------------------------------------------------------
     # PULL EMPIRICAL RETENTION & REFUND STATS FROM 13,180 RECORDS
@@ -2019,6 +2025,8 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             'education_level': edu_level,
             'sat_score': raw_sat_score,
             'sat_status': raw_sat_status,
+            'set_score': raw_sat_score,
+            'set_status': raw_sat_status,
             'normalized_persona': persona_name,
             'persona_key': persona,
             'normalized_experience': exp_bracket

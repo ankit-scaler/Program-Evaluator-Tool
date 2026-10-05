@@ -27,7 +27,7 @@ def get_track_duration(program_str, track_str):
     p_lower = str(program_str).lower()
     t_lower = str(track_str).lower()
     
-    # Program 1: Scaler Academy
+    # Program 1: Scaler Academy (PDF Page 3)
     if 'academy' in p_lower or 'program 1' in p_lower:
         if 'beginner' in t_lower:
             return '12 - 18 Months'
@@ -37,25 +37,25 @@ def get_track_duration(program_str, track_str):
             return '10 - 17 Months'
         return '12 Months'
         
-    # Program 2: DSML
+    # Program 2: DSML (PDF Page 5)
     elif 'dsml' in p_lower or 'data science' in p_lower or 'program 2' in p_lower:
         if 'beginner' in t_lower:
-            return '14 - 21.5 Months'
-        elif 'intermediate' in t_lower or 'core' in t_lower or 'predictive' in t_lower:
-            return '11.5 Months'
-        return '11.5 - 14 Months'
+            return '16 - 20 Months'
+        elif 'intermediate' in t_lower or 'core' in t_lower or 'predictive' in t_lower or 'advanced' in t_lower:
+            return '14 - 16 Months'
+        return '14 - 16 Months'
         
-    # Program 3: AI Forward Deployed Engineer (FDE)
+    # Program 3: AI Forward Deployed Engineer (FDE) (PDF Page 8)
     elif 'fde' in p_lower or 'forward deployed' in p_lower or 'program 3' in p_lower:
-        return '12 - 16 Months'
+        return '12 Months'
         
-    # Program 4: AI & ML with Agentic AI
+    # Program 4: AI & ML with Agentic AI (PDF Page 12)
     elif 'agentic' in p_lower or 'program 4' in p_lower or 'aiml' in p_lower:
         if 'beginner' in t_lower or 'foundation' in t_lower:
-            return '14 - 18 Months'
-        return '11 - 15 Months'
+            return '12 - 15 Months'
+        return '12 - 15 Months'
         
-    # Program 5: DevOps, Cloud & AI Platform Engineering
+    # Program 5: DevOps, Cloud & AI Platform Engineering (PDF Page 16)
     elif 'devops' in p_lower or 'cloud' in p_lower or 'platform' in p_lower or 'program 5' in p_lower:
         return '14 - 18 Months'
         

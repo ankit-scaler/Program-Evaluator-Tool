@@ -101,13 +101,89 @@
 
     /* TOP NAVBAR */
     nav {
-      padding: var(--space-7) 24px;
+      background: var(--color-surface-muted);
+      border-bottom: 1px solid var(--color-surface-raised);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .nav-top-row {
+      padding: 10px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--color-surface-muted);
-      border-bottom: 1px solid var(--color-surface-raised);
-      box-shadow: var(--shadow-3);
+      gap: 16px;
+    }
+
+    .nav-filter-strip {
+      padding: 7px 24px;
+      background: #f8fafc;
+      border-top: 1px solid #eef2f6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-filter-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .nav-filters-grid {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .nav-filter-input, .nav-filter-select {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-raised);
+      border-radius: var(--radius-xs);
+      padding: 4px 8px;
+      font-size: 11.5px;
+      font-family: var(--font-family-stack);
+      color: var(--color-text-tertiary);
+      outline: none;
+      height: 31px;
+      box-sizing: border-box;
+      transition: border-color var(--motion-duration-instant);
+    }
+
+    .nav-filter-input:focus, .nav-filter-select:focus {
+      border-color: var(--scaler-blue);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+
+    .nav-filter-reset {
+      font-family: var(--font-family-stack);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      padding: 0 12px;
+      border-radius: var(--radius-xs);
+      font-size: 11px;
+      font-weight: 700;
+      height: 31px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--motion-duration-instant);
+    }
+
+    .nav-filter-reset:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #b91c1c;
     }
 
     .brand-logo {
@@ -1484,53 +1560,55 @@
 </head>
 <body>
 
-  <!-- TOP NAVBAR -->
+  <!-- TOP NAVBAR WITH EMBEDDED FILTERS -->
   <nav>
-    <a href="#" class="brand-logo">
-      <img src="scaler_logo.png" alt="Scaler" class="brand-scaler-logo">
-      <span class="brand-divider"></span>
-      <div class="brand-title">Sales Intelligence Desk</div>
-    </a>
-    <div class="nav-actions">
-      <!-- Dynamic CRM Email/Phone Lookup Bar -->
-      <div style="display:flex; align-items:center; background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:var(--space-2) var(--space-4); width:340px; box-shadow:var(--shadow-3);">
-        <input 
-          type="text" 
-          id="nav-crm-search-input" 
-          placeholder="Lookup lead by email, phone, or name..." 
-          style="border:none; outline:none; font-family:var(--font-family-stack); font-size:var(--font-size-xs); width:100%; padding:5px; color:var(--color-text-tertiary); background:transparent;"
-          onkeydown="if(event.key === 'Enter') executeCrmLookup()"
-        >
-        <button onclick="executeCrmLookup()" style="background:var(--color-text-tertiary); color:var(--color-surface-muted); border:none; border-radius:var(--radius-xs); padding:var(--space-3) var(--space-6); font-family:var(--font-family-stack); font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; transition:background var(--motion-duration-fast);" onmouseover="this.style.background='var(--color-surface-base)'" onmouseout="this.style.background='var(--color-text-tertiary)'">
-          Search
+    <div class="nav-top-row">
+      <a href="#" class="brand-logo">
+        <img src="scaler_logo.png" alt="Scaler" class="brand-scaler-logo">
+        <span class="brand-divider"></span>
+        <div class="brand-title">Sales Intelligence Desk</div>
+      </a>
+      <div class="nav-actions">
+        <!-- Dynamic CRM Email/Phone Lookup Bar -->
+        <div style="display:flex; align-items:center; background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:var(--space-2) var(--space-4); width:320px; box-shadow:var(--shadow-3);">
+          <input 
+            type="text" 
+            id="nav-crm-search-input" 
+            placeholder="Lookup lead by email, phone, or name..." 
+            style="border:none; outline:none; font-family:var(--font-family-stack); font-size:var(--font-size-xs); width:100%; padding:4px; color:var(--color-text-tertiary); background:transparent;"
+            onkeydown="if(event.key === 'Enter') executeCrmLookup()"
+          >
+          <button onclick="executeCrmLookup()" style="background:var(--color-text-tertiary); color:var(--color-surface-muted); border:none; border-radius:var(--radius-xs); padding:4px 10px; font-family:var(--font-family-stack); font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; transition:background var(--motion-duration-fast);" onmouseover="this.style.background='var(--color-surface-base)'" onmouseout="this.style.background='var(--color-text-tertiary)'">
+            Search
+          </button>
+        </div>
+        <button class="btn-sm" onclick="syncMetabaseLeads()" id="btn-sync-metabase" style="display:flex; align-items:center; gap:5px; font-weight:700;">
+          <span>&#8635;</span> Sync Metabase
+        </button>
+        <span class="status-badge" id="leads-count-status">Active Leads: <b id="stat-total">0</b></span>
+        <button class="btn-sm" onclick="downloadMasterCsv()">
+          Export CRM CSV
         </button>
       </div>
-      <button class="btn-sm" onclick="syncMetabaseLeads()" id="btn-sync-metabase" style="display:flex; align-items:center; gap:5px; font-weight:700;">
-        <span>&#8635;</span> Sync Metabase
-      </button>
-      <span class="status-badge" id="leads-count-status">Active Leads: <b id="stat-total">0</b></span>
-      <button class="btn-sm" onclick="downloadMasterCsv()">
-        Export CRM CSV
-      </button>
     </div>
-  </nav>
 
-  <!-- APP CONTAINER -->
-  <div class="app-container">
-
-    <!-- FILTERS BAR (DIRECTLY UNDER NAV BAR) -->
-    <div class="filters-card" id="filters-section">
-      <div class="filters-header">Filter & Search Evaluated Leads</div>
-      <div class="filters-grid">
+    <!-- COMPACT FILTERS STRIP IN NAVBAR -->
+    <div class="nav-filter-strip">
+      <div class="nav-filter-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--scaler-blue);"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        <span>Filters:</span>
+      </div>
+      <div class="nav-filters-grid">
         <input 
           type="text" 
           id="filter-search" 
-          class="filter-input" 
-          placeholder="Search Name, Email, or Company..." 
+          class="nav-filter-input" 
+          placeholder="Search Name, Email, Role, Company..." 
+          style="flex: 1.4; min-width: 170px;"
           oninput="applyFilters()"
         >
 
-        <select id="filter-program" class="filter-select" onchange="applyFilters()">
+        <select id="filter-program" class="nav-filter-select" style="flex: 1; min-width: 135px;" onchange="applyFilters()">
           <option value="ALL">All Programs (1 to 5)</option>
           <option value="Program 1">Program 1: Scaler Academy</option>
           <option value="Program 2">Program 2: DSML</option>
@@ -1539,50 +1617,58 @@
           <option value="Program 5">Program 5: DevOps & Cloud</option>
         </select>
 
-        <select id="filter-track" class="filter-select" onchange="applyFilters()">
+        <select id="filter-track" class="nav-filter-select" style="flex: 0.9; min-width: 115px;" onchange="applyFilters()">
           <option value="ALL">All Track Levels</option>
           <option value="Beginner">Beginner Track</option>
           <option value="Intermediate">Intermediate Track</option>
           <option value="Advanced">Advanced Track</option>
         </select>
 
-        <select id="filter-persona" class="filter-select" onchange="applyFilters()">
+        <select id="filter-persona" class="nav-filter-select" style="flex: 1; min-width: 130px;" onchange="applyFilters()">
           <option value="ALL">All Role Personas</option>
-          <option value="Non-Tech">Non-Tech / Career Switcher</option>
+          <option value="Non-Tech">Non-Tech / Switcher</option>
           <option value="Healthcare">Healthcare & Medical</option>
           <option value="Security">Security & Protective</option>
           <option value="Education">Education & Teaching</option>
-          <option value="Hospitality">Hospitality & Food Services</option>
+          <option value="Hospitality">Hospitality & Food</option>
           <option value="Trades">Trades & Construction</option>
           <option value="Logistics">Logistics & Transportation</option>
-          <option value="Retail">Retail & Customer Service</option>
-          <option value="HR">HR & People Operations</option>
+          <option value="Retail">Retail & Customer</option>
+          <option value="HR">HR & People Ops</option>
           <option value="Sales">Sales & Marketing</option>
           <option value="Finance">Finance & Accounting</option>
-          <option value="Legal">Legal & Public Administration</option>
-          <option value="Traditional Engineering">Traditional Engineering (Non-CS)</option>
+          <option value="Legal">Legal & Public Admin</option>
+          <option value="Traditional Engineering">Traditional Engineering</option>
           <option value="QA">QA / SDET / Testing</option>
           <option value="Data">Data & Analytics</option>
-          <option value="DevOps">DevOps & Cloud Platform</option>
+          <option value="DevOps">DevOps & Cloud</option>
           <option value="Systems">Systems & Embedded</option>
           <option value="Software">Software Engineering</option>
         </select>
 
-        <select id="filter-retention" class="filter-select" onchange="applyFilters()">
-          <option value="ALL">All Retention Levels</option>
-          <option value="HIGH">High Retention (>=80%)</option>
+        <select id="filter-retention" class="nav-filter-select" style="flex: 0.85; min-width: 120px;" onchange="applyFilters()">
+          <option value="ALL">All Retention</option>
+          <option value="HIGH">High (>=80%)</option>
           <option value="MODERATE">Moderate (75 - 79%)</option>
           <option value="RISK">Pacing Risk (<75%)</option>
         </select>
 
-        <select id="filter-confidence" class="filter-select" onchange="applyFilters()">
-          <option value="ALL">All Confidence Tiers</option>
-          <option value="HIGH">High Confidence (>=75%)</option>
-          <option value="MID">Mid Confidence (55 - 74%)</option>
-          <option value="LOW">Low Confidence (<55%)</option>
+        <select id="filter-confidence" class="nav-filter-select" style="flex: 0.85; min-width: 115px;" onchange="applyFilters()">
+          <option value="ALL">All Confidence</option>
+          <option value="HIGH">High (>=75%)</option>
+          <option value="MID">Mid (55 - 74%)</option>
+          <option value="LOW">Low (<55%)</option>
         </select>
+
+        <button class="nav-filter-reset" onclick="resetFilters()" title="Reset all filters to default">
+          Reset
+        </button>
       </div>
     </div>
+  </nav>
+
+  <!-- APP CONTAINER -->
+  <div class="app-container">
 
     <!-- HERO HEADER -->
     <div class="hero-header">
@@ -2595,6 +2681,18 @@
         console.error(err);
         alert('Server error while evaluating CSV.');
       }
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-program').value = 'ALL';
+      document.getElementById('filter-track').value = 'ALL';
+      document.getElementById('filter-persona').value = 'ALL';
+      document.getElementById('filter-retention').value = 'ALL';
+      if (document.getElementById('filter-confidence')) {
+        document.getElementById('filter-confidence').value = 'ALL';
+      }
+      applyFilters();
     }
 
     function applyFilters() {

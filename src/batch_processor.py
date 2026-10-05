@@ -130,10 +130,29 @@ def process_leads_dataframe(df):
             if m_yr:
                 grad_year = int(m_yr.group(1))
 
-        # 4. Role
+        # Track quality flags for missing data fallbacks
+        data_quality_flags = []
+
+        # 4. Role Extraction & Cross-Signal Inference
         raw_role = str(row[col_role]).strip() if col_role and pd.notna(row[col_role]) else ""
-        if raw_role.lower() in ['nan', 'none']:
+        if raw_role.lower() in ['nan', 'none', 'null', '', '-']:
             raw_role = ""
+
+        # Cross-signal role inference if role is missing
+        if not raw_role:
+            combined_role_hints = f"{cand_comp_type} {event_str}".lower()
+            if any(k in combined_role_hints for k in ['data_science', 'machine learning', 'data science', 'dsml', 'data analyst', 'analytics']):
+                raw_role = "Data Analyst / Scientist (Inferred)"
+                data_quality_flags.append("role_inferred")
+            elif any(k in combined_role_hints for k in ['devops', 'cloud', 'kubernetes', 'docker', 'sre', 'platform']):
+                raw_role = "DevOps / Systems Engineer (Inferred)"
+                data_quality_flags.append("role_inferred")
+            elif any(k in combined_role_hints for k in ['fde', 'forward deployed', 'solutions engineer']):
+                raw_role = "Solutions / Forward Deployed Engineer (Inferred)"
+                data_quality_flags.append("role_inferred")
+            elif any(k in combined_role_hints for k in ['agentic', 'ai agent', 'genai', 'llm']):
+                raw_role = "AI / ML Engineer (Inferred)"
+                data_quality_flags.append("role_inferred")
 
         # 5. Experience Ingestion & Fallback Logic
         raw_exp = row[col_exp] if col_exp and pd.notna(row[col_exp]) else None
@@ -177,13 +196,15 @@ def process_leads_dataframe(df):
         is_senior_role = any(k in raw_role.lower() for k in ['leadership', 'director', 'vp', 'manager', 'head of', 'architect', 'principal'])
         is_entry_role = any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
 
-        if exp_years is None or exp_years == 0.0:
+        if exp_years is None or (raw_exp is None and exp_years == 0.0):
             if is_senior_role:
                 exp_years = 7.0
-                exp_display = "7+ yrs (Senior Leadership)"
+                exp_display = "7+ yrs (Senior Profile)"
+                data_quality_flags.append("experience_inferred_from_title")
             elif is_entry_role:
                 exp_years = 0.0
                 exp_display = "Fresher (Entry-level Role)"
+                data_quality_flags.append("experience_inferred_from_title")
             elif grad_year is not None:
                 if grad_year >= 2025:
                     exp_years = 0.0
@@ -194,27 +215,33 @@ def process_leads_dataframe(df):
                     inferred_yoe = max(0, CURRENT_YEAR - grad_year)
                     exp_years = float(inferred_yoe)
                     exp_display = f"{inferred_yoe} yrs (Batch {grad_year})"
+                data_quality_flags.append("experience_inferred_from_grad_year")
             elif is_beginner_event:
                 exp_years = 0.0
                 exp_display = "Fresher / Learner"
                 if not raw_role:
                     raw_role = "Learner / Transitioner"
+                data_quality_flags.append("experience_inferred_from_event")
             elif raw_role and any(k in raw_role.lower() for k in ['lead', 'senior', 'staff']):
                 exp_years = 6.0
                 exp_display = "6+ yrs (Senior Profile)"
+                data_quality_flags.append("experience_inferred_from_title")
             else:
                 exp_years = 2.0
                 exp_display = "2 yrs (Estimated)"
+                data_quality_flags.append("experience_estimated_default")
 
         if not raw_role:
             if exp_years == 0.0:
                 raw_role = "College Student / Fresher"
             else:
                 raw_role = "General Professional / Career Switcher"
+            data_quality_flags.append("role_defaulted")
 
-        # 6. Inbound Program Synthesis (event_name + program_type)
+        # 6. Inbound Program Synthesis (event_name + program_type + role fallback)
         prog_str = str(row[col_prog]).strip() if col_prog and pd.notna(row[col_prog]) else ""
         combined_intent = f"{event_str} {prog_str}".lower()
+        role_intent_hint = raw_role.lower()
 
         if any(k in combined_intent for k in ['agentic', 'agent memory', 'rag pipeline', 'ai agent', 'genai', 'ai_ml']):
             inbound_prog = "Program 4: AI & Machine Learning with Agentic AI"
@@ -224,8 +251,25 @@ def process_leads_dataframe(df):
             inbound_prog = "Program 5: DevOps, Cloud & AI Platform Engineering"
         elif any(k in combined_intent for k in ['data_science', 'machine learning', 'data science', 'dsml', 'data analyst']):
             inbound_prog = "Program 2: Modern Data Science & Machine Learning (DSML)"
-        else:
+        elif combined_intent.strip():
             inbound_prog = "Program 1: Software & AI Engineering (Scaler Academy)"
+        else:
+            # Event and Program empty -> cross-infer from Role
+            if any(k in role_intent_hint for k in ['data', 'analyst', 'machine learning', 'dsml']):
+                inbound_prog = "Program 2: Modern Data Science & Machine Learning (DSML)"
+                data_quality_flags.append("intent_inferred_from_role")
+            elif any(k in role_intent_hint for k in ['devops', 'cloud', 'sre', 'platform', 'infrastructure']):
+                inbound_prog = "Program 5: DevOps, Cloud & AI Platform Engineering"
+                data_quality_flags.append("intent_inferred_from_role")
+            elif any(k in role_intent_hint for k in ['fde', 'forward deployed', 'solutions']):
+                inbound_prog = "Program 3: AI Forward Deployed Engineer (FDE)"
+                data_quality_flags.append("intent_inferred_from_role")
+            elif any(k in role_intent_hint for k in ['agent', 'genai', 'llm']):
+                inbound_prog = "Program 4: AI & Machine Learning with Agentic AI"
+                data_quality_flags.append("intent_inferred_from_role")
+            else:
+                inbound_prog = "Program 1: Software & AI Engineering (Scaler Academy)"
+                data_quality_flags.append("intent_defaulted_to_p1")
 
         # 7. Comprehensive Touchpoint Capture
         attended_val = row[col_attended] if col_attended and pd.notna(row[col_attended]) else None
@@ -320,6 +364,7 @@ def process_leads_dataframe(df):
         lead_id = f"LD-SALES-{idx+1:04d}"
         eval_res['lead_id'] = lead_id
         eval_res['touchpoints'] = touchpoint_dict
+        eval_res['data_quality_flags'] = data_quality_flags
         evaluated_records.append(eval_res)
 
         s = eval_res.get('sales_script', {})
@@ -327,6 +372,7 @@ def process_leads_dataframe(df):
         # Flat row for CRM export
         flat_row = {
             'Lead ID': lead_id,
+            'Data Quality Flags': ", ".join(data_quality_flags) if data_quality_flags else "Complete Data",
             'Name': eval_res['person']['name'],
             'Email': eval_res['person']['email'],
             'Phone': eval_res['person']['phone'],

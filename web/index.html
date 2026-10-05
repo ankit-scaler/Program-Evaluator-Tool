@@ -1868,46 +1868,21 @@
 
         <!-- EVALUATION MODE SWITCHER TABS -->
         <div class="evaluation-mode-switcher">
-          <button type="button" id="tab-mode-csv" class="mode-tab-btn active" onclick="switchEvaluationMode('csv')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            <span>Upload Bulk Leads CSV</span>
-          </button>
-          <button type="button" id="tab-mode-email" class="mode-tab-btn" onclick="switchEvaluationMode('email')">
+          <button type="button" id="tab-mode-email" class="mode-tab-btn active" onclick="switchEvaluationMode('email')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <span>Search &amp; Fetch Live Lead by Email</span>
+          </button>
+          <button type="button" id="tab-mode-csv" class="mode-tab-btn" onclick="switchEvaluationMode('csv')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Upload Bulk Leads CSV</span>
           </button>
         </div>
 
         <!-- MAIN CARD CONTAINER -->
         <div class="upload-card">
           
-          <!-- MODE 1: BULK CSV UPLOAD -->
-          <div id="mode-content-csv">
-            <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
-            <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
-              <div style="margin-bottom: 14px;">
-                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round"
-                  style="background: #eff6ff; padding: 10px; border-radius: 50%; border: 1px solid #bfdbfe;">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-              </div>
-              <div class="dropzone-title" id="dropzone-status-title">Choose or Drag &amp; Drop Leads CSV File</div>
-              <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience,
-                Organization, Inbound Program). Evaluates automatically upon upload.</div>
-              <div style="margin-top: 16px;">
-                <button type="button" class="btn-sm"
-                  style="background: var(--scaler-blue); color: #ffffff; border-color: var(--scaler-blue); font-weight: 700; padding: 8px 22px; font-size: 13px; border-radius: 4px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);">
-                  Browse CSV File
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- MODE 2: FETCH LIVE LEAD BY EMAIL SEARCH -->
-          <div id="mode-content-email" style="display: none;">
+          <!-- MODE 1 (PRIMARY): FETCH LIVE LEAD BY EMAIL SEARCH -->
+          <div id="mode-content-email">
             <div class="dropzone-box" style="cursor: default;">
               <div style="margin-bottom: 14px;">
                 <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="1.8"
@@ -1939,6 +1914,31 @@
                 </button>
               </div>
               <div id="live-search-status-msg" style="margin-top: 10px; font-size: 11.5px; color: #dc2626; font-weight: 600; display: none;"></div>
+            </div>
+          </div>
+
+          <!-- MODE 2 (SECONDARY): BULK CSV UPLOAD -->
+          <div id="mode-content-csv" style="display: none;">
+            <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
+            <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
+              <div style="margin-bottom: 14px;">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  style="background: #eff6ff; padding: 10px; border-radius: 50%; border: 1px solid #bfdbfe;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <div class="dropzone-title" id="dropzone-status-title">Choose or Drag &amp; Drop Leads CSV File</div>
+              <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience,
+                Organization, Inbound Program). Evaluates automatically upon upload.</div>
+              <div style="margin-top: 16px;">
+                <button type="button" class="btn-sm"
+                  style="background: var(--scaler-blue); color: #ffffff; border-color: var(--scaler-blue); font-weight: 700; padding: 8px 22px; font-size: 13px; border-radius: 4px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);">
+                  Browse CSV File
+                </button>
+              </div>
             </div>
           </div>
 

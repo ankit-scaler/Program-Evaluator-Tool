@@ -3103,6 +3103,7 @@
           <td style="vertical-align: middle;">
             <div style="font-weight: 800; color: var(--scaler-navy); font-size: 12.5px; line-height: 1.35;">${prim.catalog_code ? prim.catalog_code + ': ' : ''}${prim.program.split('(')[0]}</div>
             <div style="font-size: 11px; color: #475569; margin-top: 3px;">Track: <b style="color: #1e293b;">${prim.track.split('(')[0]}</b></div>
+            <div style="font-size: 10.5px; color: #94a3b8; margin-top: 3px;">Duration: <b>${prim.duration || '12 - 18 Months'}</b></div>
           </td>
           <td style="vertical-align: middle;">
             ${fall && fall.program ? `
@@ -3118,7 +3119,6 @@
                 ${prim.confidence_tier || 'Mid'} (${prim.confidence_score !== undefined ? prim.confidence_score : 70}%)
               </span>
             </div>
-            <div style="font-size: 10.5px; color: #64748b; margin-top: 4px;">Duration: <b>${prim.duration || '12 - 18 Months'}</b></div>
           </td>
           <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
             <button class="btn-action-view" onclick="event.stopPropagation(); viewLeadDetails('${lead.lead_id}')" title="Open candidate dossier and recommendation breakdown">

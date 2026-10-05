@@ -611,8 +611,8 @@
     /* CANDIDATE DOSSIER HERO (AVATAR ON LEFT, DETAILS BOX ON RIGHT) */
     .candidate-dossier-hero {
       display: flex;
-      gap: 20px;
-      align-items: stretch;
+      gap: 22px;
+      align-items: center;
       background: #ffffff;
       border: 1px solid var(--color-surface-raised);
       border-radius: var(--radius-xs);
@@ -627,19 +627,19 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      width: 110px;
+      width: 125px;
       border-right: 1px dashed var(--color-surface-raised);
-      padding-right: 18px;
+      padding-right: 20px;
     }
 
     .candidate-avatar-wrapper {
       position: relative;
-      width: 88px;
-      height: 88px;
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
       background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
       border: 2.5px solid var(--scaler-blue);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -650,7 +650,7 @@
 
     .candidate-avatar-wrapper:hover {
       transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
     }
 
     .candidate-avatar-img {
@@ -664,12 +664,12 @@
       position: absolute;
       bottom: 2px;
       right: 4px;
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: var(--scaler-blue);
       color: #ffffff;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
       display: flex;
       align-items: center;
@@ -679,12 +679,77 @@
     }
 
     .avatar-toggle-hint {
-      font-size: 9.5px;
+      font-size: 10px;
       color: #64748b;
-      margin-top: 6px;
+      margin-top: 8px;
       text-align: center;
       font-weight: 600;
       line-height: 1.2;
+    }
+
+    /* DOSSIER TILES GRID (ALL IDENTICAL SIZE) */
+    .dossier-tiles-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      .dossier-tiles-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .dossier-tiles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .dossier-tile {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      height: 72px;
+      box-sizing: border-box;
+      transition: all 0.15s ease;
+      overflow: hidden;
+    }
+
+    .dossier-tile:hover {
+      border-color: #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .dossier-tile-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+
+    .dossier-tile-val {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.35;
+      word-break: break-word;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     .candidate-info-box {
@@ -1685,51 +1750,47 @@
               <button class="modal-close-btn" onclick="closeModal()" title="Close Dossier">&times;</button>
             </div>
 
-            <!-- PROFILE STRIP -->
-            <div class="profile-strip" style="grid-template-columns: repeat(6, 1fr); margin-bottom:8px; padding:10px 14px;">
-              <div>
-                <div class="strip-item-label">Current Role</div>
-                <div class="strip-item-val" id="modal-role">-</div>
+            <!-- DOSSIER TILES GRID (10 UNIFORM TILES, SAME SIZE FOR ALL) -->
+            <div class="dossier-tiles-grid">
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Current Role</div>
+                <div class="dossier-tile-val" id="modal-role">-</div>
               </div>
-              <div>
-                <div class="strip-item-label">Previous Org</div>
-                <div class="strip-item-val" id="modal-org">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Previous Org</div>
+                <div class="dossier-tile-val" id="modal-org">-</div>
               </div>
-              <div>
-                <div class="strip-item-label">Experience</div>
-                <div class="strip-item-val" id="modal-exp">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Experience</div>
+                <div class="dossier-tile-val" id="modal-exp">-</div>
               </div>
-              <div>
-                <div class="strip-item-label">Education</div>
-                <div class="strip-item-val" id="modal-edu">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Education</div>
+                <div class="dossier-tile-val" id="modal-edu">-</div>
               </div>
-              <div>
-                <div class="strip-item-label">Company Type</div>
-                <div class="strip-item-val" id="modal-company">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Company Type</div>
+                <div class="dossier-tile-val" id="modal-company">-</div>
               </div>
-              <div>
-                <div class="strip-item-label">Inbound Enquiry</div>
-                <div class="strip-item-val" id="modal-inbound" style="color:var(--scaler-red); font-weight:700;">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Inbound Enquiry</div>
+                <div class="dossier-tile-val" id="modal-inbound" style="color:var(--scaler-red); font-weight:700;">-</div>
               </div>
-            </div>
-
-            <!-- CAPTURED TOUCHPOINTS STRIP -->
-            <div class="touchpoints-strip" style="margin-bottom:0; padding:10px 14px;">
-              <div>
-                <div class="tp-item-label">Inbound Masterclass / Course</div>
-                <div class="tp-item-val" id="modal-tp-event" title="">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Masterclass / Event</div>
+                <div class="dossier-tile-val" id="modal-tp-event" title="">-</div>
               </div>
-              <div>
-                <div class="tp-item-label">Attendance & Watch Time</div>
-                <div class="tp-item-val" id="modal-tp-attendance">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Attendance &amp; Watch</div>
+                <div class="dossier-tile-val" id="modal-tp-attendance">-</div>
               </div>
-              <div>
-                <div class="tp-item-label">Diagnostic Coding SET Score</div>
-                <div class="tp-item-val" id="modal-tp-sat">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Diagnostic SET Score</div>
+                <div class="dossier-tile-val" id="modal-tp-sat">-</div>
               </div>
-              <div>
-                <div class="tp-item-label">Source & Channel</div>
-                <div class="tp-item-val" id="modal-tp-channel">-</div>
+              <div class="dossier-tile">
+                <div class="dossier-tile-label">Source &amp; Channel</div>
+                <div class="dossier-tile-val" id="modal-tp-channel">-</div>
               </div>
             </div>
           </div>
@@ -3065,21 +3126,37 @@
         elAcadBadge.innerText = lead.academic_eligibility?.status ? `Academic Status: ${lead.academic_eligibility.status}` : 'Academic Status: Degree Verified';
       }
 
-      // Profile strip
-      document.getElementById('modal-role').innerHTML = `${p.role}${p.role_domain ? ` <span style="font-size:10px; font-weight:600; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:1px 6px; border-radius:3px; margin-left:4px;">${p.role_domain}</span>` : ''}`;
+      // Update tiles
+      const roleDomainTag = p.role_domain ? `<span style="display:inline-block; font-size:9.5px; font-weight:700; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:1px 5px; border-radius:3px; margin-top:2px;">${p.role_domain}</span>` : '';
+      document.getElementById('modal-role').innerHTML = `<div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.role}</div>${roleDomainTag}`;
+      document.getElementById('modal-role').title = p.role + (p.role_domain ? ` (${p.role_domain})` : '');
 
       document.getElementById('modal-org').innerText = p.previous_org;
+      document.getElementById('modal-org').title = p.previous_org;
       document.getElementById('modal-exp').innerText = p.experience;
+      document.getElementById('modal-exp').title = p.experience;
       document.getElementById('modal-edu').innerText = p.education || 'Graduated / Degree';
+      document.getElementById('modal-edu').title = p.education || 'Graduated / Degree';
       document.getElementById('modal-company').innerText = p.company_type;
+      document.getElementById('modal-company').title = p.company_type;
       document.getElementById('modal-inbound').innerText = p.enquired_program;
+      document.getElementById('modal-inbound').title = p.enquired_program;
 
-      // Captured Touchpoints strip
+      // Captured Touchpoints
       document.getElementById('modal-tp-event').innerText = tp.event_name || '-';
       document.getElementById('modal-tp-event').title = tp.event_name || '';
       document.getElementById('modal-tp-attendance').innerText = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
-      document.getElementById('modal-tp-sat').innerText = tp.set_status || tp.sat_status || 'SET Not Attempted';
+      document.getElementById('modal-tp-attendance').title = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
+
+      const satText = tp.set_status || tp.sat_status || 'SET Not Attempted';
+      let satColor = '#475569';
+      if (satText.includes('Passed') || satText.includes('Score:')) satColor = '#15803d';
+      else if (satText.includes('Attempted')) satColor = '#b45309';
+      document.getElementById('modal-tp-sat').innerHTML = `<span style="color:${satColor}; font-weight:700;">${satText}</span>`;
+      document.getElementById('modal-tp-sat').title = satText;
+
       document.getElementById('modal-tp-channel').innerText = tp.channel || 'Direct Web';
+      document.getElementById('modal-tp-channel').title = tp.channel || 'Direct Web';
 
       // Primary
       const primTitle = prim.catalog_code ? `${prim.catalog_code}: ${prim.program}` : prim.program;

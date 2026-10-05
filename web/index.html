@@ -1764,24 +1764,6 @@
               </div>
             </div>
           </div>
-
-          <!-- SUCCESS BANNER POST-EVALUATION -->
-          <div id="eval-success-card" style="display: none; margin-top: 18px; padding: 18px 20px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; text-align: center;">
-            <div style="font-weight: 800; color: #166534; font-size: 14.5px; margin-bottom: 5px;">
-              Evaluation Complete: <span id="eval-success-count">0</span> Leads Analyzed!
-            </div>
-            <div style="font-size: 12px; color: #15803d; margin-bottom: 14px;">
-              All recommendations generated. Opening full analysis in a new tab...
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-              <button class="btn-sm" onclick="openAnalysisInNewBrowserTab()" style="background: var(--scaler-blue); color: #ffffff; border-color: var(--scaler-blue); font-weight: 700; padding: 7px 18px;">
-                <span>&#8599;</span> Open Analysis in New Tab
-              </button>
-              <button class="btn-sm" onclick="showAnalysisView()" style="background: #ffffff; color: var(--scaler-blue); border-color: #bfdbfe; font-weight: 700; padding: 7px 18px;">
-                View Analysis Here &rarr;
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -1797,9 +1779,6 @@
           <div style="display: flex; align-items: center; gap: 8px;">
             <button class="btn-sm" onclick="showUploadView()" style="display: inline-flex; align-items: center; gap: 4px;">
               <span>&larr;</span> Upload Another CSV
-            </button>
-            <button class="btn-sm" onclick="openAnalysisInNewBrowserTab()" title="Open evaluation analysis in a new browser tab" style="display: inline-flex; align-items: center; gap: 4px;">
-              <span>&#8599;</span> Open in New Tab
             </button>
             <button class="btn-sm" onclick="downloadMasterCsv()">
               Download Filtered CSV
@@ -2729,7 +2708,7 @@
           document.getElementById('stat-total').innerText = (data.total || data.leads.length).toLocaleString();
           document.getElementById('table-total-count').innerText = (data.total || data.leads.length).toLocaleString();
 
-          // Save evaluated data in localStorage so new browser tab loads instantly
+          // Save evaluated data in localStorage
           try {
             localStorage.setItem('scaler_all_leads', JSON.stringify(data.leads));
             if (data.curriculum_catalog) {
@@ -2738,19 +2717,12 @@
           } catch (e) {
             console.warn('Storage save warning:', e);
           }
-
-          // Show success message card in centered upload desk
-          const succCard = document.getElementById('eval-success-card');
-          const succCount = document.getElementById('eval-success-count');
-          if (succCard) succCard.style.display = 'block';
-          if (succCount) succCount.innerText = (data.total || data.leads.length).toLocaleString();
-
           currentPage = 1;
           applyFilters();
 
-          // Automatically open all the analysis in a new tab!
+          // Automatically open the dashboard directly upon analysis completion!
           setTimeout(() => {
-            openAnalysisInNewBrowserTab();
+            showAnalysisView();
           }, 600);
 
         } else {

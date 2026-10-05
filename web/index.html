@@ -1636,7 +1636,7 @@
               <div class="rec-career-box" id="modal-primary-career-box">
                 <div class="rec-career-header">
                   <div class="rec-career-title">
-                    <span>💼</span> <span>Target Career Outcomes &amp; Job Roles</span>
+                    <span>Target Career Outcomes &amp; Job Roles</span>
                   </div>
                   <span class="rec-career-salary-tag" id="modal-primary-career-salary">₹16 LPA – ₹32 LPA</span>
                 </div>
@@ -1676,7 +1676,7 @@
               <div class="rec-career-box" id="modal-fallback-career-box">
                 <div class="rec-career-header">
                   <div class="rec-career-title">
-                    <span>💼</span> <span>Target Career Outcomes &amp; Job Roles</span>
+                    <span>Target Career Outcomes &amp; Job Roles</span>
                   </div>
                   <span class="rec-career-salary-tag" id="modal-fallback-career-salary">₹10 LPA – ₹22 LPA</span>
                 </div>
@@ -2760,7 +2760,7 @@
       if (elSal) elSal.innerText = careerData.salary_range || 'Industry Competitive';
       if (elRoles) {
         const roles = careerData.roles || [];
-        elRoles.innerHTML = roles.map(r => `<span class="career-role-pill">🎯 ${r}</span>`).join('');
+        elRoles.innerHTML = roles.map(r => `<span class="career-role-pill">${r}</span>`).join('');
       }
       if (elDesc) {
         elDesc.innerText = careerData.transition_summary || '';

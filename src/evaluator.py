@@ -1305,49 +1305,32 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['fit_tier'] = 'Alternative Development Track'
             fallback['why'] = "Alternative path if you decide to pivot to core backend software engineering."
         elif inbound_cat == 'P3_FDE':
-            if is_senior and not is_manual_qa:
-                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
-                primary['catalog_code'] = 'Program 1'
-                primary['track'] = 'Advanced Track (High-Level System Design & Scalability)'
-                primary['fit_tier'] = 'Prerequisite Architecture Foundation for FDE'
-                primary['why'] = (
-                    f"While you enquired about Forward Deployed Engineering, Program 3 strictly mandates hands-on production backend systems "
-                    f"and API deployment capability. With {raw_exp} of enterprise QA experience, jumping straight into client AI code deployment "
-                    "without modern distributed systems depth risks severe pacing friction. Scaler Academy's Advanced Track equips you with "
-                    "High-Level Distributed System Design (Kafka, database sharding, microservices architecture) first, establishing the necessary "
-                    "systems engineering foundation before forward-deploying AI into enterprise client environments."
-                )
-                primary['guardrail'] = "FDE Catalog Prerequisite: QA professionals require distributed systems & backend architecture foundations before client AI deployment."
+            primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+            primary['catalog_code'] = 'Program 1'
+            primary['track'] = 'Intermediate Track (Backend SDE Transition)'
+            primary['fit_tier'] = 'Foundational Prerequisite for FDE'
+            primary['why'] = (
+                f"While you enquired about Forward Deployed Engineering, Program 3 strictly mandates hands-on production backend development, "
+                f"API deployment, and algorithmic problem-solving depth. With {raw_exp} in quality assurance & testing, jumping straight into "
+                "client AI code deployment without modern backend development depth risks severe pacing friction. Scaler Academy's Intermediate Track "
+                "(Backend SDE Transition) equips you with core algorithmic problem-solving, advanced data structures (DSA), low-level object-oriented "
+                "design (LLD), and backend API architecture first, establishing the necessary engineering foundation before forward-deploying AI into enterprise environments."
+            )
+            primary['guardrail'] = "FDE Catalog Prerequisite: QA professionals require backend engineering, DSA & LLD foundations before client AI deployment."
 
-                fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
-                fallback['catalog_code'] = 'Program 3'
-                fallback['track'] = 'Enterprise AI Integration & Production RAG Track'
-                fallback['fit_tier'] = 'Aspirational Goal (Post-System Design)'
-                fallback['why'] = (
-                    f"Target program once distributed systems architecture and backend foundations are mastered, "
-                    f"leveraging your {raw_exp} of enterprise quality governance into live enterprise AI deployment."
-                )
-            else:
-                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
-                primary['catalog_code'] = 'Program 1'
-                primary['track'] = 'Intermediate Track (Backend SDE Transition)'
-                primary['fit_tier'] = 'Foundational Prerequisite for FDE'
-                primary['why'] = (
-                    f"While you enquired about Forward Deployed Engineering, Program 3 requires hands-on backend development depth. "
-                    "Scaler Academy's Intermediate Track builds your core data structures and object-oriented design first."
-                )
-                primary['guardrail'] = "FDE Prerequisite Gate: QA professionals require backend engineering foundation first."
-
-                fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
-                fallback['catalog_code'] = 'Program 3'
-                fallback['track'] = 'Enterprise AI Integration Track'
-                fallback['fit_tier'] = 'Aspirational Goal (Post-Foundations)'
-                fallback['why'] = "Target program once foundational software engineering and data structures are mastered."
+            fallback['program'] = 'AI Forward Deployed Engineer (FDE)'
+            fallback['catalog_code'] = 'Program 3'
+            fallback['track'] = 'Enterprise AI Integration & Production RAG Track'
+            fallback['fit_tier'] = 'Aspirational Goal (Post-Foundations)'
+            fallback['why'] = (
+                f"Target program once foundational backend software engineering, DSA, and object-oriented design are mastered, "
+                f"leveraging your {raw_exp} of enterprise quality governance into live enterprise AI deployment."
+            )
 
         elif inbound_cat == 'P4_AIML_AGENTIC':
             primary['program'] = 'AI & Machine Learning with Agentic AI'
             primary['catalog_code'] = 'Program 4'
-            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)' if is_eligible_for_fde else 'Beginner Track (AI & Machine Learning Foundations)'
+            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)' if is_senior else 'Beginner Track (AI & Machine Learning Foundations)'
             primary['fit_tier'] = 'Best Fit (AI Testing & Agentic Systems)'
             primary['why'] = (
                 f"Leverages your test engineering precision as a {raw_role} to evaluate autonomous AI agents, "
@@ -1361,6 +1344,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             fallback['fit_tier'] = 'Alternative Infrastructure Track'
             fallback['why'] = "Automates testing and AI agent deployment through modern cloud pipelines."
         else:
+            is_pure_qa = any(k in raw_role.lower() for k in ['qa', 'test', 'quality']) and 'sdet' not in raw_role.lower()
             if is_manual_qa:
                 primary['program'] = 'Software & AI Engineering (Scaler Academy)'
                 primary['catalog_code'] = 'Program 1'
@@ -1388,13 +1372,31 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 fallback['track'] = 'CI/CD Automation & Cloud Infrastructure Track'
                 fallback['fit_tier'] = 'Alternative Cloud Platform Path'
                 fallback['why'] = "An alternative route to build automated deployment and cloud infrastructure skills."
+            elif is_pure_qa:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Intermediate Track (Backend SDE Transition)'
+                primary['fit_tier'] = 'Best Fit (Backend SDE Transition)'
+                primary['why'] = (
+                    f"As a {raw_role} with {raw_exp}, you already understand software lifecycles, release protocols, and code structures; "
+                    "this track bridges the exact gap in algorithmic optimization, advanced DSA, and low-level object-oriented design (LLD) "
+                    "to transition into core Backend SDE roles. Bypasses basic syntax to focus directly on Intermediate DSA (AI Assisted Problem Solving), "
+                    "Advanced DSA (Divide & Conquer, Trees, Heaps, Graphs, Dynamic Programming), and Low-Level Design (LLD)."
+                )
+                primary['guardrail'] = "Calibrated for QA/Testing transition: Bridges DSA & LLD gaps to achieve product-company SDE readiness."
+
+                fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
+                fallback['catalog_code'] = 'Program 5'
+                fallback['track'] = 'CI/CD Automation & Cloud Infrastructure Track' if not is_senior else 'Cloud Platform & Infrastructure Track'
+                fallback['fit_tier'] = 'Alternative Cloud Platform Leadership' if is_senior else 'Alternative Infrastructure Path'
+                fallback['why'] = "A fast-track alternative that leverages your testing automation into cloud engineering."
             elif is_senior:
                 primary['program'] = 'Software & AI Engineering (Scaler Academy)'
                 primary['catalog_code'] = 'Program 1'
                 primary['track'] = 'Advanced Track (High-Level System Design & Scalability)'
                 primary['fit_tier'] = 'Best Fit (Engineering Leadership & System Architecture)'
                 primary['why'] = (
-                    f"With {raw_exp} as a {raw_role}, you have mastered software delivery and quality governance. "
+                    f"With {raw_exp} as a {raw_role}, you have mastered software delivery and test framework architecture. "
                     "This Advanced Track bypasses entry-level coding drills to focus 100% on High-Level System Design (HLD): "
                     "distributed caching, database sharding, Kafka event streaming, and architectural scalability."
                 )
@@ -1418,7 +1420,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
                 fallback['program'] = 'DevOps, Cloud & AI Platform Engineering'
                 fallback['catalog_code'] = 'Program 5'
-                fallback['track'] = 'Cloud Platform & Infrastructure Track'
+                fallback['track'] = 'CI/CD Automation & Cloud Infrastructure Track'
                 fallback['fit_tier'] = 'Alternative Infrastructure Path'
                 fallback['why'] = "A fast-track alternative that leverages your testing automation into cloud engineering."
 

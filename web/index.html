@@ -430,9 +430,21 @@
 
     .filters-grid {
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr 1fr;
       gap: var(--space-6);
       align-items: center;
+    }
+
+    @media (max-width: 1280px) {
+      .filters-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .filter-input, .filter-select {
@@ -1374,6 +1386,72 @@
   <!-- APP CONTAINER -->
   <div class="app-container">
 
+    <!-- FILTERS BAR (DIRECTLY UNDER NAV BAR) -->
+    <div class="filters-card" id="filters-section">
+      <div class="filters-header">Filter & Search Evaluated Leads</div>
+      <div class="filters-grid">
+        <input 
+          type="text" 
+          id="filter-search" 
+          class="filter-input" 
+          placeholder="Search Name, Email, or Company..." 
+          oninput="applyFilters()"
+        >
+
+        <select id="filter-program" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Programs (1 to 5)</option>
+          <option value="Program 1">Program 1: Scaler Academy</option>
+          <option value="Program 2">Program 2: DSML</option>
+          <option value="Program 3">Program 3: FDE</option>
+          <option value="Program 4">Program 4: Agentic AI</option>
+          <option value="Program 5">Program 5: DevOps & Cloud</option>
+        </select>
+
+        <select id="filter-track" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Track Levels</option>
+          <option value="Beginner">Beginner Track</option>
+          <option value="Intermediate">Intermediate Track</option>
+          <option value="Advanced">Advanced Track</option>
+        </select>
+
+        <select id="filter-persona" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Role Personas</option>
+          <option value="Non-Tech">Non-Tech / Career Switcher</option>
+          <option value="Healthcare">Healthcare & Medical</option>
+          <option value="Security">Security & Protective</option>
+          <option value="Education">Education & Teaching</option>
+          <option value="Hospitality">Hospitality & Food Services</option>
+          <option value="Trades">Trades & Construction</option>
+          <option value="Logistics">Logistics & Transportation</option>
+          <option value="Retail">Retail & Customer Service</option>
+          <option value="HR">HR & People Operations</option>
+          <option value="Sales">Sales & Marketing</option>
+          <option value="Finance">Finance & Accounting</option>
+          <option value="Legal">Legal & Public Administration</option>
+          <option value="Traditional Engineering">Traditional Engineering (Non-CS)</option>
+          <option value="QA">QA / SDET / Testing</option>
+          <option value="Data">Data & Analytics</option>
+          <option value="DevOps">DevOps & Cloud Platform</option>
+          <option value="Systems">Systems & Embedded</option>
+          <option value="Software">Software Engineering</option>
+        </select>
+
+        <select id="filter-retention" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Retention Levels</option>
+          <option value="HIGH">High Retention (>=80%)</option>
+          <option value="MODERATE">Moderate (75 - 79%)</option>
+          <option value="RISK">Pacing Risk (<75%)</option>
+        </select>
+
+        <select id="filter-confidence" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">All Confidence Tiers</option>
+          <option value="HIGH">High Confidence (>=75%)</option>
+          <option value="MID">Mid Confidence (55 - 74%)</option>
+          <option value="LOW">Low Confidence (<55%)</option>
+        </select>
+      </div>
+    </div>
+
     <!-- HERO HEADER -->
     <div class="hero-header">
       <h1 class="hero-title">
@@ -1429,74 +1507,7 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- FILTERS BAR -->
-    <div class="filters-card" id="filters-section">
-      <div class="filters-header">Filter & Search Evaluated Leads</div>
-      <div class="filters-grid">
-        <input 
-          type="text" 
-          id="filter-search" 
-          class="filter-input" 
-          placeholder="Search Name, Email, or Company..." 
-          oninput="applyFilters()"
-        >
-
-        <select id="filter-program" class="filter-select" onchange="applyFilters()">
-          <option value="ALL">All Programs (1 to 5)</option>
-          <option value="Program 1">Program 1: Scaler Academy</option>
-          <option value="Program 2">Program 2: DSML</option>
-          <option value="Program 3">Program 3: FDE</option>
-          <option value="Program 4">Program 4: Agentic AI</option>
-          <option value="Program 5">Program 5: DevOps & Cloud</option>
-        </select>
-
-        <select id="filter-track" class="filter-select" onchange="applyFilters()">
-          <option value="ALL">All Track Levels</option>
-          <option value="Beginner">Beginner Track</option>
-          <option value="Intermediate">Intermediate Track</option>
-          <option value="Advanced">Advanced Track</option>
-        </select>
-
-        <select id="filter-persona" class="filter-select" onchange="applyFilters()">
-          <option value="ALL">All Role Personas</option>
-          <option value="Non-Tech">Non-Tech / Career Switcher</option>
-          <option value="Healthcare">Healthcare & Medical</option>
-          <option value="Security">Security & Protective</option>
-          <option value="Education">Education & Teaching</option>
-          <option value="Hospitality">Hospitality & Food Services</option>
-          <option value="Trades">Trades & Construction</option>
-          <option value="Logistics">Logistics & Transportation</option>
-          <option value="Retail">Retail & Customer Service</option>
-          <option value="HR">HR & People Operations</option>
-          <option value="Sales">Sales & Marketing</option>
-          <option value="Finance">Finance & Accounting</option>
-          <option value="Legal">Legal & Public Administration</option>
-          <option value="Traditional Engineering">Traditional Engineering (Non-CS)</option>
-          <option value="QA">QA / SDET / Testing</option>
-          <option value="Data">Data & Analytics</option>
-          <option value="DevOps">DevOps & Cloud Platform</option>
-          <option value="Systems">Systems & Embedded</option>
-          <option value="Software">Software Engineering</option>
-        </select>
-
-
-        <select id="filter-retention" class="filter-select" onchange="applyFilters()">
-          <option value="ALL">All Retention Levels</option>
-          <option value="HIGH">High Retention (>=80%)</option>
-          <option value="MODERATE">Moderate (75 - 79%)</option>
-          <option value="RISK">Pacing Risk (<75%)</option>
-        </select>
-
-        <select id="filter-confidence" class="filter-select" onchange="applyFilters()">
-          <option value="ALL">All Confidence Tiers</option>
-          <option value="HIGH">High Confidence (>=75%)</option>
-          <option value="MID">Mid Confidence (55 - 74%)</option>
-          <option value="LOW">Low Confidence (<55%)</option>
-        </select>
       </div>
-    </div>
 
     <!-- LEADS TABLE -->
     <div class="table-card">

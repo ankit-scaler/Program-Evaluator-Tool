@@ -165,25 +165,69 @@
       box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
     }
 
-    .nav-filter-reset {
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 20px;
+    }
+
+    .nav-tab-btn {
       font-family: var(--font-family-stack);
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      color: #475569;
-      padding: 0 12px;
-      border-radius: var(--radius-xs);
-      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
       font-weight: 700;
-      height: 31px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #64748b;
       cursor: pointer;
-      white-space: nowrap;
       transition: all var(--motion-duration-instant);
     }
 
-    .nav-filter-reset:hover {
-      background: #fee2e2;
-      border-color: #fca5a5;
-      color: #b91c1c;
+    .nav-tab-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .nav-tab-btn.active {
+      background: #eff6ff;
+      color: var(--scaler-blue);
+      border-color: #bfdbfe;
+    }
+
+    /* TAB VIEWS */
+    .tab-view {
+      width: 100%;
+    }
+
+    /* CENTERED UPLOAD DESK */
+    .upload-center-wrapper {
+      max-width: 820px;
+      margin: 40px auto 60px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .upload-center-wrapper .hero-header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .upload-center-wrapper .upload-card {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--color-surface-raised);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
 
     .brand-logo {
@@ -1560,14 +1604,27 @@
 </head>
 <body>
 
-  <!-- TOP NAVBAR WITH EMBEDDED FILTERS -->
+  <!-- TOP NAVBAR WITH EMBEDDED FILTERS & TABS -->
   <nav>
     <div class="nav-top-row">
-      <a href="#" class="brand-logo">
-        <img src="scaler_logo.png" alt="Scaler" class="brand-scaler-logo">
-        <span class="brand-divider"></span>
-        <div class="brand-title">Sales Intelligence Desk</div>
-      </a>
+      <div style="display: flex; align-items: center;">
+        <a href="#" class="brand-logo" onclick="switchTab('upload')">
+          <img src="scaler_logo.png" alt="Scaler" class="brand-scaler-logo">
+          <span class="brand-divider"></span>
+          <div class="brand-title">Sales Intelligence Desk</div>
+        </a>
+        <div class="nav-tabs">
+          <button id="tab-btn-upload" class="nav-tab-btn active" onclick="switchTab('upload')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Upload Leads</span>
+          </button>
+          <button id="tab-btn-analysis" class="nav-tab-btn" onclick="switchTab('analysis')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Analysis &amp; Recommendations <b id="tab-badge-count" style="margin-left: 4px; font-size: 10.5px; padding: 1px 6px; background: #e0f2fe; color: #0284c7; border-radius: 10px;">0</b></span>
+          </button>
+        </div>
+      </div>
+
       <div class="nav-actions">
         <!-- Dynamic CRM Email/Phone Lookup Bar -->
         <div style="display:flex; align-items:center; background:var(--color-surface-muted); border:1px solid var(--color-surface-raised); border-radius:var(--radius-xs); padding:var(--space-2) var(--space-4); width:320px; box-shadow:var(--shadow-3);">
@@ -1592,8 +1649,8 @@
       </div>
     </div>
 
-    <!-- COMPACT FILTERS STRIP IN NAVBAR -->
-    <div class="nav-filter-strip">
+    <!-- COMPACT FILTERS STRIP IN NAVBAR (VISIBLE IN ANALYSIS TAB) -->
+    <div id="nav-filter-strip" class="nav-filter-strip" style="display: none;">
       <div class="nav-filter-label">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--scaler-blue);"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
         <span>Filters:</span>
@@ -1670,79 +1727,105 @@
   <!-- APP CONTAINER -->
   <div class="app-container">
 
-    <!-- HERO HEADER -->
-    <div class="hero-header">
-      <h1 class="hero-title">
-        Program Recommendation & <span>Sales Intelligence</span> Desk
-      </h1>
-      <p class="hero-tagline">
-        Upload inbound leads CSV to evaluate academic eligibility, track leveling, and empirical retention benchmarks against catalog rules.
-      </p>
+    <!-- TAB 1: UPLOAD & EVALUATE VIEW (CENTERED) -->
+    <div id="view-upload" class="tab-view active">
+      <div class="upload-center-wrapper">
+        <div class="hero-header">
+          <h1 class="hero-title">
+            Program Recommendation &amp; <span>Sales Intelligence</span> Desk
+          </h1>
+          <p class="hero-tagline">
+            Upload inbound leads CSV to evaluate academic eligibility, track leveling, and empirical retention benchmarks against catalog rules.
+          </p>
+        </div>
+
+        <!-- CSV UPLOAD DROPZONE -->
+        <div class="upload-card">
+          <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
+          <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
+            <div style="margin-bottom: 14px;">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="background: #eff6ff; padding: 10px; border-radius: 50%; border: 1px solid #bfdbfe;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="dropzone-title" id="dropzone-status-title">Choose or Drag &amp; Drop Leads CSV File</div>
+            <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience, Organization, Inbound Program). Evaluates automatically upon upload.</div>
+            <div style="margin-top: 16px;">
+              <button type="button" class="btn-sm" style="background: var(--scaler-blue); color: #ffffff; border-color: var(--scaler-blue); font-weight: 700; padding: 8px 22px; font-size: 13px; border-radius: 4px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);">
+                Browse CSV File
+              </button>
+            </div>
+          </div>
+
+          <!-- LIVE EVALUATION PROGRESS & STAGES STEPPER -->
+          <div id="eval-progress-container" class="eval-progress-container">
+            <div class="eval-progress-header">
+              <div class="eval-progress-title">
+                <span id="eval-pulse" class="eval-pulse-dot"></span>
+                <span id="eval-status-label">Evaluating Inbound Leads...</span>
+              </div>
+              <div class="eval-progress-pct" id="eval-progress-pct">0%</div>
+            </div>
+
+            <div class="eval-progress-bar-bg">
+              <div class="eval-progress-fill" id="eval-progress-fill"></div>
+            </div>
+
+            <div class="eval-stages-stepper">
+              <div class="eval-stage-item" id="stage-1">
+                <div class="eval-stage-badge"><span id="stage-icon-1">⏳</span> Stage 1</div>
+                <div class="eval-stage-title">Ingest Schema</div>
+              </div>
+              <div class="eval-stage-item" id="stage-2">
+                <div class="eval-stage-badge"><span id="stage-icon-2">⏳</span> Stage 2</div>
+                <div class="eval-stage-title">Prerequisite Gates</div>
+              </div>
+              <div class="eval-stage-item" id="stage-3">
+                <div class="eval-stage-badge"><span id="stage-icon-3">⏳</span> Stage 3</div>
+                <div class="eval-stage-title">Funnel Matrix</div>
+              </div>
+              <div class="eval-stage-item" id="stage-4">
+                <div class="eval-stage-badge"><span id="stage-icon-4">⏳</span> Stage 4</div>
+                <div class="eval-stage-title">Curriculum Match</div>
+              </div>
+              <div class="eval-stage-item" id="stage-5">
+                <div class="eval-stage-badge"><span id="stage-icon-5">⏳</span> Stage 5</div>
+                <div class="eval-stage-title">Live Recommend</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- CSV UPLOAD DROPZONE -->
-    <div class="upload-card">
-      <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
-      <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
-        <div class="dropzone-title" id="dropzone-status-title">Choose or Drag & Drop Leads CSV File</div>
-        <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience, Organization, Inbound Program). Evaluates automatically upon upload.</div>
-      </div>
-
-      <!-- LIVE EVALUATION PROGRESS & STAGES STEPPER -->
-      <div id="eval-progress-container" class="eval-progress-container">
-        <div class="eval-progress-header">
-          <div class="eval-progress-title">
-            <span id="eval-pulse" class="eval-pulse-dot"></span>
-            <span id="eval-status-label">Evaluating Inbound Leads...</span>
+    <!-- TAB 2: ANALYSIS & EVALUATED LEADS VIEW (FULL WIDTH) -->
+    <div id="view-analysis" class="tab-view" style="display: none;">
+      <!-- LEADS TABLE -->
+      <div class="table-card">
+        <div class="table-top-bar">
+          <div class="table-count-label">
+            Evaluated Leads (<span id="table-display-count">0</span> / <span id="table-total-count">0</span>)
           </div>
-          <div class="eval-progress-pct" id="eval-progress-pct">0%</div>
-        </div>
-
-        <div class="eval-progress-bar-bg">
-          <div class="eval-progress-fill" id="eval-progress-fill"></div>
-        </div>
-
-        <div class="eval-stages-stepper">
-          <div class="eval-stage-item" id="stage-1">
-            <div class="eval-stage-badge"><span id="stage-icon-1">⏳</span> Stage 1</div>
-            <div class="eval-stage-title">Ingest Schema</div>
-          </div>
-          <div class="eval-stage-item" id="stage-2">
-            <div class="eval-stage-badge"><span id="stage-icon-2">⏳</span> Stage 2</div>
-            <div class="eval-stage-title">Prerequisite Gates</div>
-          </div>
-          <div class="eval-stage-item" id="stage-3">
-            <div class="eval-stage-badge"><span id="stage-icon-3">⏳</span> Stage 3</div>
-            <div class="eval-stage-title">Funnel Matrix</div>
-          </div>
-          <div class="eval-stage-item" id="stage-4">
-            <div class="eval-stage-badge"><span id="stage-icon-4">⏳</span> Stage 4</div>
-            <div class="eval-stage-title">Curriculum Match</div>
-          </div>
-          <div class="eval-stage-item" id="stage-5">
-            <div class="eval-stage-badge"><span id="stage-icon-5">⏳</span> Stage 5</div>
-            <div class="eval-stage-title">Live Recommend</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-sm" onclick="switchTab('upload')" style="display: inline-flex; align-items: center; gap: 4px;">
+              <span>+</span> Upload Another CSV
+            </button>
+            <button class="btn-sm" onclick="openAnalysisInNewBrowserTab()" title="Open evaluation analysis in a new browser tab" style="display: inline-flex; align-items: center; gap: 4px;">
+              <span>&#8599;</span> Open in New Tab
+            </button>
+            <button class="btn-sm" onclick="downloadMasterCsv()">
+              Download Filtered CSV
+            </button>
           </div>
         </div>
-      </div>
-      </div>
 
-    <!-- LEADS TABLE -->
-    <div class="table-card">
-      <div class="table-top-bar">
-        <div class="table-count-label">
-          Evaluated Leads (<span id="table-display-count">0</span> / <span id="table-total-count">0</span>)
-        </div>
-        <button class="btn-sm" onclick="downloadMasterCsv()">
-          Download Filtered CSV
-        </button>
-      </div>
-
-      <div class="table-wrapper">
-        <table id="leads-table">
-          <thead>
-            <tr>
-              <th style="width: 120px; white-space: nowrap;">Lead ID</th>
+        <div class="table-wrapper">
+          <table id="leads-table">
+            <thead>
+              <tr>
+                <th style="width: 120px; white-space: nowrap;">Lead ID</th>
               <th style="min-width: 190px;">Candidate</th>
               <th style="min-width: 170px;">Current Role</th>
               <th style="width: 95px; white-space: nowrap;">Experience</th>
@@ -1771,8 +1854,9 @@
         </div>
       </div>
     </div>
+    </div> <!-- end view-analysis -->
 
-  </div>
+  </div> <!-- end app-container -->
 
   <!-- POP-UP SALES DOSSIER MODAL -->
   <div class="modal-overlay" id="lead-modal" onclick="handleOverlayClick(event)">
@@ -2658,17 +2742,16 @@
           
           document.getElementById('stat-total').innerText = (data.total || data.leads.length).toLocaleString();
           document.getElementById('table-total-count').innerText = (data.total || data.leads.length).toLocaleString();
+          const tabBadge = document.getElementById('tab-badge-count');
+          if (tabBadge) tabBadge.innerText = (data.total || data.leads.length).toLocaleString();
 
           currentPage = 1;
           applyFilters();
 
-          // Smoothly pop open first lead recommendation dossier
+          // Smoothly switch to the analysis tab to show all evaluated leads and recommendations!
           setTimeout(() => {
-            if (allLeads && allLeads.length > 0) {
-              activeLeadData = allLeads[0];
-              openModalWithLead(allLeads[0]);
-            }
-          }, 600);
+            switchTab('analysis');
+          }, 800);
 
         } else {
           clearInterval(progressTimer);
@@ -2682,6 +2765,42 @@
         alert('Server error while evaluating CSV.');
       }
     }
+
+    function switchTab(tab) {
+      const uploadView = document.getElementById('view-upload');
+      const analysisView = document.getElementById('view-analysis');
+      const tabUpload = document.getElementById('tab-btn-upload');
+      const tabAnalysis = document.getElementById('tab-btn-analysis');
+      const filterStrip = document.getElementById('nav-filter-strip');
+
+      if (tab === 'analysis') {
+        if (uploadView) uploadView.style.display = 'none';
+        if (analysisView) analysisView.style.display = 'block';
+        if (tabUpload) tabUpload.classList.remove('active');
+        if (tabAnalysis) tabAnalysis.classList.add('active');
+        if (filterStrip) filterStrip.style.display = 'flex';
+        renderTable();
+      } else {
+        if (uploadView) uploadView.style.display = 'block';
+        if (analysisView) analysisView.style.display = 'none';
+        if (tabUpload) tabUpload.classList.add('active');
+        if (tabAnalysis) tabAnalysis.classList.remove('active');
+        if (filterStrip) filterStrip.style.display = 'none';
+      }
+    }
+
+    function openAnalysisInNewBrowserTab() {
+      const newWin = window.open(window.location.origin + window.location.pathname + '#analysis', '_blank');
+      if (newWin) newWin.focus();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash === '#analysis' && allLeads && allLeads.length > 0) {
+        switchTab('analysis');
+      } else {
+        switchTab('upload');
+      }
+    });
 
     function resetFilters() {
       document.getElementById('filter-search').value = '';
@@ -3318,6 +3437,9 @@
             allLeads.unshift(data.lead);
             filteredLeads = [...allLeads];
             document.getElementById('stat-total').innerText = allLeads.length;
+            const tabBadge = document.getElementById('tab-badge-count');
+            if (tabBadge) tabBadge.innerText = allLeads.length;
+            switchTab('analysis');
             renderTable();
           }
           activeLeadData = data.lead;
@@ -3345,6 +3467,9 @@
             filteredLeads = [...allLeads];
             document.getElementById('stat-total').innerText = data.total_synced;
             document.getElementById('table-total-count').innerText = data.total_synced;
+            const tabBadge = document.getElementById('tab-badge-count');
+            if (tabBadge) tabBadge.innerText = data.total_synced;
+            switchTab('analysis');
             renderTable();
           }
           alert(data.message);

@@ -623,34 +623,25 @@
 
     .candidate-avatar-col {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      width: 125px;
+      width: 120px;
       border-right: 1px dashed var(--color-surface-raised);
       padding-right: 20px;
     }
 
     .candidate-avatar-wrapper {
-      position: relative;
-      width: 96px;
-      height: 96px;
+      width: 104px;
+      height: 104px;
       border-radius: 50%;
       background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
       border: 2.5px solid var(--scaler-blue);
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18);
-      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.16);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .candidate-avatar-wrapper:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
     }
 
     .candidate-avatar-img {
@@ -660,34 +651,7 @@
       object-position: top center;
     }
 
-    .avatar-gender-indicator {
-      position: absolute;
-      bottom: 2px;
-      right: 4px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--scaler-blue);
-      color: #ffffff;
-      font-size: 11px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #ffffff;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-    }
-
-    .avatar-toggle-hint {
-      font-size: 10px;
-      color: #64748b;
-      margin-top: 8px;
-      text-align: center;
-      font-weight: 600;
-      line-height: 1.2;
-    }
-
-    /* DOSSIER TILES GRID (ALL IDENTICAL SIZE) */
+    /* DOSSIER TILES GRID (ALL IDENTICAL SIZE & FULL VISIBILITY) */
     .dossier-tiles-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -711,14 +675,13 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      padding: 8px 12px;
+      padding: 9px 12px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      height: 72px;
+      min-height: 84px;
       box-sizing: border-box;
       transition: all 0.15s ease;
-      overflow: hidden;
     }
 
     .dossier-tile:hover {
@@ -733,7 +696,7 @@
       color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -741,15 +704,11 @@
     }
 
     .dossier-tile-val {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       color: #0f172a;
       line-height: 1.35;
       word-break: break-word;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
     }
 
     .candidate-info-box {
@@ -1732,11 +1691,9 @@
         <div class="candidate-dossier-hero">
           <!-- AVATAR COLUMN (LEFT) -->
           <div class="candidate-avatar-col">
-            <div class="candidate-avatar-wrapper" onclick="toggleAvatarGender()" title="Click to toggle Male & Female avatar">
+            <div class="candidate-avatar-wrapper">
               <img id="modal-candidate-avatar" src="avatar_male.png" alt="Candidate Avatar" class="candidate-avatar-img">
-              <div class="avatar-gender-indicator" id="modal-avatar-gender-badge" title="Gender detected (Click to switch)">M</div>
             </div>
-            <div class="avatar-toggle-hint">Click avatar to switch</div>
           </div>
 
           <!-- CANDIDATE INFO BOX (RIGHT) -->
@@ -3075,37 +3032,11 @@
     }
 
     function updateCandidateAvatar(name) {
-      currentAvatarGender = guessGenderByName(name);
-      renderAvatarDisplay();
-    }
-
-    function toggleAvatarGender() {
-      currentAvatarGender = (currentAvatarGender === 'MALE') ? 'FEMALE' : 'MALE';
-      renderAvatarDisplay();
-    }
-
-    function renderAvatarDisplay() {
+      const gender = guessGenderByName(name);
       const elImg = document.getElementById('modal-candidate-avatar');
-      const elBadge = document.getElementById('modal-avatar-gender-badge');
       if (!elImg) return;
-      
-      if (currentAvatarGender === 'FEMALE') {
-        elImg.src = 'avatar_female.png';
-        elImg.alt = 'Female Candidate Avatar';
-        if (elBadge) {
-          elBadge.innerText = 'F';
-          elBadge.style.background = '#db2777';
-          elBadge.title = 'Female (Click to toggle)';
-        }
-      } else {
-        elImg.src = 'avatar_male.png';
-        elImg.alt = 'Male Candidate Avatar';
-        if (elBadge) {
-          elBadge.innerText = 'M';
-          elBadge.style.background = 'var(--scaler-blue)';
-          elBadge.title = 'Male (Click to toggle)';
-        }
-      }
+      elImg.src = (gender === 'FEMALE') ? 'avatar_female.png' : 'avatar_male.png';
+      elImg.alt = (gender === 'FEMALE') ? 'Female Candidate Avatar' : 'Male Candidate Avatar';
     }
 
     function openModalWithLead(lead) {
@@ -3119,43 +3050,51 @@
       document.getElementById('modal-name').innerText = p.name;
       document.getElementById('modal-id').innerText = lead.lead_id;
 
-      // Update avatar
+      // Update avatar automatically based on candidate
       updateCandidateAvatar(p.name);
       const elAcadBadge = document.getElementById('modal-academic-badge');
       if (elAcadBadge) {
         elAcadBadge.innerText = lead.academic_eligibility?.status ? `Academic Status: ${lead.academic_eligibility.status}` : 'Academic Status: Degree Verified';
       }
 
-      // Update tiles
-      const roleDomainTag = p.role_domain ? `<span style="display:inline-block; font-size:9.5px; font-weight:700; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:1px 5px; border-radius:3px; margin-top:2px;">${p.role_domain}</span>` : '';
-      document.getElementById('modal-role').innerHTML = `<div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.role}</div>${roleDomainTag}`;
+      // Update tiles with clean formatting & zero text cut-off
+      const roleDomainTag = p.role_domain ? `<span style="display:inline-block; font-size:9.5px; font-weight:700; color:#0284c7; background:#e0f2fe; border:1px solid #bae6fd; padding:1px 6px; border-radius:3px; margin-top:3px; line-height:1.2;">${p.role_domain}</span>` : '';
+      document.getElementById('modal-role').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.role}</div>${roleDomainTag}`;
       document.getElementById('modal-role').title = p.role + (p.role_domain ? ` (${p.role_domain})` : '');
 
-      document.getElementById('modal-org').innerText = p.previous_org;
+      document.getElementById('modal-org').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.previous_org}</div>`;
       document.getElementById('modal-org').title = p.previous_org;
-      document.getElementById('modal-exp').innerText = p.experience;
+
+      document.getElementById('modal-exp').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.experience}</div>`;
       document.getElementById('modal-exp').title = p.experience;
-      document.getElementById('modal-edu').innerText = p.education || 'Graduated / Degree';
+
+      document.getElementById('modal-edu').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.education || 'Graduated / Degree'}</div>`;
       document.getElementById('modal-edu').title = p.education || 'Graduated / Degree';
-      document.getElementById('modal-company').innerText = p.company_type;
+
+      document.getElementById('modal-company').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.company_type}</div>`;
       document.getElementById('modal-company').title = p.company_type;
-      document.getElementById('modal-inbound').innerText = p.enquired_program;
-      document.getElementById('modal-inbound').title = p.enquired_program;
+
+      let inbProg = p.enquired_program || 'Academy';
+      let displayInb = inbProg.replace(/\s*\([^)]*\)\s*$/, '').trim();
+      document.getElementById('modal-inbound').innerHTML = `<div style="color:var(--scaler-red); font-weight:700; line-height:1.3; font-size:11.5px;">${displayInb}</div>`;
+      document.getElementById('modal-inbound').title = inbProg;
 
       // Captured Touchpoints
-      document.getElementById('modal-tp-event').innerText = tp.event_name || '-';
+      document.getElementById('modal-tp-event').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25; font-size:11px;">${tp.event_name || '-'}</div>`;
       document.getElementById('modal-tp-event').title = tp.event_name || '';
-      document.getElementById('modal-tp-attendance').innerText = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
-      document.getElementById('modal-tp-attendance').title = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
+
+      const attStr = `${tp.attended || 'N/A'}${tp.duration && tp.duration !== 'N/A' ? ' (' + tp.duration + ')' : ''}`;
+      document.getElementById('modal-tp-attendance').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25; font-size:11.5px;">${attStr}</div>`;
+      document.getElementById('modal-tp-attendance').title = attStr;
 
       const satText = tp.set_status || tp.sat_status || 'SET Not Attempted';
       let satColor = '#475569';
       if (satText.includes('Passed') || satText.includes('Score:')) satColor = '#15803d';
       else if (satText.includes('Attempted')) satColor = '#b45309';
-      document.getElementById('modal-tp-sat').innerHTML = `<span style="color:${satColor}; font-weight:700;">${satText}</span>`;
+      document.getElementById('modal-tp-sat').innerHTML = `<div style="color:${satColor}; font-weight:700; line-height:1.25; font-size:11.5px;">${satText}</div>`;
       document.getElementById('modal-tp-sat').title = satText;
 
-      document.getElementById('modal-tp-channel').innerText = tp.channel || 'Direct Web';
+      document.getElementById('modal-tp-channel').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25; font-size:11.5px;">${tp.channel || 'Direct Web'}</div>`;
       document.getElementById('modal-tp-channel').title = tp.channel || 'Direct Web';
 
       // Primary

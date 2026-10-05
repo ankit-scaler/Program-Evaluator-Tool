@@ -608,26 +608,122 @@
       position: relative;
     }
 
-    .modal-header {
-      padding: var(--space-7) 24px;
-      border-bottom: 1px solid var(--color-surface-raised);
+    /* CANDIDATE DOSSIER HERO (AVATAR ON LEFT, DETAILS BOX ON RIGHT) */
+    .candidate-dossier-hero {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+      background: #ffffff;
+      border: 1px solid var(--color-surface-raised);
+      border-radius: var(--radius-xs);
+      padding: 16px 20px;
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-3);
+    }
+
+    .candidate-avatar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 110px;
+      border-right: 1px dashed var(--color-surface-raised);
+      padding-right: 18px;
+    }
+
+    .candidate-avatar-wrapper {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 2.5px solid var(--scaler-blue);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .candidate-avatar-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    }
+
+    .candidate-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .avatar-gender-indicator {
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--scaler-blue);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffffff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+
+    .avatar-toggle-hint {
+      font-size: 9.5px;
+      color: #64748b;
+      margin-top: 6px;
+      text-align: center;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .candidate-info-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .candidate-info-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      background: var(--color-surface-muted);
-      z-index: 10;
+      margin-bottom: 8px;
     }
 
-    .modal-title {
-      font-family: var(--font-family-stack);
-      font-size: var(--font-size-md);
-      font-weight: 700;
-      color: var(--color-text-tertiary);
+    .candidate-name-row {
       display: flex;
       align-items: center;
-      gap: var(--space-5);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .candidate-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.3px;
+    }
+
+    .candidate-academic-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      border-radius: 4px;
+      padding: 2px 7px;
     }
 
     .id-tag {
@@ -1564,63 +1660,78 @@
   <div class="modal-overlay" id="lead-modal" onclick="handleOverlayClick(event)">
     <div class="modal-container">
       
-      <!-- MODAL HEADER -->
-      <div class="modal-header">
-        <div class="modal-title">
-          <span id="modal-name">Candidate Profile</span>
-          <span class="id-tag" id="modal-id">LD-SALES-0001</span>
-        </div>
-        <button class="modal-close-btn" onclick="closeModal()">&times;</button>
-      </div>
-
       <!-- MODAL BODY -->
       <div class="modal-body">
         
-        <!-- PROFILE STRIP -->
-        <div class="profile-strip" style="grid-template-columns: repeat(6, 1fr);">
-          <div>
-            <div class="strip-item-label">Current Role</div>
-            <div class="strip-item-val" id="modal-role">-</div>
+        <!-- CANDIDATE DOSSIER HERO (AVATAR ON LEFT, DETAILS BOX ON RIGHT) -->
+        <div class="candidate-dossier-hero">
+          <!-- AVATAR COLUMN (LEFT) -->
+          <div class="candidate-avatar-col">
+            <div class="candidate-avatar-wrapper" onclick="toggleAvatarGender()" title="Click to toggle Male & Female avatar">
+              <img id="modal-candidate-avatar" src="avatar_male.png" alt="Candidate Avatar" class="candidate-avatar-img">
+              <div class="avatar-gender-indicator" id="modal-avatar-gender-badge" title="Gender detected (Click to switch)">M</div>
+            </div>
+            <div class="avatar-toggle-hint">Click avatar to switch</div>
           </div>
-          <div>
-            <div class="strip-item-label">Previous Org</div>
-            <div class="strip-item-val" id="modal-org">-</div>
-          </div>
-          <div>
-            <div class="strip-item-label">Experience</div>
-            <div class="strip-item-val" id="modal-exp">-</div>
-          </div>
-          <div>
-            <div class="strip-item-label">Education</div>
-            <div class="strip-item-val" id="modal-edu">-</div>
-          </div>
-          <div>
-            <div class="strip-item-label">Company Type</div>
-            <div class="strip-item-val" id="modal-company">-</div>
-          </div>
-          <div>
-            <div class="strip-item-label">Inbound Enquiry</div>
-            <div class="strip-item-val" id="modal-inbound" style="color:var(--scaler-red);">-</div>
-          </div>
-        </div>
 
-        <!-- CAPTURED TOUCHPOINTS STRIP -->
-        <div class="touchpoints-strip">
-          <div>
-            <div class="tp-item-label">Inbound Masterclass / Course</div>
-            <div class="tp-item-val" id="modal-tp-event" title="">-</div>
-          </div>
-          <div>
-            <div class="tp-item-label">Attendance & Watch Time</div>
-            <div class="tp-item-val" id="modal-tp-attendance">-</div>
-          </div>
-          <div>
-            <div class="tp-item-label">Diagnostic Coding SET Score</div>
-            <div class="tp-item-val" id="modal-tp-sat">-</div>
-          </div>
-          <div>
-            <div class="tp-item-label">Source & Channel</div>
-            <div class="tp-item-val" id="modal-tp-channel">-</div>
+          <!-- CANDIDATE INFO BOX (RIGHT) -->
+          <div class="candidate-info-box">
+            <div class="candidate-info-top">
+              <div class="candidate-name-row">
+                <span class="candidate-name" id="modal-name">Yamini Grover</span>
+                <span class="id-tag" id="modal-id">LD-SALES-0023</span>
+                <span class="candidate-academic-badge" id="modal-academic-badge">Academic Status: Degree Verified</span>
+              </div>
+              <button class="modal-close-btn" onclick="closeModal()" title="Close Dossier">&times;</button>
+            </div>
+
+            <!-- PROFILE STRIP -->
+            <div class="profile-strip" style="grid-template-columns: repeat(6, 1fr); margin-bottom:8px; padding:10px 14px;">
+              <div>
+                <div class="strip-item-label">Current Role</div>
+                <div class="strip-item-val" id="modal-role">-</div>
+              </div>
+              <div>
+                <div class="strip-item-label">Previous Org</div>
+                <div class="strip-item-val" id="modal-org">-</div>
+              </div>
+              <div>
+                <div class="strip-item-label">Experience</div>
+                <div class="strip-item-val" id="modal-exp">-</div>
+              </div>
+              <div>
+                <div class="strip-item-label">Education</div>
+                <div class="strip-item-val" id="modal-edu">-</div>
+              </div>
+              <div>
+                <div class="strip-item-label">Company Type</div>
+                <div class="strip-item-val" id="modal-company">-</div>
+              </div>
+              <div>
+                <div class="strip-item-label">Inbound Enquiry</div>
+                <div class="strip-item-val" id="modal-inbound" style="color:var(--scaler-red); font-weight:700;">-</div>
+              </div>
+            </div>
+
+            <!-- CAPTURED TOUCHPOINTS STRIP -->
+            <div class="touchpoints-strip" style="margin-bottom:0; padding:10px 14px;">
+              <div>
+                <div class="tp-item-label">Inbound Masterclass / Course</div>
+                <div class="tp-item-val" id="modal-tp-event" title="">-</div>
+              </div>
+              <div>
+                <div class="tp-item-label">Attendance & Watch Time</div>
+                <div class="tp-item-val" id="modal-tp-attendance">-</div>
+              </div>
+              <div>
+                <div class="tp-item-label">Diagnostic Coding SET Score</div>
+                <div class="tp-item-val" id="modal-tp-sat">-</div>
+              </div>
+              <div>
+                <div class="tp-item-label">Source & Channel</div>
+                <div class="tp-item-val" id="modal-tp-channel">-</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2861,6 +2972,81 @@
       }
     }
 
+    let currentAvatarGender = 'MALE';
+
+    function guessGenderByName(fullName) {
+      if (!fullName) return 'MALE';
+      const nameClean = fullName.trim().toLowerCase();
+      
+      // Honorifics
+      if (nameClean.startsWith('ms.') || nameClean.startsWith('mrs.') || nameClean.startsWith('miss ')) {
+        return 'FEMALE';
+      }
+      if (nameClean.startsWith('mr.')) {
+        return 'MALE';
+      }
+      
+      const firstName = nameClean.split(/\s+/)[0].replace(/[^a-z]/g, '');
+      
+      const FEMALE_NAMES = new Set([
+        'yamini', 'priya', 'pooja', 'ananya', 'neha', 'sneha', 'shreya', 'divya', 'swati', 'tanvi',
+        'ritu', 'megha', 'kavita', 'deepa', 'sunita', 'anita', 'pallavi', 'riya', 'anjali', 'aayushi',
+        'shruti', 'preeti', 'nisha', 'rashmi', 'aditi', 'simran', 'kriti', 'sonal', 'payal', 'garima',
+        'komal', 'bhavna', 'monika', 'sweta', 'shweta', 'sheetal', 'mansi', 'jyoti', 'rekha', 'seema',
+        'smriti', 'sakshi', 'tanu', 'diksha', 'prerna', 'richa', 'radhika', 'geeta', 'meenakshi', 'arti',
+        'vandana', 'alka', 'aparna', 'madhuri', 'anushka', 'juhi', 'kajal', 'isha', 'ishita',
+        'parul', 'deepika', 'archana', 'sapna', 'sushma', 'alisha', 'natasha', 'sarah', 'emily', 'jessica',
+        'aadhya', 'aarti', 'amrita', 'bhoomika', 'charulata', 'chitra', 'madhavi', 'saumya', 'uma',
+        'lakshmi', 'aisha', 'nandini', 'rashmika', 'harshita', 'ankita', 'tanya', 'pragati', 'khushboo',
+        'kanika', 'shikha', 'shalini', 'shilpa', 'deepali', 'roshni', 'gunjan', 'mona', 'vidya',
+        'varsha', 'surabhi', 'surbhi', 'bhavya', 'urvashi', 'sonali', 'chetna', 'tripti', 'upasana'
+      ]);
+      
+      if (FEMALE_NAMES.has(firstName)) {
+        return 'FEMALE';
+      }
+      
+      if (nameClean.includes(' kaur') || nameClean.includes(' devi') || nameClean.includes(' kumari') || nameClean.includes(' begum')) {
+        return 'FEMALE';
+      }
+      
+      return 'MALE';
+    }
+
+    function updateCandidateAvatar(name) {
+      currentAvatarGender = guessGenderByName(name);
+      renderAvatarDisplay();
+    }
+
+    function toggleAvatarGender() {
+      currentAvatarGender = (currentAvatarGender === 'MALE') ? 'FEMALE' : 'MALE';
+      renderAvatarDisplay();
+    }
+
+    function renderAvatarDisplay() {
+      const elImg = document.getElementById('modal-candidate-avatar');
+      const elBadge = document.getElementById('modal-avatar-gender-badge');
+      if (!elImg) return;
+      
+      if (currentAvatarGender === 'FEMALE') {
+        elImg.src = 'avatar_female.png';
+        elImg.alt = 'Female Candidate Avatar';
+        if (elBadge) {
+          elBadge.innerText = 'F';
+          elBadge.style.background = '#db2777';
+          elBadge.title = 'Female (Click to toggle)';
+        }
+      } else {
+        elImg.src = 'avatar_male.png';
+        elImg.alt = 'Male Candidate Avatar';
+        if (elBadge) {
+          elBadge.innerText = 'M';
+          elBadge.style.background = 'var(--scaler-blue)';
+          elBadge.title = 'Male (Click to toggle)';
+        }
+      }
+    }
+
     function openModalWithLead(lead) {
       currentModalLead = lead;
       const p = lead.person;
@@ -2871,6 +3057,13 @@
 
       document.getElementById('modal-name').innerText = p.name;
       document.getElementById('modal-id').innerText = lead.lead_id;
+
+      // Update avatar
+      updateCandidateAvatar(p.name);
+      const elAcadBadge = document.getElementById('modal-academic-badge');
+      if (elAcadBadge) {
+        elAcadBadge.innerText = lead.academic_eligibility?.status ? `Academic Status: ${lead.academic_eligibility.status}` : 'Academic Status: Degree Verified';
+      }
 
       // Profile strip
       document.getElementById('modal-role').innerHTML = `${p.role}${p.role_domain ? ` <span style="font-size:10px; font-weight:600; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:1px 6px; border-radius:3px; margin-left:4px;">${p.role_domain}</span>` : ''}`;

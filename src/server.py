@@ -64,6 +64,20 @@ async def serve_scaler_logo():
         return FileResponse(logo_path, media_type="image/png")
     raise HTTPException(status_code=404, detail="Logo not found")
 
+@app.get("/avatar_male.png")
+async def serve_avatar_male():
+    avatar_path = os.path.join(WEB_DIR, 'avatar_male.png')
+    if os.path.exists(avatar_path):
+        return FileResponse(avatar_path, media_type="image/png")
+    raise HTTPException(status_code=404, detail="Male avatar not found")
+
+@app.get("/avatar_female.png")
+async def serve_avatar_female():
+    avatar_path = os.path.join(WEB_DIR, 'avatar_female.png')
+    if os.path.exists(avatar_path):
+        return FileResponse(avatar_path, media_type="image/png")
+    raise HTTPException(status_code=404, detail="Female avatar not found")
+
 # Global in-memory store of uploaded/evaluated leads (Starts 100% EMPTY)
 CACHED_LEADS = []
 CACHED_DF = None

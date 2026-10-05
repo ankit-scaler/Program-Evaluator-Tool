@@ -165,6 +165,65 @@
       box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
     }
 
+    .nav-arrow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 11px;
+      border-radius: 4px;
+      border: 1px solid var(--color-surface-raised);
+      background: #ffffff;
+      color: #334155;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: var(--font-family-stack);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--motion-duration-instant);
+    }
+
+    .nav-arrow-btn:hover:not(:disabled) {
+      background: #eff6ff;
+      border-color: var(--scaler-blue);
+      color: var(--scaler-blue);
+    }
+
+    .nav-arrow-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #f8fafc;
+      color: #94a3b8;
+      border-color: #e2e8f0;
+    }
+
+    .modal-nav-arrow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 3px;
+      border: none;
+      background: transparent;
+      color: #334155;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: var(--font-family-stack);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--motion-duration-instant);
+    }
+
+    .modal-nav-arrow-btn:hover:not(:disabled) {
+      background: #eff6ff;
+      color: var(--scaler-blue);
+    }
+
+    .modal-nav-arrow-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      color: #94a3b8;
+    }
+
     /* TAB VIEWS */
     .tab-view {
       width: 100%;
@@ -1587,11 +1646,25 @@
   <!-- TOP NAVBAR -->
   <nav>
     <div class="nav-top-row">
-      <a href="#" class="brand-logo" onclick="showUploadView()">
-        <img src="scaler_logo.png" alt="Scaler" class="brand-scaler-logo">
-        <span class="brand-divider"></span>
-        <div class="brand-title">Sales Intelligence Desk</div>
-      </a>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="#" class="brand-logo" onclick="showUploadView()">
+          <img src="scaler_logo.png" alt="Scaler" class="brand-scaler-logo">
+          <span class="brand-divider"></span>
+          <div class="brand-title">Sales Intelligence Desk</div>
+        </a>
+
+        <!-- VIEW BACK & FORWARD NAVIGATION ARROWS -->
+        <div class="nav-history-controls" style="display: flex; align-items: center; gap: 5px;">
+          <button id="nav-btn-back" class="nav-arrow-btn" onclick="navigateView('back')" title="Back to Upload Screen">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Upload</span>
+          </button>
+          <button id="nav-btn-forward" class="nav-arrow-btn" onclick="navigateView('forward')" title="Forward to Analysis Dashboard">
+            <span>Dashboard</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+      </div>
 
       <div class="nav-actions">
         <!-- Dynamic CRM Email/Phone Lookup Bar -->
@@ -1847,10 +1920,28 @@
                 <span class="id-tag" id="modal-id">LD-SALES-0023</span>
                 <span class="candidate-academic-badge" id="modal-academic-badge">Academic Status: Degree Verified</span>
               </div>
-              <button class="modal-close-btn" onclick="closeModal()" title="Close Dossier (ESC)">
-                <span style="font-size:16px; line-height:1;">&times;</span>
-                <span style="font-size:11.5px;">Close</span>
-              </button>
+
+              <!-- PREV & NEXT CANDIDATE CONTROLS + CLOSE -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="modal-candidate-nav" style="display: flex; align-items: center; gap: 4px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 3px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                  <button id="modal-btn-prev-candidate" onclick="navigateCandidate(-1)" title="Previous Candidate (Left Arrow)" class="modal-nav-arrow-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>Prev</span>
+                  </button>
+                  <span id="modal-candidate-counter" style="font-size: 11px; font-weight: 700; color: #475569; padding: 0 8px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; white-space: nowrap;">
+                    1 / 200
+                  </span>
+                  <button id="modal-btn-next-candidate" onclick="navigateCandidate(1)" title="Next Candidate (Right Arrow)" class="modal-nav-arrow-btn">
+                    <span>Next</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  </button>
+                </div>
+
+                <button class="modal-close-btn" onclick="closeModal()" title="Close Dossier (ESC)">
+                  <span style="font-size:16px; line-height:1;">&times;</span>
+                  <span style="font-size:11.5px;">Close</span>
+                </button>
+              </div>
             </div>
 
             <!-- DOSSIER TILES GRID (10 UNIFORM TILES, SAME SIZE FOR ALL) -->
@@ -2738,16 +2829,40 @@
       }
     }
 
+    let currentView = 'upload';
+
+    function navigateView(dir) {
+      if (dir === 'back') {
+        showUploadView();
+      } else if (dir === 'forward') {
+        showAnalysisView();
+      }
+    }
+
+    function updateNavArrows() {
+      const btnBack = document.getElementById('nav-btn-back');
+      const btnFwd = document.getElementById('nav-btn-forward');
+      if (btnBack) {
+        btnBack.disabled = (currentView === 'upload');
+      }
+      if (btnFwd) {
+        btnFwd.disabled = (currentView === 'analysis' || !allLeads || allLeads.length === 0);
+      }
+    }
+
     function showUploadView() {
+      currentView = 'upload';
       const uploadView = document.getElementById('view-upload');
       const analysisView = document.getElementById('view-analysis');
       const filterStrip = document.getElementById('nav-filter-strip');
       if (uploadView) uploadView.style.display = 'block';
       if (analysisView) analysisView.style.display = 'none';
       if (filterStrip) filterStrip.style.display = 'none';
+      updateNavArrows();
     }
 
     function showAnalysisView() {
+      currentView = 'analysis';
       const uploadView = document.getElementById('view-upload');
       const analysisView = document.getElementById('view-analysis');
       const filterStrip = document.getElementById('nav-filter-strip');
@@ -2755,6 +2870,19 @@
       if (analysisView) analysisView.style.display = 'block';
       if (filterStrip) filterStrip.style.display = 'flex';
       renderTable();
+      updateNavArrows();
+    }
+
+    function navigateCandidate(delta) {
+      if (!allLeads || allLeads.length === 0 || !activeLeadData) return;
+      const list = (filteredLeads && filteredLeads.length > 0) ? filteredLeads : allLeads;
+      const curIdx = list.findIndex(l => l.lead_id === activeLeadData.lead_id);
+      if (curIdx === -1) return;
+      const newIdx = curIdx + delta;
+      if (newIdx >= 0 && newIdx < list.length) {
+        activeLeadData = list[newIdx];
+        openModalWithLead(list[newIdx]);
+      }
     }
 
     function openAnalysisInNewBrowserTab() {
@@ -3249,6 +3377,22 @@
       document.getElementById('modal-name').innerText = p.name;
       document.getElementById('modal-id').innerText = lead.lead_id;
 
+      // Update candidate counter and navigation button states
+      const list = (filteredLeads && filteredLeads.length > 0) ? filteredLeads : allLeads;
+      const curIdx = list.findIndex(l => l.lead_id === lead.lead_id);
+      const counterEl = document.getElementById('modal-candidate-counter');
+      const prevBtn = document.getElementById('modal-btn-prev-candidate');
+      const nextBtn = document.getElementById('modal-btn-next-candidate');
+      if (counterEl && curIdx !== -1) {
+        counterEl.innerText = `${curIdx + 1} / ${list.length}`;
+      }
+      if (prevBtn) {
+        prevBtn.disabled = (curIdx <= 0);
+      }
+      if (nextBtn) {
+        nextBtn.disabled = (curIdx >= list.length - 1);
+      }
+
       // Update avatar automatically based on candidate
       updateCandidateAvatar(p.name);
       const elAcadBadge = document.getElementById('modal-academic-badge');
@@ -3407,7 +3551,11 @@
     }
 
     window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('lead-modal');
+      const isModalActive = modal && modal.classList.contains('active');
       if (e.key === 'Escape') closeModal();
+      if (isModalActive && e.key === 'ArrowLeft') navigateCandidate(-1);
+      if (isModalActive && e.key === 'ArrowRight') navigateCandidate(1);
     });
 
     function handleOverlayClick(event) {

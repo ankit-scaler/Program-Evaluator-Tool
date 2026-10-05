@@ -1653,8 +1653,8 @@
           <div class="brand-title">Sales Intelligence Desk</div>
         </a>
 
-        <!-- VIEW BACK & FORWARD NAVIGATION ARROWS -->
-        <div class="nav-history-controls" style="display: flex; align-items: center; gap: 5px;">
+        <!-- VIEW BACK & FORWARD NAVIGATION ARROWS (ONLY SHOWN WHEN CSV IS UPLOADED) -->
+        <div id="nav-history-controls" class="nav-history-controls" style="display: none; align-items: center; gap: 5px;">
           <button id="nav-btn-back" class="nav-arrow-btn" onclick="navigateView('back')" title="Back to Upload Screen">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             <span>Upload</span>
@@ -1798,6 +1798,16 @@
                 Browse CSV File
               </button>
             </div>
+          </div>
+
+          <!-- RESUME DASHBOARD BANNER IF LEADS ALREADY LOADED -->
+          <div id="upload-existing-leads-banner" style="display: none; margin-top: 14px; padding: 10px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; align-items: center; justify-content: space-between; gap: 10px;">
+            <div style="font-size: 12px; color: #166534;">
+              <span>&#10003;</span> Currently evaluated: <b id="existing-leads-count" style="color: #14532d;">0</b> leads in memory.
+            </div>
+            <button type="button" onclick="showAnalysisView()" class="btn-sm" style="font-weight: 700; color: #ffffff; background: var(--scaler-blue); border-color: var(--scaler-blue); padding: 5px 14px; font-size: 11.5px; border-radius: 4px;">
+              View Dashboard &rarr;
+            </button>
           </div>
 
           <!-- LIVE EVALUATION PROGRESS & STAGES STEPPER -->
@@ -2840,13 +2850,19 @@
     }
 
     function updateNavArrows() {
+      const controls = document.getElementById('nav-history-controls');
       const btnBack = document.getElementById('nav-btn-back');
       const btnFwd = document.getElementById('nav-btn-forward');
+
+      const hasLeads = (allLeads && allLeads.length > 0);
+      if (controls) {
+        controls.style.display = hasLeads ? 'flex' : 'none';
+      }
       if (btnBack) {
         btnBack.disabled = (currentView === 'upload');
       }
       if (btnFwd) {
-        btnFwd.disabled = (currentView === 'analysis' || !allLeads || allLeads.length === 0);
+        btnFwd.disabled = (currentView === 'analysis' || !hasLeads);
       }
     }
 
@@ -2858,6 +2874,19 @@
       if (uploadView) uploadView.style.display = 'block';
       if (analysisView) analysisView.style.display = 'none';
       if (filterStrip) filterStrip.style.display = 'none';
+
+      // Update resume banner if leads exist
+      const resumeBanner = document.getElementById('upload-existing-leads-banner');
+      const resumeCount = document.getElementById('existing-leads-count');
+      if (resumeBanner) {
+        if (allLeads && allLeads.length > 0) {
+          resumeBanner.style.display = 'flex';
+          if (resumeCount) resumeCount.innerText = allLeads.length.toLocaleString();
+        } else {
+          resumeBanner.style.display = 'none';
+        }
+      }
+
       updateNavArrows();
     }
 
@@ -2893,9 +2922,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const isAnalysis = (urlParams.get('tab') === 'analysis') || (window.location.hash === '#analysis');
 
-      // Hydrate leads from localStorage if empty (e.g. opened in new browser tab)
+      // Hydrate leads from localStorage if empty (e.g. refreshed or new tab)
       if (!allLeads || allLeads.length === 0) {
         try {
           const cached = localStorage.getItem('scaler_all_leads');
@@ -2917,11 +2945,13 @@
         }
       }
 
-      if (isAnalysis && allLeads && allLeads.length > 0) {
+      // If leads exist (sales team already uploaded CSV), directly open the dashboard on refresh so they don't have to upload again!
+      if (allLeads && allLeads.length > 0 && urlParams.get('view') !== 'upload') {
         showAnalysisView();
       } else {
         showUploadView();
       }
+      updateNavArrows();
     });
 
     function resetFilters() {

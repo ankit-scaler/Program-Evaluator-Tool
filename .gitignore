@@ -16,6 +16,8 @@ env/
 Data_Source/*.csv
 output/leads_store.db
 output/crm_evaluated_master.csv
+leads_store.db
+*.db
 
 # Logs & temp files
 *.log

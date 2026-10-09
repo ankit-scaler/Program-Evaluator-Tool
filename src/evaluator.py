@@ -859,20 +859,35 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     Evaluates a lead profile against the official 5-Program Scaler Catalog.
     Includes Education Prerequisite Gate, Persona Taxonomy, and spoken sales scripts.
     """
-    name = clean_str(lead_dict.get('name'), 'Prospective Learner')
-    email = clean_str(lead_dict.get('email'), 'unspecified@lead.com')
-    phone = clean_str(lead_dict.get('phone'), 'N/A')
-    raw_role = clean_str(lead_dict.get('role'), 'General Tech Professional')
-    company_type = clean_str(lead_dict.get('company type'), 'IT Services / Technology')
-    prev_org = clean_str(lead_dict.get('previous org name'), 'Current Company')
-    prev_year = clean_str(lead_dict.get('previous org year'), '1-2 years')
-    raw_exp = clean_str(lead_dict.get('experience'), '2 years')
-    inbound_prog_raw = clean_str(lead_dict.get('program'), 'Academy')
-    raw_edu = clean_str(lead_dict.get('education') or lead_dict.get('degree') or lead_dict.get('qualification'), 'Graduated / Degree')
-    raw_sat_status = clean_str(lead_dict.get('set_status') or lead_dict.get('sat_status'), 'SET Not Attempted')
+    def _field(keys, default=''):
+        for k in keys:
+            if k in lead_dict and lead_dict[k] is not None:
+                val = str(lead_dict[k]).strip()
+                if val and val.lower() not in ['nan', 'none', 'null']:
+                    return val
+        ld_lower = {str(k).strip().lower(): v for k, v in lead_dict.items() if v is not None}
+        for k in keys:
+            kl = k.lower()
+            if kl in ld_lower:
+                val = str(ld_lower[kl]).strip()
+                if val and val.lower() not in ['nan', 'none', 'null']:
+                    return val
+        return default
+
+    name = clean_str(_field(['name', 'full_name', 'candidate_name', 'student_name']), 'Prospective Learner')
+    email = clean_str(_field(['email', 'email_id', 'contact_email', 'lead_email']), 'unspecified@lead.com')
+    phone = clean_str(_field(['phone', 'mobile', 'contact', 'phone_number']), 'N/A')
+    raw_role = clean_str(_field(['role', 'current_role', 'designation', 'job_title', 'profile']), 'General Tech Professional')
+    company_type = clean_str(_field(['company type', 'company_type', 'industry', 'sector']), 'IT Services / Technology')
+    prev_org = clean_str(_field(['previous org name', 'company', 'organization', 'employer']), 'Current Company')
+    prev_year = clean_str(_field(['previous org year', 'year', 'org_year']), '1-2 years')
+    raw_exp = clean_str(_field(['experience', 'yoe', 'total_experience', 'work_experience', 'exp']), '2 years')
+    inbound_prog_raw = clean_str(_field(['program', 'inbound_program', 'enquired_program', 'course']), 'Academy')
+    raw_edu = clean_str(_field(['education', 'degree', 'qualification', 'highest_qualification', 'stream']), 'Graduated / Degree')
+    raw_sat_status = clean_str(_field(['set_status', 'sat_status', 'diagnostic set status', 'diagnostic sat status', 'test_launched_flag']), 'SET Not Attempted')
     if 'sat' in raw_sat_status.lower():
         raw_sat_status = raw_sat_status.replace('SAT', 'SET').replace('Sat', 'Set').replace('sat', 'set')
-    raw_sat_score = clean_str(lead_dict.get('set_score') or lead_dict.get('sat_score'), 'Not Attempted')
+    raw_sat_score = clean_str(_field(['set_score', 'sat_score', 'diagnostic set score', 'diagnostic sat score']), 'Not Attempted')
     
     # Normalized taxonomy & education
     persona = normalize_persona('', raw_role)

@@ -1,5 +1,6 @@
 import os
 import io
+import json
 import pandas as pd
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
@@ -11,7 +12,14 @@ from .evaluator import evaluate_lead_profile
 from .market_intelligence import get_all_curricula_catalog
 from .lead_store import (
     init_db, save_evaluated_lead, bulk_save_evaluated_leads,
-    find_lead_by_query, get_recent_leads
+    find_lead_by_query, get_recent_leads, get_connection
+)
+import asyncio
+from .csv_watcher import (
+    sync_watched_csv,
+    get_watched_csv_status,
+    append_lead_to_csv,
+    WATCHED_CSV_PATH
 )
 from .metabase_client import (
     is_metabase_configured,
@@ -37,6 +45,29 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_event():
+    # Initial sync from watched CSV
+    try:
+        res = sync_watched_csv(force=True, memory_cache_ref=CACHED_LEADS)
+        print(f">> Watched CSV Initial Sync: {res.get('new_leads_synced', 0)} new leads loaded from {res.get('file_path')}")
+    except Exception as e:
+        print(f"Warning during initial CSV watcher sync: {e}")
+        
+    # Start background polling task (checks every 5 seconds for newly added rows)
+    async def poll_watched_csv_loop():
+        while True:
+            await asyncio.sleep(5)
+            try:
+                sync_res = sync_watched_csv(force=False, memory_cache_ref=CACHED_LEADS)
+                new_count = sync_res.get('new_leads_synced', 0)
+                if new_count > 0:
+                    print(f">> Watched CSV Update Detected: Auto-evaluated and synced {new_count} new leads!")
+            except Exception:
+                pass
+                
+    asyncio.create_task(poll_watched_csv_loop())
 
 @app.get("/health")
 @app.get("/api/health")
@@ -332,31 +363,42 @@ async def lookup_lead(q: str):
     if db_lead:
         if not any(l['lead_id'] == db_lead['lead_id'] for l in CACHED_LEADS):
             CACHED_LEADS.insert(0, db_lead)
-        return {"status": "success", "source": "crm_database", "lead": db_lead}
+        source_label = "watched_csv" if db_lead.get('source') == 'WATCHED_CSV' else "crm_database"
+        return {"status": "success", "source": source_label, "lead": db_lead}
         
-    # 3. Dynamic Fallback: Search live in Metabase via API
+    # 3. Dynamic Check: Scan watched CSV file immediately (in case lead was just added moments ago)
+    try:
+        csv_sync = sync_watched_csv(force=True, memory_cache_ref=CACHED_LEADS)
+        if csv_sync.get('new_leads_synced', 0) > 0:
+            db_lead = find_lead_by_query(q_clean)
+            if db_lead:
+                return {"status": "success", "source": "watched_csv", "lead": db_lead}
+    except Exception:
+        pass
+
+    # 4. Dynamic Fallback: Search live in Metabase via API
     try:
         mb_row = fetch_lead_by_email_from_metabase(q_clean)
         if mb_row:
             eval_res = evaluate_lead_profile(mb_row)
-            lead_id = f"LD-MB-{abs(hash(q_clean)) % 100000:05d}"
+            lead_id = mb_row.get('lead_id') or mb_row.get('Lead ID') or mb_row.get('id') or f"LD-MIS-{abs(hash(q_clean)) % 100000:05d}"
             eval_res['lead_id'] = lead_id
             eval_res['touchpoints'] = {
-                'summary': f"Metabase Ingest - {mb_row.get('event_name', mb_row.get('Program', 'Live Inquiry'))}",
-                'event_name': mb_row.get('event_name', mb_row.get('Event Name', 'Metabase Lead Query')),
-                'attended': mb_row.get('attended', mb_row.get('Attended', 'Registered')),
-                'duration': str(mb_row.get('duration', 'N/A')),
-                'sat_status': mb_row.get('set_status', mb_row.get('sat_status', 'SET Pending')),
-                'sat_score': str(mb_row.get('set_score', mb_row.get('sat_score', 'N/A'))),
-                'set_status': mb_row.get('set_status', mb_row.get('sat_status', 'SET Pending')),
-                'set_score': str(mb_row.get('set_score', mb_row.get('sat_score', 'N/A'))),
-                'channel': mb_row.get('channel', 'Metabase Data Warehouse'),
-                'campaign': mb_row.get('campaign', 'Metabase Query Sync'),
-                'platform': "Metabase API",
-                'geography': mb_row.get('geography', 'India'),
-                'signup_date': str(mb_row.get('signup_date', 'Recent')),
-                'lead_score': "Hot (Direct Query)",
-                'landing_page': "https://www.scaler.com"
+                'summary': f"Marketing MIS - {mb_row.get('event_name') or mb_row.get('Event Name') or mb_row.get('program') or mb_row.get('Program') or 'Live Inquiry'}",
+                'event_name': mb_row.get('event_name') or mb_row.get('Event Name') or 'Direct MIS Query',
+                'attended': mb_row.get('attended') or mb_row.get('Attended') or 'Registered',
+                'duration': str(mb_row.get('duration') or mb_row.get('Duration') or 'N/A'),
+                'sat_status': mb_row.get('set_status') or mb_row.get('sat_status') or mb_row.get('SET Status') or 'SET Not Attempted',
+                'sat_score': str(mb_row.get('set_score') or mb_row.get('sat_score') or mb_row.get('SET Score') or 'N/A'),
+                'set_status': mb_row.get('set_status') or mb_row.get('sat_status') or mb_row.get('SET Status') or 'SET Not Attempted',
+                'set_score': str(mb_row.get('set_score') or mb_row.get('sat_score') or mb_row.get('SET Score') or 'N/A'),
+                'channel': mb_row.get('channel') or mb_row.get('Channel') or 'Marketing MIS',
+                'campaign': mb_row.get('campaign') or mb_row.get('Campaign') or 'Direct Campaign',
+                'platform': mb_row.get('platform') or mb_row.get('Platform') or 'MIS Web API',
+                'geography': mb_row.get('geography') or mb_row.get('City') or mb_row.get('Geography') or 'India',
+                'signup_date': str(mb_row.get('signup_date') or mb_row.get('Created At') or mb_row.get('Date') or 'Recent'),
+                'lead_score': str(mb_row.get('lead_score') or mb_row.get('Lead Score') or 'Active'),
+                'landing_page': mb_row.get('landing_page') or mb_row.get('Landing Page') or 'https://www.scaler.com'
             }
             save_evaluated_lead(eval_res, source="METABASE_LIVE_LOOKUP")
             CACHED_LEADS.insert(0, eval_res)
@@ -365,6 +407,66 @@ async def lookup_lead(q: str):
         pass
         
     return {"status": "not_found", "message": f"No lead found in CRM matching '{q}'."}
+
+class AppendLeadInput(BaseModel):
+    name: str = "Prospective Learner"
+    email: str
+    phone: Optional[str] = "N/A"
+    role: str = "Software Engineer"
+    experience: str = "2 years"
+    education: Optional[str] = "B.Tech CSE"
+    company_type: Optional[str] = "IT Services / Technology"
+    previous_org: Optional[str] = "Current Company"
+    program: Optional[str] = "Academy"
+    set_status: Optional[str] = "Passed"
+    set_score: Optional[str] = "80"
+
+@app.get("/api/csv-stream/status")
+async def get_csv_stream_status():
+    """Returns status and file details for the incoming watched CSV file."""
+    return {
+        "status": "success",
+        "details": get_watched_csv_status()
+    }
+
+@app.post("/api/csv-stream/sync")
+async def trigger_csv_stream_sync():
+    """Forces an immediate sync of the incoming watched CSV file."""
+    global CACHED_LEADS
+    res = sync_watched_csv(force=True, memory_cache_ref=CACHED_LEADS)
+    return res
+
+@app.get("/api/csv-stream/leads")
+async def get_csv_stream_leads():
+    """
+    Returns all evaluated leads strictly from the user's active CSV files in data/,
+    completely isolated from bulk/synthetic database records.
+    """
+    import json
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT evaluated_json FROM leads 
+        WHERE source LIKE 'CSV:%' OR source = 'WATCHED_CSV'
+        ORDER BY created_at DESC;
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    leads = [json.loads(r['evaluated_json']) for r in rows]
+    return {
+        "status": "success",
+        "total": len(leads),
+        "leads": leads
+    }
+
+@app.post("/api/csv-stream/append")
+async def append_lead_to_csv_endpoint(lead_input: AppendLeadInput):
+    """
+    Appends a new lead to the incoming watched CSV file and triggers auto-evaluation.
+    """
+    res = append_lead_to_csv(lead_input.dict())
+    return res
 
 @app.post("/api/metabase/sync")
 async def sync_metabase():
@@ -412,20 +514,84 @@ async def metabase_status():
         "has_api_key": bool(cfg.get("api_key"))
     }
 
+from fastapi.responses import Response
+
 @app.get("/api/export")
-async def export_crm_csv():
-    if not os.path.exists(EXPORT_CSV_PATH):
-        if CACHED_DF is not None:
-            os.makedirs(OUTPUT_DIR, exist_ok=True)
-            CACHED_DF.to_csv(EXPORT_CSV_PATH, index=False)
-        else:
-            raise HTTPException(status_code=404, detail="No evaluated leads available to export. Please upload a CSV first.")
+async def export_crm_data(format: str = "csv"):
+    """
+    Exports evaluated leads directly from SQLite database.
+    Supports ?format=csv or ?format=xlsx (Excel).
+    Never locks files and always reflects the most up-to-date evaluated leads.
+    """
+    format_clean = format.lower().strip()
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT evaluated_json, source, created_at FROM leads ORDER BY created_at DESC;")
+    rows = cursor.fetchall()
+    conn.close()
     
-    return FileResponse(
-        path=EXPORT_CSV_PATH,
-        filename="crm_evaluated_leads_master.csv",
-        media_type="text/csv"
-    )
+    if not rows:
+        raise HTTPException(status_code=404, detail="No evaluated leads available in database to export.")
+        
+    records = []
+    for row in rows:
+        try:
+            r_json = row['evaluated_json']
+            src = row['source']
+            dt = row['created_at']
+            data = json.loads(r_json)
+            p = data.get('person', {})
+            prim = data.get('primary', {})
+            fall = data.get('fallback', {})
+            tp = data.get('touchpoints', {})
+            records.append({
+                'Lead ID': data.get('lead_id', ''),
+                'Candidate Name': p.get('name', ''),
+                'Email': p.get('email', ''),
+                'Phone': p.get('phone', ''),
+                'Current Role': p.get('role', ''),
+                'Total Experience': p.get('experience', ''),
+                'Education': p.get('education', ''),
+                'Company Type': p.get('company_type', ''),
+                'Previous Organization': p.get('previous_org', ''),
+                'Enquired Program': p.get('enquired_program', p.get('program', 'N/A')),
+                'Primary Program': prim.get('program', ''),
+                'Primary Track': prim.get('track', ''),
+                'Primary Fit Tier': prim.get('fit_tier', ''),
+                'Primary Duration': prim.get('duration', ''),
+                'Retention Rate (%)': prim.get('retention_rate', ''),
+                'Refund Risk (%)': prim.get('refund_rate', ''),
+                'Fallback Program': fall.get('program', ''),
+                'Fallback Track': fall.get('track', ''),
+                'Diagnostic SET Status': tp.get('set_status', tp.get('sat_status', 'SET Not Attempted')),
+                'Diagnostic SET Score': tp.get('set_score', tp.get('sat_score', 'N/A')),
+                'Ingestion Source': src,
+                'Evaluated At': dt
+            })
+        except Exception:
+            continue
+            
+    df_export = pd.DataFrame(records)
+    
+    if format_clean in ['xlsx', 'excel']:
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df_export.to_excel(writer, index=False, sheet_name='Evaluated Leads')
+        output.seek(0)
+        return Response(
+            content=output.getvalue(),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads_master.xlsx"}
+        )
+    else:
+        # Default CSV export with UTF-8 BOM for Microsoft Excel compatibility
+        csv_buffer = io.StringIO()
+        df_export.to_csv(csv_buffer, index=False, encoding='utf-8')
+        return Response(
+            content=csv_buffer.getvalue().encode('utf-8-sig'),
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads_master.csv"}
+        )
 
 if __name__ == '__main__':
     import uvicorn

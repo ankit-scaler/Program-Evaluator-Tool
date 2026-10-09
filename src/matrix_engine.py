@@ -407,7 +407,7 @@ def canonical_persona_key(persona_str):
         'data scientist', 'data analyst', 'data engineer', 'analytics', 'bi', 'business intelligence',
         'power bi', 'tableau', 'machine learning', 'ml engineer', 'mle', 'ai engineer', 'nlp',
         'computer vision', 'deep learning', 'applied scientist', 'analytics engineer', 'big data engineer',
-        'etl developer', 'bi developer', 'bi engineer', 'database engineer'
+        'etl developer', 'bi developer', 'bi engineer', 'database engineer', 'business analyst'
     ]):
         return 'DATA_ANALYST'
 
@@ -437,13 +437,20 @@ def canonical_persona_key(persona_str):
             'engineering manager', 'tech lead', 'technical lead', 'software manager',
             'development manager', 'technical architect', 'solutions architect', 'enterprise architect',
             'lead architect', 'software architect', 'systems architect', 'data architect', 'cto',
-            'vp of engineering', 'director of engineering', 'chief technology officer'
+            'vp of engineering', 'director of engineering', 'chief technology officer',
+            'engineering leadership', 'tech leadership', 'technical leadership', 'software leadership',
+            'head of engineering', 'head of tech', 'vp engineering', 'director engineering',
+            'principal engineer', 'staff engineer', 'lead engineer', 'lead developer', 'distinguished engineer'
         ]) or 
         (
             match_token(s, 'team lead') and not any(op in s for op in [
                 'operation', 'bpo', 'kpo', 'support', 'sales', 'marketing', 'hr', 'talent',
                 'retail', 'logistics', 'finance', 'non-tech', 'call center', 'process'
             ])
+        ) or
+        (
+            match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead', 'leadership', 'head']) and 
+            match_any(s, ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])
         )
     ):
         return 'LEADERSHIP'

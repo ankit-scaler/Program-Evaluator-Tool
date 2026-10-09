@@ -1563,6 +1563,47 @@
       box-shadow: 0 1px 4px rgba(30, 58, 138, 0.25);
     }
 
+    /* LIVE CRM SEARCH LOADING SPINNER */
+    .live-search-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: live-spin 0.6s linear infinite;
+    }
+
+    @keyframes live-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .crm-source-badge {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      letter-spacing: 0.2px;
+      vertical-align: middle;
+    }
+
+    .csv-source-badge {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      letter-spacing: 0.2px;
+      vertical-align: middle;
+    }
+
     /* EVALUATION MODE SWITCHER (BULK CSV vs LIVE EMAIL SEARCH) */
     .evaluation-mode-switcher {
       display: flex;
@@ -1765,9 +1806,11 @@
           style="display:flex; align-items:center; gap:5px; font-weight:700;">
           <span>&#8635;</span> Sync Metabase
         </button>
-        <span class="status-badge" id="leads-count-status">Active Leads: <b id="stat-total">0</b></span>
-        <button class="btn-sm" onclick="downloadMasterCsv()">
-          Export CRM CSV
+        <button class="btn-sm" onclick="downloadMasterCsv()" style="display:flex; align-items:center; gap:5px; font-weight:700;" title="Export all evaluated leads as CSV (Excel compatible)">
+          Export CSV
+        </button>
+        <button class="btn-sm" onclick="downloadMasterExcel()" style="display:flex; align-items:center; gap:5px; font-weight:700; background:#059669; color:#fff; border-color:#059669;" title="Export all evaluated leads as Microsoft Excel spreadsheet (.xlsx)">
+          Export Excel (.xlsx)
         </button>
       </div>
     </div>
@@ -2117,7 +2160,7 @@
             <!-- DOSSIER TILES GRID (10 UNIFORM TILES, SAME SIZE FOR ALL) -->
             <div class="dossier-tiles-grid">
               <div class="dossier-tile">
-                <div class="dossier-tile-label">Current Role</div>
+                <div class="dossier-tile-label">Current Role &amp; Persona</div>
                 <div class="dossier-tile-val" id="modal-role">-</div>
               </div>
               <div class="dossier-tile">
@@ -3104,36 +3147,57 @@
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
 
-      // Hydrate leads from localStorage if empty (e.g. refreshed or new tab)
-      if (!allLeads || allLeads.length === 0) {
-        try {
-          const cached = localStorage.getItem('scaler_all_leads');
-          if (cached) {
-            allLeads = JSON.parse(cached);
+      // Always load leads strictly from the user's active CSV file
+      fetch('/api/csv-stream/leads')
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success' && data.leads && data.leads.length > 0) {
+            allLeads = data.leads;
             filteredLeads = [...allLeads];
             const cnt = allLeads.length.toLocaleString();
             const statTotal = document.getElementById('stat-total');
             if (statTotal) statTotal.innerText = cnt;
             const tblCount = document.getElementById('table-total-count');
             if (tblCount) tblCount.innerText = cnt;
+            renderTable();
+            if (urlParams.get('view') !== 'upload') {
+              showAnalysisView();
+            }
+          } else {
+            showUploadView();
           }
-          const cachedCat = localStorage.getItem('scaler_curriculum_catalog');
-          if (cachedCat) {
-            curriculumCatalog = JSON.parse(cachedCat);
-          }
-        } catch (e) {
-          console.warn('Hydration warning:', e);
-        }
-      }
+        })
+        .catch(() => {
+          showUploadView();
+        });
 
-      // If leads exist (sales team already uploaded CSV), directly open the dashboard on refresh so they don't have to upload again!
-      if (allLeads && allLeads.length > 0 && urlParams.get('view') !== 'upload') {
-        showAnalysisView();
-      } else {
-        showUploadView();
-      }
       updateNavArrows();
     });
+
+    const CANONICAL_PERSONA_MAP = {
+      'SWE_BACKEND': 'Software Engineering (Backend/FullStack)',
+      'DEVOPS_CLOUD': 'DevOps & Cloud Platform',
+      'DATA_ANALYST': 'Data Science & Analytics',
+      'QA_SDET': 'QA / SDET / Testing',
+      'SYSTEMS_ENG': 'Systems & Embedded Engineering',
+      'FRONTEND': 'Frontend Engineering',
+      'LEADERSHIP': 'Engineering Leadership / Management',
+      'IT_SERVICES': 'IT Services & Maintenance',
+      'NON_TECH': 'Non-Tech / Career Switcher'
+    };
+
+    function getDisplayPersona(p) {
+      if (!p) return 'General Tech';
+      let norm = (p.normalized_persona || '').trim();
+      if (norm) {
+        if (CANONICAL_PERSONA_MAP[norm]) return CANONICAL_PERSONA_MAP[norm];
+        return norm;
+      }
+      let key = (p.persona_key || '').trim();
+      if (key && CANONICAL_PERSONA_MAP[key]) return CANONICAL_PERSONA_MAP[key];
+      if (key) return key;
+      return 'General Tech';
+    }
 
     function resetFilters() {
       document.getElementById('filter-search').value = '';
@@ -3147,6 +3211,17 @@
       applyFilters();
     }
 
+    function hasDirectIdentifierMatches(qLower) {
+      if (!qLower || !allLeads || allLeads.length === 0) return false;
+      return allLeads.some(l => {
+        const p = l.person || {};
+        const n = (p.name || '').toLowerCase();
+        const em = (p.email || '').toLowerCase();
+        const id = (l.lead_id || '').toLowerCase();
+        return n.includes(qLower) || em.includes(qLower) || id.includes(qLower);
+      });
+    }
+
     function applyFilters() {
       currentPage = 1;
       const q = document.getElementById('filter-search').value.toLowerCase().trim();
@@ -3156,22 +3231,31 @@
       const ret = document.getElementById('filter-retention').value;
       const conf = document.getElementById('filter-confidence') ? document.getElementById('filter-confidence').value : 'ALL';
 
+      const directCandidateSearch = hasDirectIdentifierMatches(q);
+
       filteredLeads = allLeads.filter(lead => {
-        const p = lead.person;
-        const prim = lead.primary;
+        const p = lead.person || {};
+        const prim = lead.primary || {};
         const tp = lead.touchpoints || {};
 
         // Search text
         if (q) {
-          const matchSearch = (
-            p.name.toLowerCase().includes(q) ||
-            p.email.toLowerCase().includes(q) ||
-            p.role.toLowerCase().includes(q) ||
-            p.previous_org.toLowerCase().includes(q) ||
-            lead.lead_id.toLowerCase().includes(q) ||
-            (tp.event_name && tp.event_name.toLowerCase().includes(q))
-          );
-          if (!matchSearch) return false;
+          const nameLower = (p.name || '').toLowerCase();
+          const emailLower = (p.email || '').toLowerCase();
+          const idLower = (lead.lead_id || '').toLowerCase();
+          const isDirectMatch = nameLower.includes(q) || emailLower.includes(q) || idLower.includes(q);
+
+          if (directCandidateSearch) {
+            // When query matches a candidate name, email, or ID, strictly match that candidate
+            // (prevents substring leaks into unrelated roles/companies so searching a name shows ONLY that specific lead!)
+            if (!isDirectMatch) return false;
+          } else {
+            // Fallback for role, company, or event searches (e.g. searching "Google", "Cognizant", or "QA")
+            const roleMatch = (p.role || '').toLowerCase().includes(q);
+            const orgMatch = (p.previous_org || '').toLowerCase().includes(q);
+            const eventMatch = (tp.event_name || '').toLowerCase().includes(q);
+            if (!isDirectMatch && !roleMatch && !orgMatch && !eventMatch) return false;
+          }
         }
 
         // Program filter
@@ -3267,6 +3351,7 @@
         tr.innerHTML = `
           <td style="white-space: nowrap; vertical-align: middle;">
             <b style="color: var(--scaler-navy); font-size: 12px; font-family: monospace; letter-spacing: 0.3px;">${lead.lead_id}</b>
+            ${lead._source === 'crm_lookup' ? '<div style="margin-top: 3px;"><span class="crm-source-badge">CRM</span></div>' : ''}
           </td>
           <td style="vertical-align: middle;">
             <div style="font-weight: 700; color: #0f172a; font-size: 13px; line-height: 1.3;">${p.name}</div>
@@ -3275,8 +3360,7 @@
             ${(lead.data_quality_flags && lead.data_quality_flags.length > 0) ? `<div style="margin-top: 3px;"><span style="display: inline-block; font-size: 9.5px; font-weight: 700; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; padding: 1px 6px; border-radius: 3px;" title="Inferred fields: ${lead.data_quality_flags.join(', ')}">⚠️ ${lead.data_quality_flags.includes('experience_estimated_default') ? 'Exp Estimated' : 'Inferred Profile'}</span></div>` : ''}
           </td>
           <td style="vertical-align: middle;">
-            <div style="font-weight: 700; color: #0f172a; font-size: 12.5px; line-height: 1.3;">${p.role}</div>
-            ${p.role_domain ? `<div style="margin-top: 3px;"><span style="display: inline-block; font-size: 9.5px; font-weight: 600; color: #0284c7; background: #e0f2fe; border: 1px solid #bae6fd; padding: 1px 7px; border-radius: 3px;">${p.role_domain}</span></div>` : ''}
+            <div style="font-weight: 700; color: #0f172a; font-size: 12.5px; line-height: 1.3;">${p.role || 'Not Specified'}</div>
             <div style="font-size: 11px; color: #475569; margin-top: 4px;">
               ${p.previous_org ? `<div><span style="color: #94a3b8; font-weight: 600;">Org:</span> <b style="color: #1e293b;">${p.previous_org}</b></div>` : ''}
               ${p.experience ? `<div><span style="color: #94a3b8; font-weight: 600;">Exp:</span> <b style="color: #1e293b;">${p.experience}</b></div>` : ''}
@@ -3619,9 +3703,11 @@
       }
 
       // Update tiles with clean formatting & zero text cut-off
-      const roleDomainTag = p.role_domain ? `<span style="display:inline-block; font-size:9.5px; font-weight:700; color:#0284c7; background:#e0f2fe; border:1px solid #bae6fd; padding:1px 6px; border-radius:3px; margin-top:3px; line-height:1.2;">${p.role_domain}</span>` : '';
-      document.getElementById('modal-role').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.role}</div>${roleDomainTag}`;
-      document.getElementById('modal-role').title = p.role + (p.role_domain ? ` (${p.role_domain})` : '');
+      const dispPersona = getDisplayPersona(p);
+      const personaBadge = `<div style="margin-top:4px;"><span style="display:inline-block; font-size:10px; font-weight:700; color:#4338ca; background:#e0e7ff; border:1px solid #c7d2fe; padding:2px 7px; border-radius:4px; line-height:1.2;" title="Mapped Canonical Persona">Persona: ${dispPersona}</span></div>`;
+      const domainBadge = (p.role_domain && p.role_domain !== dispPersona) ? `<div style="margin-top:3px;"><span style="display:inline-block; font-size:9.5px; font-weight:600; color:#0284c7; background:#e0f2fe; border:1px solid #bae6fd; padding:1px 6px; border-radius:3px; line-height:1.2;">Domain: ${p.role_domain}</span></div>` : '';
+      document.getElementById('modal-role').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.role || 'Not Specified'}</div>${personaBadge}${domainBadge}`;
+      document.getElementById('modal-role').title = `Role: ${p.role || ''} | Persona: ${dispPersona}`;
 
       document.getElementById('modal-org').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.previous_org}</div>`;
       document.getElementById('modal-org').title = p.previous_org;
@@ -3805,37 +3891,106 @@
       const inputEl = document.getElementById('home-live-search-input');
       const q = inputEl ? inputEl.value.trim() : '';
       const msgEl = document.getElementById('live-search-status-msg');
+      const fetchBtn = document.querySelector('#mode-content-email button[onclick="handleLiveLeadSearch()"]');
       if (!q) {
         if (msgEl) {
-          msgEl.innerText = 'Please enter a candidate email ID, phone number, or Lead ID.';
+          msgEl.style.color = '#dc2626';
+          msgEl.innerText = 'Please enter a candidate email ID, phone number, or name.';
           msgEl.style.display = 'block';
         }
         return;
       }
-      if (msgEl) msgEl.style.display = 'none';
 
-      try {
-        const res = await fetch(`/api/lookup?q=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        if (data.status === 'success' && data.lead) {
-          if (!allLeads.some(l => l.lead_id === data.lead.lead_id)) {
-            allLeads.unshift(data.lead);
-            filteredLeads = [...allLeads];
-            document.getElementById('stat-total').innerText = allLeads.length;
-            try { localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads)); } catch (e) { }
+      // Show loading state
+      if (msgEl) {
+        msgEl.style.color = '#0284c7';
+        msgEl.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><span class="live-search-spinner"></span> Querying Marketing MIS & Evaluating Candidate...</span>';
+        msgEl.style.display = 'block';
+      }
+      if (fetchBtn) {
+        fetchBtn.disabled = true;
+        fetchBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><span class="live-search-spinner"></span> Fetching MIS...</span>';
+      }
+
+      // 1. Check local loaded leads first for instant sub-second response
+      const qLower = q.toLowerCase();
+      const localMatches = allLeads.filter(l => {
+        const p = l.person || {};
+        const n = (p.name || '').toLowerCase();
+        const em = (p.email || '').toLowerCase();
+        const id = (l.lead_id || '').toLowerCase();
+        const ph = (p.phone || '');
+        return n.includes(qLower) || em.includes(qLower) || id.includes(qLower) || ph.includes(q);
+      });
+
+      if (localMatches.length > 0) {
+        activeLeadData = localMatches[0];
+        if (msgEl) {
+          const personName = localMatches[0].person ? localMatches[0].person.name : 'Lead';
+          msgEl.style.color = '#059669';
+          msgEl.innerHTML = '✓ Lead ready: <b>' + personName + '</b> — Opening evaluation dossier...';
+          msgEl.style.display = 'block';
+        }
+        setTimeout(() => {
+          openModalWithLead(localMatches[0]);
+          if (fetchBtn) {
+            fetchBtn.disabled = false;
+            fetchBtn.innerHTML = 'Fetch &amp; Evaluate Lead';
           }
-          activeLeadData = data.lead;
-          openModalWithLead(data.lead);
+        }, 250);
+        return;
+      }
+
+      // 2. Not in local memory? Fetch on-the-fly from Server / Marketing MIS / SQLite
+      try {
+        const resp = await fetch('/api/lookup?q=' + encodeURIComponent(q));
+        const data = await resp.json();
+
+        if (data && data.status === 'success' && data.lead) {
+          const lead = data.lead;
+          const personName = lead.person ? lead.person.name : 'Candidate';
+          const srcLabel = data.source === 'metabase_live' ? 'Marketing MIS (Live)' : (data.source === 'watched_csv' ? 'Watched MIS CSV' : 'CRM Database');
+
+          // Prepend to leads list so counselor sees it in table & history
+          allLeads.unshift(lead);
+          filteredLeads.unshift(lead);
+
+          // Update counts
+          const cnt = allLeads.length.toLocaleString();
+          const statTotal = document.getElementById('stat-total');
+          if (statTotal) statTotal.innerText = cnt;
+          const tblCount = document.getElementById('table-total-count');
+          if (tblCount) tblCount.innerText = cnt;
+
+          renderTable();
+          activeLeadData = lead;
+
+          if (msgEl) {
+            msgEl.style.color = '#059669';
+            msgEl.innerHTML = `✓ Found in <b>${srcLabel}</b>: <b>${personName}</b> — Opening dossier...`;
+            msgEl.style.display = 'block';
+          }
+
+          setTimeout(() => {
+            openModalWithLead(lead);
+          }, 350);
         } else {
           if (msgEl) {
-            msgEl.innerText = `No candidate found matching "${q}". Please check the email ID or upload a bulk CSV.`;
+            msgEl.style.color = '#dc2626';
+            msgEl.innerHTML = `No record found in Marketing MIS or CRM for "<b>${q}</b>". Please verify the email address or phone number.`;
             msgEl.style.display = 'block';
           }
         }
       } catch (err) {
         if (msgEl) {
-          msgEl.innerText = 'Server search error: ' + err.message;
+          msgEl.style.color = '#dc2626';
+          msgEl.innerText = 'Network error fetching lead from Marketing MIS: ' + err.message;
           msgEl.style.display = 'block';
+        }
+      } finally {
+        if (fetchBtn) {
+          fetchBtn.disabled = false;
+          fetchBtn.innerHTML = 'Fetch &amp; Evaluate Lead';
         }
       }
     }
@@ -3843,29 +3998,51 @@
     async function executeCrmLookup() {
       const q = document.getElementById('nav-crm-search-input').value.trim();
       if (!q) {
-        alert('Please enter an email, phone number, name, or Lead ID to search.');
+        alert('Please enter an email, phone number, name, or Lead ID to search in your CRM / Marketing MIS.');
+        return;
+      }
+      const qLower = q.toLowerCase();
+
+      // Check local loaded leads first
+      const localMatches = allLeads.filter(l => {
+        const p = l.person || {};
+        const n = (p.name || '').toLowerCase();
+        const em = (p.email || '').toLowerCase();
+        const id = (l.lead_id || '').toLowerCase();
+        const ph = (p.phone || '');
+        return n.includes(qLower) || em.includes(qLower) || id.includes(qLower) || ph.includes(q);
+      });
+
+      if (localMatches.length > 0) {
+        activeLeadData = localMatches[0];
+        openModalWithLead(localMatches[0]);
         return;
       }
 
+      // Query server & Marketing MIS on the fly
       try {
-        const res = await fetch(`/api/lookup?q=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        if (data.status === 'success' && data.lead) {
-          if (!allLeads.some(l => l.lead_id === data.lead.lead_id)) {
-            allLeads.unshift(data.lead);
-            filteredLeads = [...allLeads];
-            document.getElementById('stat-total').innerText = allLeads.length;
-            try { localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads)); } catch (e) { }
-            showAnalysisView();
-            renderTable();
-          }
-          activeLeadData = data.lead;
-          openModalWithLead(data.lead);
+        const resp = await fetch('/api/lookup?q=' + encodeURIComponent(q));
+        const data = await resp.json();
+
+        if (data && data.status === 'success' && data.lead) {
+          const lead = data.lead;
+          allLeads.unshift(lead);
+          filteredLeads.unshift(lead);
+
+          const cnt = allLeads.length.toLocaleString();
+          const statTotal = document.getElementById('stat-total');
+          if (statTotal) statTotal.innerText = cnt;
+          const tblCount = document.getElementById('table-total-count');
+          if (tblCount) tblCount.innerText = cnt;
+
+          renderTable();
+          activeLeadData = lead;
+          openModalWithLead(lead);
         } else {
-          alert(`No CRM lead found matching "${q}". Verify the email address or phone number.`);
+          alert(`No lead found in Marketing MIS or CRM matching "${q}".`);
         }
       } catch (err) {
-        alert('Lookup request failed: ' + err.message);
+        alert('Error looking up lead: ' + err.message);
       }
     }
 
@@ -3890,7 +4067,7 @@
           }
           alert(data.message);
         } else if (data.status === 'not_configured') {
-          alert('Metabase is not configured yet.\n\nPlease open "Program_Evaluator_Sales/metabase_config.json" and enter your Metabase URL and Card ID or Public UUID.');
+          alert('Metabase is not configured yet.\n\nPlease open "Program_Evaluator_Deploy/metabase_config.json" and enter your Metabase URL and Card ID or Public UUID.');
         } else {
           alert(data.message || data.detail || 'Metabase sync failed');
         }
@@ -3903,7 +4080,11 @@
     }
 
     function downloadMasterCsv() {
-      window.location.href = '/api/export';
+      window.location.href = '/api/export?format=csv';
+    }
+
+    function downloadMasterExcel() {
+      window.location.href = '/api/export?format=xlsx';
     }
   </script>
 </body>

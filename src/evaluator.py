@@ -72,10 +72,14 @@ def classify_education(education_str):
     is_pg_diploma = any(k in edu for k in ['pg diploma', 'post graduate diploma', 'pgdca', 'pgdbm', 'pgdm'])
     
     below_grad_patterns = [
-        r'\b10th\b', r'\b12th\b', r'\bhsc\b', r'\bssc\b', r'\bintermediate\b', r'\binter\b',
-        r'\b10\+2\b', r'\b12\s*pass\b', r'\b10\s*pass\b', r'\bmatric\b', r'\bpolytechnic\b',
+        r'\b(1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th)\b',
+        r'\b[1-9]\s*(st|nd|rd|th)?\s*(standard|std|class|grade|pass)\b',
+        r'\b10\s*pass\b', r'\b12\s*pass\b',
+        r'\bhsc\b', r'\bssc\b', r'\bintermediate\b', r'\binter\b',
+        r'\b10\+2\b', r'\bmatric\b', r'\bmatriculation\b', r'\bpolytechnic\b',
         r'\bdiploma\b', r'\biti\b', r'\bbelow graduation\b', r'\bhigh school\b',
-        r'\bpuc\b', r'\bhigher secondary\b'
+        r'\bmiddle school\b', r'\bprimary school\b', r'\bunder matric\b', r'\bnon[- ]matric\b',
+        r'\bpuc\b', r'\bhigher secondary\b', r'\bschooling\b', r'\bsecondary school\b'
     ]
 
     has_explicit_degree = any(re.search(pat, edu) for pat in [
@@ -968,7 +972,12 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             },
             'primary': prim,
             'fallback': fall,
-            'sales_script': sales_script
+            'sales_script': sales_script,
+            'academic_eligibility': {
+                'status': 'Ineligible (Degree Prerequisite)',
+                'is_eligible': False,
+                'rationale': f"Education background ({raw_edu}) does not satisfy Bachelor's degree requirement."
+            }
         }
 
     # Detect inbound program category
@@ -2040,5 +2049,10 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         'primary': primary,
         'fallback': fallback,
         'sales_script': sales_script,
-        'market_intelligence': prim_market
+        'market_intelligence': prim_market,
+        'academic_eligibility': {
+            'status': 'Degree Verified',
+            'is_eligible': True,
+            'rationale': f"Education background ({raw_edu or 'Degree'}) satisfies Bachelor's degree prerequisite."
+        }
     }

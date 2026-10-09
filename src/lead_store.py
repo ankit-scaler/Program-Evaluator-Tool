@@ -177,60 +177,68 @@ def find_lead_by_query(query: str) -> Optional[Dict[str, Any]]:
     
     order_clause = "ORDER BY CASE WHEN source = 'WATCHED_CSV' THEN 0 WHEN source = 'CSV_UPLOAD' THEN 1 ELSE 2 END, created_at DESC LIMIT 1;"
     
+    # Helper to return formatted lead with lead_id and source
+    def format_row(r):
+        data = json.loads(r['evaluated_json'])
+        if 'lead_id' not in data or not data['lead_id']:
+            data['lead_id'] = r['lead_id']
+        data['source'] = r['source']
+        return data
+
     # 1. Exact email match (case-insensitive)
-    cursor.execute(f"SELECT evaluated_json FROM leads WHERE email_lower = ? {order_clause}", (q_lower,))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE email_lower = ? {order_clause}", (q_lower,))
     row = cursor.fetchone()
     if row:
         conn.close()
-        return json.loads(row['evaluated_json'])
+        return format_row(row)
         
     # 2. Exact lead_id match
-    cursor.execute(f"SELECT evaluated_json FROM leads WHERE UPPER(lead_id) = ? {order_clause}", (q.upper(),))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE UPPER(lead_id) = ? {order_clause}", (q.upper(),))
     row = cursor.fetchone()
     if row:
         conn.close()
-        return json.loads(row['evaluated_json'])
+        return format_row(row)
 
     # 3. Exact full name match (case-insensitive)
-    cursor.execute(f"SELECT evaluated_json FROM leads WHERE LOWER(name) = ? {order_clause}", (q_lower,))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) = ? {order_clause}", (q_lower,))
     row = cursor.fetchone()
     if row:
         conn.close()
-        return json.loads(row['evaluated_json'])
+        return format_row(row)
 
     # 4. Name prefix match (e.g. "Faizan" -> "Faizan Ahmed")
-    cursor.execute(f"SELECT evaluated_json FROM leads WHERE LOWER(name) LIKE ? {order_clause}", (f"{q_lower}%",))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) LIKE ? {order_clause}", (f"{q_lower}%",))
     row = cursor.fetchone()
     if row:
         conn.close()
-        return json.loads(row['evaluated_json'])
+        return format_row(row)
 
     # 5. Name contains query
-    cursor.execute(f"SELECT evaluated_json FROM leads WHERE LOWER(name) LIKE ? {order_clause}", (f"%{q_lower}%",))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) LIKE ? {order_clause}", (f"%{q_lower}%",))
     row = cursor.fetchone()
     if row:
         conn.close()
-        return json.loads(row['evaluated_json'])
+        return format_row(row)
 
     # 6. Phone match (normalized digits)
     digits = re.sub(r'\D', '', q)
     if len(digits) >= 7:
-        cursor.execute(f"SELECT evaluated_json FROM leads WHERE phone LIKE ? {order_clause}", (f"%{digits}%",))
+        cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE phone LIKE ? {order_clause}", (f"%{digits}%",))
         row = cursor.fetchone()
         if row:
             conn.close()
-            return json.loads(row['evaluated_json'])
+            return format_row(row)
             
     # 7. Partial email or lead_id match as last resort
     cursor.execute(f"""
-        SELECT evaluated_json FROM leads 
+        SELECT lead_id, source, evaluated_json FROM leads 
         WHERE email_lower LIKE ? OR lead_id LIKE ?
         {order_clause}
     """, (f"%{q_lower}%", f"%{q.upper()}%"))
     row = cursor.fetchone()
     conn.close()
     if row:
-        return json.loads(row['evaluated_json'])
+        return format_row(row)
         
     return None
 

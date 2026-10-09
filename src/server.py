@@ -361,7 +361,7 @@ async def lookup_lead(q: str):
     # 2. Search in persistent SQLite database
     db_lead = find_lead_by_query(q_clean)
     if db_lead:
-        if not any(l['lead_id'] == db_lead['lead_id'] for l in CACHED_LEADS):
+        if not any(l.get('lead_id') == db_lead.get('lead_id') for l in CACHED_LEADS if l.get('lead_id')):
             CACHED_LEADS.insert(0, db_lead)
         source_label = "watched_csv" if db_lead.get('source') == 'WATCHED_CSV' else "crm_database"
         return {"status": "success", "source": source_label, "lead": db_lead}

@@ -3699,7 +3699,18 @@
       updateCandidateAvatar(p.name);
       const elAcadBadge = document.getElementById('modal-academic-badge');
       if (elAcadBadge) {
-        elAcadBadge.innerText = lead.academic_eligibility?.status ? `Academic Status: ${lead.academic_eligibility.status}` : 'Academic Status: Degree Verified';
+        const isEligible = lead.academic_eligibility ? lead.academic_eligibility.is_eligible : (p.education_level !== 'BELOW_GRAD');
+        const statusText = lead.academic_eligibility?.status || (isEligible ? 'Degree Verified' : 'Ineligible (Degree Prerequisite)');
+        elAcadBadge.innerText = `Academic Status: ${statusText}`;
+        if (isEligible) {
+          elAcadBadge.style.background = '#ecfdf5';
+          elAcadBadge.style.color = '#047857';
+          elAcadBadge.style.borderColor = '#a7f3d0';
+        } else {
+          elAcadBadge.style.background = '#fef2f2';
+          elAcadBadge.style.color = '#b91c1c';
+          elAcadBadge.style.borderColor = '#fecaca';
+        }
       }
 
       // Update tiles with clean formatting & zero text cut-off

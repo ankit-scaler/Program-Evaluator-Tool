@@ -133,6 +133,9 @@ def process_leads_dataframe(df):
         # Track quality flags for missing data fallbacks
         data_quality_flags = []
 
+        # Event / Masterclass signal
+        event_str = str(row[col_event]).strip() if col_event and pd.notna(row[col_event]) else ""
+
         # 4. Role Extraction & Cross-Signal Inference
         raw_role = str(row[col_role]).strip() if col_role and pd.notna(row[col_role]) else ""
         if raw_role.lower() in ['nan', 'none', 'null', '', '-']:

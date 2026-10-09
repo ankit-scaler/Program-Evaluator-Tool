@@ -18,6 +18,8 @@ output/leads_store.db
 output/crm_evaluated_master.csv
 leads_store.db
 *.db
+data/
+*.csv
 
 # Logs & temp files
 *.log

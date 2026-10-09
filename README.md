@@ -10,7 +10,7 @@ An academic fit and retention intelligence platform for edtech sales counselors.
 - **Academic Degree Prerequisite Gate**: Automatically prevents placement-track enrollment for candidates without a Bachelor's degree, protecting candidates from recruiter screening rejections.
 - **Track-Level Calibration**: Accurately places learners into Beginner (15 Mos), Intermediate (12 Mos), or Advanced (9 Mos) pacing.
 - **Visual Retention vs. Refund Meter**: Displays cohort completion with an 80% benchmark target line.
-- **Sequential Spoken Teleprompter**: 4-stage phone script (Discovery, Value Pitch, Objection Rebuttal, and 10–12 hr/week Commitment Check).
+- **Sequential Spoken Teleprompter**: 3-stage phone script (Discovery Hook, Value Pitch, and Inbound Objection Rebuttal).
 
 ---
 

@@ -418,8 +418,7 @@ def process_leads_dataframe(df):
             'Fallback Rationale': eval_res['fallback']['why'],
             'Sales Call Opening Script': s.get('call_opening', ''),
             'Program Value Pitch Script': s.get('program_pitch', ''),
-            'Inbound Handling Script': s.get('inbound_handling', ''),
-            'Commitment Setting Script': s.get('commitment_setting', '')
+            'Inbound Handling Script': s.get('inbound_handling', '')
         }
         enriched_rows.append(flat_row)
 

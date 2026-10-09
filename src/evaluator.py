@@ -954,8 +954,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         sales_script = {
             'call_opening': f'"Hi {first_name}, thank you for connecting with Scaler. I reviewed your profile and noticed your education background is {raw_edu}. Before discussing technical curricula, I want to be completely transparent with you regarding our program prerequisites."',
             'program_pitch': '"At Scaler, our career accelerators and hiring partner placement networks strictly require learners to hold an undergraduate Bachelor\'s degree (or be in their final year of graduation). Because companies enforce strict degree cutoffs in technical hiring rounds, we never want you to invest time and money into a program where corporate recruiters might disqualify you on degree credentials alone."',
-            'inbound_handling': '"We sincerely appreciate your drive to learn software development. Our honest recommendation is to first complete a formal degree program (such as a BCA, B.Sc, or B.Tech). As you approach your graduation year, we will gladly fast-track your enrollment into our technical cohorts."',
-            'commitment_setting': '"Rather than rushing into an enrollment that could lead to career placement hurdles, focus on completing your formal degree foundations. We will keep your profile active and reconnect with you once you are in your graduation year."'
+            'inbound_handling': '"We sincerely appreciate your drive to learn software development. Our honest recommendation is to first complete a formal degree program (such as a BCA, B.Sc, or B.Tech). As you approach your graduation year, we will gladly fast-track your enrollment into our technical cohorts."'
         }
         return {
             'person': {
@@ -1980,19 +1979,10 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             f"{fallback['program']} becomes vastly easier and faster.\""
         )
 
-    # 4. Expectation & Commitment Setting (Retention Safeguard)
-    commitment_setting = (
-        "\"To be completely transparent with you, this is an intensive, high-impact curriculum. "
-        "It requires a consistent commitment of 12 to 15 hours per week. Completing the initial onboarding assessment and staying "
-        "disciplined with live sessions is the key difference between learners who struggle and those who successfully transition. "
-        "If you can commit that time, our mentors and teaching assistants will support you through every assignment.\""
-    )
-
     sales_script = {
         'call_opening': call_opening,
         'program_pitch': program_pitch,
-        'inbound_handling': inbound_handling,
-        'commitment_setting': commitment_setting
+        'inbound_handling': inbound_handling
     }
 
     # 5. Market Intelligence, Audited Placement Metrics & Curriculum Attachment

@@ -3146,13 +3146,26 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
+      const savedActiveLeadId = sessionStorage.getItem('scaler_active_lead_id');
 
-      // Always load leads strictly from the user's active CSV file
+      // Fetch all evaluated leads from server session
       fetch('/api/csv-stream/leads')
         .then(res => res.json())
         .then(data => {
-          if (data.status === 'success' && data.leads && data.leads.length > 0) {
-            allLeads = data.leads;
+          let serverLeads = (data.status === 'success' && data.leads) ? data.leads : [];
+          
+          // Check local storage backup if server is empty
+          if (serverLeads.length === 0) {
+            try {
+              const localCached = JSON.parse(localStorage.getItem('scaler_all_leads') || '[]');
+              if (localCached && localCached.length > 0) {
+                serverLeads = localCached;
+              }
+            } catch (e) {}
+          }
+
+          if (serverLeads && serverLeads.length > 0) {
+            allLeads = serverLeads;
             filteredLeads = [...allLeads];
             const cnt = allLeads.length.toLocaleString();
             const statTotal = document.getElementById('stat-total');
@@ -3160,14 +3173,40 @@
             const tblCount = document.getElementById('table-total-count');
             if (tblCount) tblCount.innerText = cnt;
             renderTable();
+
             if (urlParams.get('view') !== 'upload') {
               showAnalysisView();
+            }
+
+            // If counselor had an open dossier before refresh, restore it immediately
+            if (savedActiveLeadId) {
+              const matched = allLeads.find(l => l.lead_id === savedActiveLeadId);
+              if (matched) {
+                setTimeout(() => {
+                  openModalWithLead(matched);
+                }, 200);
+              }
             }
           } else {
             showUploadView();
           }
         })
         .catch(() => {
+          // If offline/error, attempt localStorage recovery
+          try {
+            const localCached = JSON.parse(localStorage.getItem('scaler_all_leads') || '[]');
+            if (localCached && localCached.length > 0) {
+              allLeads = localCached;
+              filteredLeads = [...allLeads];
+              renderTable();
+              showAnalysisView();
+              if (savedActiveLeadId) {
+                const matched = allLeads.find(l => l.lead_id === savedActiveLeadId);
+                if (matched) openModalWithLead(matched);
+              }
+              return;
+            }
+          } catch (e) {}
           showUploadView();
         });
 
@@ -3829,10 +3868,12 @@
       // Render Curriculum for Recommended Track
       switchCurriculumTab('primary');
 
+      try {
+        sessionStorage.setItem('scaler_active_lead_id', lead.lead_id);
+      } catch (e) {}
+
       document.getElementById('lead-modal').classList.add('active');
     }
-
-
 
     function renderFactorBars(containerId, bk) {
       const container = document.getElementById(containerId);
@@ -3862,6 +3903,9 @@
     }
 
     function closeModal() {
+      try {
+        sessionStorage.removeItem('scaler_active_lead_id');
+      } catch (e) {}
       document.getElementById('lead-modal').classList.remove('active');
     }
 
@@ -3966,6 +4010,10 @@
           allLeads.unshift(lead);
           filteredLeads.unshift(lead);
 
+          try {
+            localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads));
+          } catch (e) {}
+
           // Update counts
           const cnt = allLeads.length.toLocaleString();
           const statTotal = document.getElementById('stat-total');
@@ -4039,6 +4087,10 @@
           const lead = data.lead;
           allLeads.unshift(lead);
           filteredLeads.unshift(lead);
+
+          try {
+            localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads));
+          } catch (e) {}
 
           const cnt = allLeads.length.toLocaleString();
           const statTotal = document.getElementById('stat-total');

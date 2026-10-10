@@ -439,21 +439,27 @@ async def trigger_csv_stream_sync():
 @app.get("/api/csv-stream/leads")
 async def get_csv_stream_leads():
     """
-    Returns all evaluated leads strictly from the user's active CSV files in data/,
-    completely isolated from bulk/synthetic database records.
+    Returns all evaluated leads stored in the session/database (from CSVs, Marketing MIS lookups,
+    and live webhooks) so counselor data is preserved across page refreshes.
     """
     import json
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT evaluated_json FROM leads 
-        WHERE source LIKE 'CSV:%' OR source = 'WATCHED_CSV'
+        SELECT lead_id, source, evaluated_json FROM leads 
         ORDER BY created_at DESC;
     """)
     rows = cursor.fetchall()
     conn.close()
     
-    leads = [json.loads(r['evaluated_json']) for r in rows]
+    leads = []
+    for r in rows:
+        data = json.loads(r['evaluated_json'])
+        if 'lead_id' not in data or not data['lead_id']:
+            data['lead_id'] = r['lead_id']
+        data['source'] = r['source']
+        leads.append(data)
+        
     return {
         "status": "success",
         "total": len(leads),

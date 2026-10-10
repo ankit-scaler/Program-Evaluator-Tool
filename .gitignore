@@ -26,3 +26,4 @@ data/
 .tempmediaStorage/
 .system_generated/
 scratch/
+*.pdf

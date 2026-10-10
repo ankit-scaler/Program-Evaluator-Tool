@@ -27,3 +27,4 @@ data/
 .system_generated/
 scratch/
 *.pdf
+metabase_config.json

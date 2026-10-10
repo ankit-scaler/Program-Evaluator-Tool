@@ -104,10 +104,15 @@ def save_evaluated_lead(eval_res: Dict[str, Any], source: str = "CRM_WEBHOOK") -
     conn.close()
     return True
 
-def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_UPLOAD") -> int:
+def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_UPLOAD", replace_existing: bool = False) -> int:
     init_db()
     conn = get_connection()
     cursor = conn.cursor()
+    
+    if replace_existing:
+        # Clear previously uploaded bulk CSV records so the new batch does not accumulate old leads
+        cursor.execute("DELETE FROM leads WHERE source LIKE 'CSV:%' OR source = 'CSV_UPLOAD';")
+        conn.commit()
     
     batch = []
     for r in records:

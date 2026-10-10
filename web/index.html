@@ -2959,8 +2959,10 @@
       formData.append('file', file);
 
       resetEvaluationStepper();
-      document.getElementById('dropzone-status-title').innerText = `Evaluating: ${file.name}`;
-      document.getElementById('dropzone-status-sub').innerText = 'Processing candidate academic background, multi-matrix retention scores, and curriculum outlines...';
+      const preTitleEl = document.getElementById('dropzone-status-title');
+      if (preTitleEl) preTitleEl.innerText = `Evaluating: ${file.name}`;
+      const preSubEl = document.getElementById('dropzone-status-sub');
+      if (preSubEl) preSubEl.innerText = 'Processing candidate academic background, multi-matrix retention scores, and curriculum outlines...';
 
       let currentPct = 6;
       const startTime = Date.now();
@@ -3030,14 +3032,18 @@
           if (pulse) pulse.classList.add('success');
           if (pctEl) pctEl.classList.add('success');
 
-          document.getElementById('dropzone-status-title').innerText = `Evaluated: ${file.name}`;
+          const titleEl = document.getElementById('dropzone-status-title');
+          if (titleEl) titleEl.innerText = `Evaluated: ${file.name}`;
           const countNotice = (data.total && data.total > data.leads.length)
             ? `Successfully loaded ${data.total.toLocaleString()} leads (${data.leads.length.toLocaleString()} active in memory). Live recommendations ready below.`
             : `Successfully evaluated ${data.total || data.leads.length} leads. Live recommendations ready below.`;
-          document.getElementById('dropzone-status-sub').innerText = countNotice;
+          const subEl = document.getElementById('dropzone-status-sub');
+          if (subEl) subEl.innerText = countNotice;
 
-          document.getElementById('stat-total').innerText = (data.total || data.leads.length).toLocaleString();
-          document.getElementById('table-total-count').innerText = (data.total || data.leads.length).toLocaleString();
+          const statTotalEl = document.getElementById('stat-total');
+          if (statTotalEl) statTotalEl.innerText = (data.total || data.leads.length).toLocaleString();
+          const tblTotalEl = document.getElementById('table-total-count');
+          if (tblTotalEl) tblTotalEl.innerText = (data.total || data.leads.length).toLocaleString();
 
           // Save evaluated data in localStorage
           try {
@@ -3065,7 +3071,7 @@
         clearInterval(progressTimer);
         setEvalProgress(0, 'Server error during evaluation');
         console.error(err);
-        alert('Server error while evaluating CSV.');
+        alert('Server error while evaluating CSV: ' + (err && err.message ? err.message : String(err)));
       }
     }
 
@@ -3358,26 +3364,33 @@
 
     function renderTable() {
       const tbody = document.getElementById('leads-tbody');
+      if (!tbody) return;
       tbody.innerHTML = '';
-      document.getElementById('table-display-count').innerText = filteredLeads.length;
+      const displayCountEl = document.getElementById('table-display-count');
+      if (displayCountEl) displayCountEl.innerText = filteredLeads.length;
 
       const totalPages = Math.ceil(filteredLeads.length / PAGE_SIZE) || 1;
       if (currentPage > totalPages) currentPage = totalPages;
 
-      document.getElementById('current-page-display').innerText = currentPage;
-      document.getElementById('total-pages-display').innerText = totalPages;
-      document.getElementById('btn-prev-page').disabled = (currentPage <= 1);
-      document.getElementById('btn-next-page').disabled = (currentPage >= totalPages);
+      const curPageEl = document.getElementById('current-page-display');
+      if (curPageEl) curPageEl.innerText = currentPage;
+      const totPagesEl = document.getElementById('total-pages-display');
+      if (totPagesEl) totPagesEl.innerText = totalPages;
+      const prevBtn = document.getElementById('btn-prev-page');
+      if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+      const nextBtn = document.getElementById('btn-next-page');
+      if (nextBtn) nextBtn.disabled = (currentPage >= totalPages);
 
+      const pagInfoEl = document.getElementById('pagination-info');
       if (filteredLeads.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">No leads matching active filters.</td></tr>`;
-        document.getElementById('pagination-info').innerText = 'Showing 0 of 0 leads';
+        if (pagInfoEl) pagInfoEl.innerText = 'Showing 0 of 0 leads';
         return;
       }
 
       const startIdx = (currentPage - 1) * PAGE_SIZE;
       const endIdx = Math.min(startIdx + PAGE_SIZE, filteredLeads.length);
-      document.getElementById('pagination-info').innerText = `Showing ${startIdx + 1} - ${endIdx} of ${filteredLeads.length} leads`;
+      if (pagInfoEl) pagInfoEl.innerText = `Showing ${startIdx + 1} - ${endIdx} of ${filteredLeads.length} leads`;
 
       const pageLeads = filteredLeads.slice(startIdx, endIdx);
 
@@ -3983,9 +3996,10 @@
           const personName = lead.person ? lead.person.name : 'Candidate';
           const srcLabel = data.source === 'metabase_live' ? 'Marketing MIS (Live)' : 'Marketing MIS / CRM';
 
-          // Prepend to leads list so counselor sees it in table & history
+          // Remove any duplicate if already present in allLeads
+          allLeads = allLeads.filter(l => l.lead_id !== lead.lead_id && (l.person?.email || '').toLowerCase() !== (lead.person?.email || '').toLowerCase());
           allLeads.unshift(lead);
-          filteredLeads.unshift(lead);
+          filteredLeads = [...allLeads];
 
           try {
             localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads));
@@ -4062,8 +4076,9 @@
 
         if (data && data.status === 'success' && data.lead) {
           const lead = data.lead;
+          allLeads = allLeads.filter(l => l.lead_id !== lead.lead_id && (l.person?.email || '').toLowerCase() !== (lead.person?.email || '').toLowerCase());
           allLeads.unshift(lead);
-          filteredLeads.unshift(lead);
+          filteredLeads = [...allLeads];
 
           try {
             localStorage.setItem('scaler_all_leads', JSON.stringify(allLeads));
@@ -4119,12 +4134,50 @@
       }
     }
 
+    async function exportActiveLeads(format) {
+      const leadsToExport = (filteredLeads && filteredLeads.length > 0) ? filteredLeads : (allLeads && allLeads.length > 0 ? allLeads : (activeLeadData ? [activeLeadData] : []));
+      
+      if (!leadsToExport || leadsToExport.length === 0) {
+        alert('No leads currently loaded to export. Please search or upload leads first.');
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/export/active?format=${format}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ leads: leadsToExport })
+        });
+
+        if (!resp.ok) {
+          // If server returns error, fallback to legacy database export
+          window.location.href = `/api/export?format=${format}`;
+          return;
+        }
+
+        const blob = await resp.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const ext = (format === 'xlsx' || format === 'excel') ? 'xlsx' : 'csv';
+        const timestamp = new Date().toISOString().slice(0, 10);
+        a.download = `scaler_evaluated_recommendations_${timestamp}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      } catch (err) {
+        // Fallback to direct GET link if post fails
+        window.location.href = `/api/export?format=${format}`;
+      }
+    }
+
     function downloadMasterCsv() {
-      window.location.href = '/api/export?format=csv';
+      exportActiveLeads('csv');
     }
 
     function downloadMasterExcel() {
-      window.location.href = '/api/export?format=xlsx';
+      exportActiveLeads('xlsx');
     }
   </script>
 </body>

@@ -1,7 +1,9 @@
 {
-  "_comment": "Configure your Metabase connection here. Provide either 'public_uuid' (if public link enabled) OR 'api_key' + 'card_id', OR 'username' + 'password' + 'card_id'.",
-  "metabase_url": "https://metabase.yourcompany.com",
-  "card_id": "",
+  "_comment": "Metabase connection configuration for Marketing MIS Card 28973",
+  "metabase_url": "https://metabase.scaler.com",
+  "card_id": "28973",
+  "session_token": "7262c62b-ed04-43da-9127-0e29a625ccb0",
+  "email_parameter_id": "2dcd8f80-e4b6-46cf-936b-2102140cb7f2",
   "api_key": "",
   "public_uuid": "",
   "username": "",

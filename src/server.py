@@ -197,9 +197,9 @@ async def upload_csv(file: UploadFile = File(...)):
             }
             compact_records.append(c)
         
-        # Fast bulk save into SQLite database
+        # Fast bulk save into SQLite database (clearing previous bulk CSV batch so new CSV has only its leads)
         try:
-            bulk_save_evaluated_leads(compact_records, source=f"CSV: {file.filename}")
+            bulk_save_evaluated_leads(compact_records, source=f"CSV: {file.filename}", replace_existing=True)
         except Exception as db_err:
             print(f"Warning during SQLite persistence: {db_err}")
         
@@ -351,10 +351,53 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
     q_clean = q.strip().lower()
     is_mis_only = (scope == "mis")
     
-    # 1. Search in memory cache (only non-CSV if scope='mis')
+    # 1. Pure On-Demand: When searching by email for Marketing MIS, query Metabase live directly
+    if is_mis_only:
+        try:
+            mb_row = fetch_lead_by_email_from_metabase(q_clean)
+            if mb_row:
+                normalized_lead = {
+                    'name': mb_row.get('name') or mb_row.get('Name') or 'Prospective Learner',
+                    'email': mb_row.get('email') or mb_row.get('Email') or q_clean,
+                    'phone': str(mb_row.get('phone') or mb_row.get('Phone') or 'N/A'),
+                    'role': mb_row.get('role') or mb_row.get('Role') or 'Software Professional',
+                    'experience': str(mb_row.get('experience') or mb_row.get('Experience') or '2 years'),
+                    'education': mb_row.get('education') or mb_row.get('Education') or 'Graduated / Degree',
+                    'company type': mb_row.get('company_type') or mb_row.get('Company Type') or 'IT Services / Technology',
+                    'previous org name': mb_row.get('orgname') or mb_row.get('previous org name') or 'Current Organization',
+                    'previous org year': str(mb_row.get('orgyear') or mb_row.get('previous org year') or ''),
+                    'program': mb_row.get('program_type') or mb_row.get('program') or mb_row.get('which_bda_team') or 'Academy',
+                    'set_status': 'SET Passed' if str(mb_row.get('test_passed_flag')) == '1' else ('SET Attempted' if str(mb_row.get('test_launched_flag')) == '1' else 'SET Not Attempted'),
+                    'set_score': 'Passed (Cleared)' if str(mb_row.get('test_passed_flag')) == '1' else 'Attempted'
+                }
+                eval_res = evaluate_lead_profile(normalized_lead)
+                lead_id = mb_row.get('lead_id') or mb_row.get('Lead ID') or f"LD-MIS-{abs(hash(q_clean)) % 100000:05d}"
+                eval_res['lead_id'] = lead_id
+                eval_res['touchpoints'] = {
+                    'summary': f"Marketing MIS - {mb_row.get('event_name') or mb_row.get('event_type') or mb_row.get('program_type') or 'Live MIS Inquiry'}",
+                    'event_name': mb_row.get('event_name') or mb_row.get('event_type') or 'Direct MIS Query',
+                    'attended': 'Attended' if str(mb_row.get('attended_before_payment_flag')) == '1' else 'Registered',
+                    'duration': str(mb_row.get('duration') or 'N/A'),
+                    'sat_status': normalized_lead['set_status'],
+                    'sat_score': normalized_lead['set_score'],
+                    'set_status': normalized_lead['set_status'],
+                    'set_score': normalized_lead['set_score'],
+                    'channel': mb_row.get('country_type') or mb_row.get('event_category') or 'Marketing MIS',
+                    'campaign': str(mb_row.get('batch') or 'Direct MIS'),
+                    'platform': str(mb_row.get('platform') or 'Metabase MIS'),
+                    'geography': 'India',
+                    'signup_date': str(mb_row.get('signed_up_date') or mb_row.get('lead_created_at') or 'Recent'),
+                    'lead_score': str(mb_row.get('lead_score') or 'Active'),
+                    'landing_page': 'https://www.scaler.com'
+                }
+                # Pure On-Demand: Do NOT persist to SQLite disk. Handled purely in-flight.
+                return {"status": "success", "source": "metabase_live", "lead": eval_res}
+        except Exception as e:
+            pass
+        return {"status": "not_found", "message": f"No record found in Marketing MIS matching '{q}'."}
+
+    # 2. General CRM / Search lookup (checks RAM & local database)
     for lead in CACHED_LEADS:
-        if is_mis_only and str(lead.get('source', '')).startswith('CSV:'):
-            continue
         p = lead.get('person', {})
         if (p.get('email', '').strip().lower() == q_clean or
             p.get('name', '').strip().lower() == q_clean or
@@ -362,56 +405,11 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
             q_clean in p.get('email', '').lower() or
             q_clean in str(p.get('phone', ''))):
             return {"status": "success", "source": lead.get('source', 'memory_cache'), "lead": lead}
-            
-    # 2. Search in persistent SQLite database (excludes CSV uploads if scope='mis')
-    db_lead = find_lead_by_query(q_clean, exclude_bulk_csv=is_mis_only)
-    if db_lead:
-        if not any(l.get('lead_id') == db_lead.get('lead_id') for l in CACHED_LEADS if l.get('lead_id')):
-            CACHED_LEADS.insert(0, db_lead)
-        source_label = "watched_csv" if db_lead.get('source') == 'WATCHED_CSV' else "crm_database"
-        return {"status": "success", "source": source_label, "lead": db_lead}
-        
-    # 3. Dynamic Check on Watched CSV only if not restricted to MIS
-    if not is_mis_only:
-        try:
-            csv_sync = sync_watched_csv(force=True, memory_cache_ref=CACHED_LEADS)
-            if csv_sync.get('new_leads_synced', 0) > 0:
-                db_lead = find_lead_by_query(q_clean)
-                if db_lead:
-                    return {"status": "success", "source": "watched_csv", "lead": db_lead}
-        except Exception:
-            pass
 
-    # 4. Dynamic Fallback: Search live in Metabase via API
-    try:
-        mb_row = fetch_lead_by_email_from_metabase(q_clean)
-        if mb_row:
-            eval_res = evaluate_lead_profile(mb_row)
-            lead_id = mb_row.get('lead_id') or mb_row.get('Lead ID') or mb_row.get('id') or f"LD-MIS-{abs(hash(q_clean)) % 100000:05d}"
-            eval_res['lead_id'] = lead_id
-            eval_res['touchpoints'] = {
-                'summary': f"Marketing MIS - {mb_row.get('event_name') or mb_row.get('Event Name') or mb_row.get('program') or mb_row.get('Program') or 'Live Inquiry'}",
-                'event_name': mb_row.get('event_name') or mb_row.get('Event Name') or 'Direct MIS Query',
-                'attended': mb_row.get('attended') or mb_row.get('Attended') or 'Registered',
-                'duration': str(mb_row.get('duration') or mb_row.get('Duration') or 'N/A'),
-                'sat_status': mb_row.get('set_status') or mb_row.get('sat_status') or mb_row.get('SET Status') or 'SET Not Attempted',
-                'sat_score': str(mb_row.get('set_score') or mb_row.get('sat_score') or mb_row.get('SET Score') or 'N/A'),
-                'set_status': mb_row.get('set_status') or mb_row.get('sat_status') or mb_row.get('SET Status') or 'SET Not Attempted',
-                'set_score': str(mb_row.get('set_score') or mb_row.get('sat_score') or mb_row.get('SET Score') or 'N/A'),
-                'channel': mb_row.get('channel') or mb_row.get('Channel') or 'Marketing MIS',
-                'campaign': mb_row.get('campaign') or mb_row.get('Campaign') or 'Direct Campaign',
-                'platform': mb_row.get('platform') or mb_row.get('Platform') or 'MIS Web API',
-                'geography': mb_row.get('geography') or mb_row.get('City') or mb_row.get('Geography') or 'India',
-                'signup_date': str(mb_row.get('signup_date') or mb_row.get('Created At') or mb_row.get('Date') or 'Recent'),
-                'lead_score': str(mb_row.get('lead_score') or mb_row.get('Lead Score') or 'Active'),
-                'landing_page': mb_row.get('landing_page') or mb_row.get('Landing Page') or 'https://www.scaler.com'
-            }
-            save_evaluated_lead(eval_res, source="METABASE_LIVE_LOOKUP")
-            CACHED_LEADS.insert(0, eval_res)
-            return {"status": "success", "source": "metabase_live", "lead": eval_res}
-    except Exception as e:
-        pass
-        
+    db_lead = find_lead_by_query(q_clean)
+    if db_lead:
+        return {"status": "success", "source": "crm_database", "lead": db_lead}
+
     return {"status": "not_found", "message": f"No lead found in CRM matching '{q}'."}
 
 class AppendLeadInput(BaseModel):
@@ -445,14 +443,15 @@ async def trigger_csv_stream_sync():
 @app.get("/api/csv-stream/leads")
 async def get_csv_stream_leads():
     """
-    Returns all evaluated leads stored in the session/database (from CSVs, Marketing MIS lookups,
-    and live webhooks) so counselor data is preserved across page refreshes.
+    Returns bulk uploaded CSV leads so dashboard table retains uploaded files across refresh.
+    Individual Marketing MIS lookups remain on-demand per salesperson search, fetched from DB or MIS.
     """
     import json
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
         SELECT lead_id, source, evaluated_json FROM leads 
+        WHERE source LIKE 'CSV:%' OR source = 'CSV_UPLOAD'
         ORDER BY created_at DESC;
     """)
     rows = cursor.fetchall()
@@ -584,7 +583,10 @@ async def export_crm_data(format: str = "csv"):
             continue
             
     df_export = pd.DataFrame(records)
-    
+    return create_export_response(df_export, format_clean)
+
+
+def create_export_response(df_export: pd.DataFrame, format_clean: str):
     if format_clean in ['xlsx', 'excel']:
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='openpyxl') as writer:
@@ -593,17 +595,66 @@ async def export_crm_data(format: str = "csv"):
         return Response(
             content=output.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads_master.xlsx"}
+            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads.xlsx"}
         )
     else:
-        # Default CSV export with UTF-8 BOM for Microsoft Excel compatibility
         csv_buffer = io.StringIO()
         df_export.to_csv(csv_buffer, index=False, encoding='utf-8')
         return Response(
             content=csv_buffer.getvalue().encode('utf-8-sig'),
             media_type="text/csv",
-            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads_master.csv"}
+            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads.csv"}
         )
+
+
+@app.post("/api/export/active")
+async def export_active_leads(payload: dict = Body(...), format: str = "csv"):
+    """
+    Exports leads sent directly from the client's current session/filters.
+    Works seamlessly with Option 2 (zero server disk storage for on-demand leads).
+    """
+    leads = payload.get("leads", [])
+    if not leads:
+        raise HTTPException(status_code=400, detail="No leads provided in export payload.")
+
+    records = []
+    for data in leads:
+        try:
+            p = data.get('person', {})
+            prim = data.get('primary', {})
+            fall = data.get('fallback', {})
+            tp = data.get('touchpoints', {})
+            records.append({
+                'Lead ID': data.get('lead_id', ''),
+                'Candidate Name': p.get('name', ''),
+                'Email': p.get('email', ''),
+                'Phone': p.get('phone', ''),
+                'Current Role': p.get('role', ''),
+                'Total Experience': p.get('experience', ''),
+                'Education': p.get('education', ''),
+                'Company Type': p.get('company_type', ''),
+                'Previous Organization': p.get('previous_org', ''),
+                'Enquired Program': p.get('enquired_program', p.get('program', 'N/A')),
+                'Primary Program': prim.get('program', ''),
+                'Primary Track': prim.get('track', ''),
+                'Primary Fit Tier': prim.get('fit_tier', ''),
+                'Primary Duration': prim.get('duration', ''),
+                'Retention Rate (%)': prim.get('retention_rate', ''),
+                'Refund Risk (%)': prim.get('refund_rate', ''),
+                'Primary Logic': prim.get('fit_rationale', ''),
+                'Fallback Program': fall.get('program', ''),
+                'Fallback Track': fall.get('track', ''),
+                'Fallback Logic': fall.get('fit_rationale', ''),
+                'Diagnostic SET Status': tp.get('set_status', tp.get('sat_status', 'SET Not Attempted')),
+                'Diagnostic SET Score': tp.get('set_score', tp.get('sat_score', 'N/A')),
+                'Ingestion Source': data.get('source', 'MIS On-Demand'),
+                'Evaluated At': data.get('evaluated_at', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            })
+        except Exception:
+            continue
+
+    df_export = pd.DataFrame(records)
+    return create_export_response(df_export, format.lower().strip())
 
 if __name__ == '__main__':
     import uvicorn

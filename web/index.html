@@ -3005,7 +3005,13 @@
       try {
         const res = await fetch('/api/upload-csv', { method: 'POST', body: formData });
         const data = await res.json();
-        clearInterval(progressTimer);
+        if (!res.ok) {
+          const errDetail = data?.detail || `HTTP ${res.status}: ${res.statusText}`;
+          clearInterval(progressTimer);
+          setEvalProgress(0, 'Upload error');
+          alert('Upload failed: ' + errDetail);
+          return;
+        }
 
         if (data.status === 'success' && data.leads && data.leads.length > 0) {
           allLeads = data.leads;

@@ -192,7 +192,8 @@ async def upload_csv(file: UploadFile = File(...)):
                 'primary': {k: v for k, v in r.get('primary', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
                 'fallback': {k: v for k, v in r.get('fallback', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
                 'sales_script': r.get('sales_script'),
-                'touchpoints': r.get('touchpoints')
+                'touchpoints': r.get('touchpoints'),
+                'source': f"CSV: {file.filename}"
             }
             compact_records.append(c)
         
@@ -340,41 +341,46 @@ async def evaluate_single(lead_input: SingleLeadInput):
     }
 
 @app.get("/api/lookup")
-async def lookup_lead(q: str):
+async def lookup_lead(q: str, scope: Optional[str] = None):
     """
-    Looks up a lead by email, phone, name, or lead ID across memory, SQLite database,
-    and fallback to Metabase API.
+    Looks up a lead by email, phone, name, or lead ID.
+    When scope='mis', it strictly queries Marketing MIS / Metabase / live CRM lookups
+    and isolates from bulk CSV upload data.
     """
     global CACHED_LEADS
     q_clean = q.strip().lower()
+    is_mis_only = (scope == "mis")
     
-    # 1. Search in memory cache
+    # 1. Search in memory cache (only non-CSV if scope='mis')
     for lead in CACHED_LEADS:
-        p = lead['person']
-        if (p['email'].strip().lower() == q_clean or
-            p['name'].strip().lower() == q_clean or
-            lead['lead_id'].strip().lower() == q_clean or
-            q_clean in p['email'].lower() or
-            q_clean in p['phone']):
-            return {"status": "success", "source": "memory_cache", "lead": lead}
+        if is_mis_only and str(lead.get('source', '')).startswith('CSV:'):
+            continue
+        p = lead.get('person', {})
+        if (p.get('email', '').strip().lower() == q_clean or
+            p.get('name', '').strip().lower() == q_clean or
+            lead.get('lead_id', '').strip().lower() == q_clean or
+            q_clean in p.get('email', '').lower() or
+            q_clean in str(p.get('phone', ''))):
+            return {"status": "success", "source": lead.get('source', 'memory_cache'), "lead": lead}
             
-    # 2. Search in persistent SQLite database
-    db_lead = find_lead_by_query(q_clean)
+    # 2. Search in persistent SQLite database (excludes CSV uploads if scope='mis')
+    db_lead = find_lead_by_query(q_clean, exclude_bulk_csv=is_mis_only)
     if db_lead:
         if not any(l.get('lead_id') == db_lead.get('lead_id') for l in CACHED_LEADS if l.get('lead_id')):
             CACHED_LEADS.insert(0, db_lead)
         source_label = "watched_csv" if db_lead.get('source') == 'WATCHED_CSV' else "crm_database"
         return {"status": "success", "source": source_label, "lead": db_lead}
         
-    # 3. Dynamic Check: Scan watched CSV file immediately (in case lead was just added moments ago)
-    try:
-        csv_sync = sync_watched_csv(force=True, memory_cache_ref=CACHED_LEADS)
-        if csv_sync.get('new_leads_synced', 0) > 0:
-            db_lead = find_lead_by_query(q_clean)
-            if db_lead:
-                return {"status": "success", "source": "watched_csv", "lead": db_lead}
-    except Exception:
-        pass
+    # 3. Dynamic Check on Watched CSV only if not restricted to MIS
+    if not is_mis_only:
+        try:
+            csv_sync = sync_watched_csv(force=True, memory_cache_ref=CACHED_LEADS)
+            if csv_sync.get('new_leads_synced', 0) > 0:
+                db_lead = find_lead_by_query(q_clean)
+                if db_lead:
+                    return {"status": "success", "source": "watched_csv", "lead": db_lead}
+        except Exception:
+            pass
 
     # 4. Dynamic Fallback: Search live in Metabase via API
     try:

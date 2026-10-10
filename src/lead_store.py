@@ -165,7 +165,7 @@ def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_
     conn.close()
     return count
 
-def find_lead_by_query(query: str) -> Optional[Dict[str, Any]]:
+def find_lead_by_query(query: str, exclude_bulk_csv: bool = False) -> Optional[Dict[str, Any]]:
     init_db()
     q = query.strip()
     if not q:
@@ -175,7 +175,8 @@ def find_lead_by_query(query: str) -> Optional[Dict[str, Any]]:
     cursor = conn.cursor()
     q_lower = q.lower()
     
-    order_clause = "ORDER BY CASE WHEN source = 'WATCHED_CSV' THEN 0 WHEN source = 'CSV_UPLOAD' THEN 1 ELSE 2 END, created_at DESC LIMIT 1;"
+    where_source = "AND source NOT LIKE 'CSV:%' AND source != 'CSV_UPLOAD'" if exclude_bulk_csv else ""
+    order_clause = "ORDER BY CASE WHEN source = 'METABASE_LIVE_LOOKUP' THEN 0 WHEN source = 'CRM_WEBHOOK' THEN 1 ELSE 2 END, created_at DESC LIMIT 1;"
     
     # Helper to return formatted lead with lead_id and source
     def format_row(r):
@@ -186,35 +187,35 @@ def find_lead_by_query(query: str) -> Optional[Dict[str, Any]]:
         return data
 
     # 1. Exact email match (case-insensitive)
-    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE email_lower = ? {order_clause}", (q_lower,))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE email_lower = ? {where_source} {order_clause}", (q_lower,))
     row = cursor.fetchone()
     if row:
         conn.close()
         return format_row(row)
         
     # 2. Exact lead_id match
-    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE UPPER(lead_id) = ? {order_clause}", (q.upper(),))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE UPPER(lead_id) = ? {where_source} {order_clause}", (q.upper(),))
     row = cursor.fetchone()
     if row:
         conn.close()
         return format_row(row)
 
     # 3. Exact full name match (case-insensitive)
-    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) = ? {order_clause}", (q_lower,))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) = ? {where_source} {order_clause}", (q_lower,))
     row = cursor.fetchone()
     if row:
         conn.close()
         return format_row(row)
 
     # 4. Name prefix match (e.g. "Faizan" -> "Faizan Ahmed")
-    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) LIKE ? {order_clause}", (f"{q_lower}%",))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) LIKE ? {where_source} {order_clause}", (f"{q_lower}%",))
     row = cursor.fetchone()
     if row:
         conn.close()
         return format_row(row)
 
     # 5. Name contains query
-    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) LIKE ? {order_clause}", (f"%{q_lower}%",))
+    cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE LOWER(name) LIKE ? {where_source} {order_clause}", (f"%{q_lower}%",))
     row = cursor.fetchone()
     if row:
         conn.close()
@@ -223,7 +224,7 @@ def find_lead_by_query(query: str) -> Optional[Dict[str, Any]]:
     # 6. Phone match (normalized digits)
     digits = re.sub(r'\D', '', q)
     if len(digits) >= 7:
-        cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE phone LIKE ? {order_clause}", (f"%{digits}%",))
+        cursor.execute(f"SELECT lead_id, source, evaluated_json FROM leads WHERE phone LIKE ? {where_source} {order_clause}", (f"%{digits}%",))
         row = cursor.fetchone()
         if row:
             conn.close()
@@ -232,7 +233,7 @@ def find_lead_by_query(query: str) -> Optional[Dict[str, Any]]:
     # 7. Partial email or lead_id match as last resort
     cursor.execute(f"""
         SELECT lead_id, source, evaluated_json FROM leads 
-        WHERE email_lower LIKE ? OR lead_id LIKE ?
+        WHERE (email_lower LIKE ? OR lead_id LIKE ?) {where_source}
         {order_clause}
     """, (f"%{q_lower}%", f"%{q.upper()}%"))
     row = cursor.fetchone()

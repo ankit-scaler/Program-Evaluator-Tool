@@ -3973,44 +3973,15 @@
         fetchBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><span class="live-search-spinner"></span> Fetching MIS...</span>';
       }
 
-      // 1. Check local loaded leads first for instant sub-second response
-      const qLower = q.toLowerCase();
-      const localMatches = allLeads.filter(l => {
-        const p = l.person || {};
-        const n = (p.name || '').toLowerCase();
-        const em = (p.email || '').toLowerCase();
-        const id = (l.lead_id || '').toLowerCase();
-        const ph = (p.phone || '');
-        return n.includes(qLower) || em.includes(qLower) || id.includes(qLower) || ph.includes(q);
-      });
-
-      if (localMatches.length > 0) {
-        activeLeadData = localMatches[0];
-        if (msgEl) {
-          const personName = localMatches[0].person ? localMatches[0].person.name : 'Lead';
-          msgEl.style.color = '#059669';
-          msgEl.innerHTML = '✓ Lead ready: <b>' + personName + '</b> — Opening evaluation dossier...';
-          msgEl.style.display = 'block';
-        }
-        setTimeout(() => {
-          openModalWithLead(localMatches[0]);
-          if (fetchBtn) {
-            fetchBtn.disabled = false;
-            fetchBtn.innerHTML = 'Fetch &amp; Evaluate Lead';
-          }
-        }, 250);
-        return;
-      }
-
-      // 2. Not in local memory? Fetch on-the-fly from Server / Marketing MIS / SQLite
+      // Query Marketing MIS directly (strictly isolated from uploaded bulk CSV leads)
       try {
-        const resp = await fetch('/api/lookup?q=' + encodeURIComponent(q));
+        const resp = await fetch('/api/lookup?q=' + encodeURIComponent(q) + '&scope=mis');
         const data = await resp.json();
 
         if (data && data.status === 'success' && data.lead) {
           const lead = data.lead;
           const personName = lead.person ? lead.person.name : 'Candidate';
-          const srcLabel = data.source === 'metabase_live' ? 'Marketing MIS (Live)' : (data.source === 'watched_csv' ? 'Watched MIS CSV' : 'CRM Database');
+          const srcLabel = data.source === 'metabase_live' ? 'Marketing MIS (Live)' : 'Marketing MIS / CRM';
 
           // Prepend to leads list so counselor sees it in table & history
           allLeads.unshift(lead);
@@ -4032,7 +4003,7 @@
 
           if (msgEl) {
             msgEl.style.color = '#059669';
-            msgEl.innerHTML = `✓ Found in <b>${srcLabel}</b>: <b>${personName}</b> — Opening dossier...`;
+            msgEl.innerHTML = `✓ Found in <b>${srcLabel}</b>: <b>${personName}</b> — Opening evaluation dossier...`;
             msgEl.style.display = 'block';
           }
 
@@ -4042,7 +4013,7 @@
         } else {
           if (msgEl) {
             msgEl.style.color = '#dc2626';
-            msgEl.innerHTML = `No record found in Marketing MIS or CRM for "<b>${q}</b>". Please verify the email address or phone number.`;
+            msgEl.innerHTML = `No record found in Marketing MIS for "<b>${q}</b>".<br><span style="font-size:11px; color:#64748b; font-weight:500;">(Note: To search within your uploaded bulk leads CSV, please use the table search filter in the Evaluated Leads view.)</span>`;
             msgEl.style.display = 'block';
           }
         }

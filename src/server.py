@@ -182,8 +182,12 @@ async def upload_csv(file: UploadFile = File(...)):
             df = pd.read_csv(io.BytesIO(contents), encoding='latin-1', sep=None, engine='python')
         
         evaluated_all, CACHED_DF = process_leads_dataframe(df)
+        del contents
+        del df
+        import gc
+        gc.collect()
         
-        # Build high-performance compact records (removes 1.2 GB of duplicated module text from row payloads)
+        # Build high-performance compact records
         compact_records = []
         for r in evaluated_all:
             c = {
@@ -197,7 +201,7 @@ async def upload_csv(file: UploadFile = File(...)):
             }
             compact_records.append(c)
         
-        # Fast bulk save into SQLite database (clearing previous bulk CSV batch so new CSV has only its leads)
+        # Fast bulk save into SQLite database
         try:
             bulk_save_evaluated_leads(compact_records, source=f"CSV: {file.filename}", replace_existing=True)
         except Exception as db_err:
@@ -211,8 +215,10 @@ async def upload_csv(file: UploadFile = File(...)):
         except Exception as csv_err:
             print(f"Warning exporting master CSV: {csv_err}")
         
-        # Return compact leads (support high-volume batches up to 30,000 leads in memory)
-        ui_leads = compact_records[:30000]
+        # Deliver top 5,000 leads for sub-second, crash-free browser rendering on Railway 512MB RAM
+        # All 20,000+ leads remain persisted in SQLite and fully exportable via Export CSV/Excel
+        ui_leads = compact_records[:5000]
+        gc.collect()
         
         return {
             "status": "success",

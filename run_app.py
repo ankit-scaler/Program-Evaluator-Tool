@@ -24,4 +24,4 @@ if __name__ == '__main__':
     print(">> Empirical Funnel Matrix: 13,180 records precomputed")
     print(f">> Server listening on: http://{host}:{port}")
     print("=" * 70)
-    uvicorn.run("src.server:app", host=host, port=port, log_level="info")
+    uvicorn.run("src.server:app", host=host, port=port, log_level="info", timeout_keep_alive=120)

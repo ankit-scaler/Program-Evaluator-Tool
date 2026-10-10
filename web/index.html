@@ -3045,14 +3045,15 @@
           const tblTotalEl = document.getElementById('table-total-count');
           if (tblTotalEl) tblTotalEl.innerText = (data.total || data.leads.length).toLocaleString();
 
-          // Save evaluated data in localStorage
+          // Save evaluated data in localStorage (save first 3,000 to stay safely within browser 5MB quota)
           try {
-            localStorage.setItem('scaler_all_leads', JSON.stringify(data.leads));
+            const cacheSample = (data.leads && data.leads.length > 3000) ? data.leads.slice(0, 3000) : data.leads;
+            localStorage.setItem('scaler_all_leads', JSON.stringify(cacheSample));
             if (data.curriculum_catalog) {
               localStorage.setItem('scaler_curriculum_catalog', JSON.stringify(data.curriculum_catalog));
             }
           } catch (e) {
-            console.warn('Storage save warning:', e);
+            console.warn('Storage save quota reached (skipped offline cache):', e);
           }
           currentPage = 1;
           applyFilters();

@@ -211,8 +211,8 @@ async def upload_csv(file: UploadFile = File(...)):
         except Exception as csv_err:
             print(f"Warning exporting master CSV: {csv_err}")
         
-        # Return compact leads (capped at 10,000 for instant sub-second browser rendering)
-        ui_leads = compact_records[:10000]
+        # Return compact leads (support high-volume batches up to 30,000 leads in memory)
+        ui_leads = compact_records[:30000]
         
         return {
             "status": "success",

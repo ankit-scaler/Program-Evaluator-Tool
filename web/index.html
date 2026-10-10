@@ -2084,11 +2084,16 @@
         <!-- PAGINATION BAR -->
         <div class="pagination-bar" id="pagination-bar">
           <div id="pagination-info">Showing 0 of 0 leads</div>
-          <div class="pagination-controls">
-            <button class="btn-sm" id="btn-prev-page" onclick="changePage(-1)" disabled>Previous</button>
-            <span style="font-weight:600; color:var(--text-heading); font-size:12px;">Page <span
-                id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
-            <button class="btn-sm" id="btn-next-page" onclick="changePage(1)" disabled>Next</button>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="btn-sm" id="btn-load-more" onclick="loadMoreLeadsChunk()" style="display: none; background: #0284c7; color: #fff; font-weight: 700; border-color: #0284c7;">
+              + Load Next 5,000 Leads
+            </button>
+            <div class="pagination-controls">
+              <button class="btn-sm" id="btn-prev-page" onclick="changePage(-1)" disabled>Previous</button>
+              <span style="font-weight:600; color:var(--text-heading); font-size:12px;">Page <span
+                  id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
+              <button class="btn-sm" id="btn-next-page" onclick="changePage(1)" disabled>Next</button>
+            </div>
           </div>
         </div>
       </div>
@@ -3056,7 +3061,9 @@
             console.warn('Storage save quota reached (skipped offline cache):', e);
           }
           currentPage = 1;
+          totalServerLeadsCount = data.total || data.leads.length;
           applyFilters();
+          updateLoadMoreButtonVisibility();
 
           // Automatically open the dashboard directly upon analysis completion!
           setTimeout(() => {
@@ -4179,6 +4186,53 @@
 
     function downloadMasterExcel() {
       exportActiveLeads('xlsx');
+    }
+
+    let totalServerLeadsCount = 0;
+
+    function updateLoadMoreButtonVisibility() {
+      const btn = document.getElementById('btn-load-more');
+      if (!btn) return;
+      if (totalServerLeadsCount > allLeads.length) {
+        btn.style.display = 'inline-block';
+        const remaining = totalServerLeadsCount - allLeads.length;
+        const nextBatch = Math.min(5000, remaining);
+        btn.innerText = `+ Load Next ${nextBatch.toLocaleString()} Leads (${allLeads.length.toLocaleString()} / ${totalServerLeadsCount.toLocaleString()})`;
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
+    async function loadMoreLeadsChunk() {
+      const btn = document.getElementById('btn-load-more');
+      if (!btn) return;
+      const origText = btn.innerText;
+      btn.innerText = 'Loading Next Batch...';
+      btn.disabled = true;
+
+      try {
+        const offset = allLeads.length;
+        const resp = await fetch(`/api/leads/more?offset=${offset}&limit=5000`);
+        if (!resp.ok) throw new Error('Failed to fetch next leads chunk');
+        const data = await resp.json();
+
+        if (data.status === 'success' && data.leads && data.leads.length > 0) {
+          totalServerLeadsCount = data.total || totalServerLeadsCount;
+          // Append new leads avoiding duplicates
+          const existingIds = new Set(allLeads.map(l => l.lead_id));
+          const newUnique = data.leads.filter(l => !existingIds.has(l.lead_id));
+          allLeads = allLeads.concat(newUnique);
+          applyFilters();
+          
+          const tblTotal = document.getElementById('table-total-count');
+          if (tblTotal) tblTotal.innerText = (totalServerLeadsCount || allLeads.length).toLocaleString();
+        }
+      } catch (err) {
+        alert('Could not load next leads batch: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        updateLoadMoreButtonVisibility();
+      }
     }
   </script>
 </body>

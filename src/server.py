@@ -12,7 +12,7 @@ from .evaluator import evaluate_lead_profile
 from .market_intelligence import get_all_curricula_catalog
 from .lead_store import (
     init_db, save_evaluated_lead, bulk_save_evaluated_leads,
-    find_lead_by_query, get_recent_leads, get_connection
+    find_lead_by_query, get_recent_leads, get_total_leads_count, get_connection
 )
 import asyncio
 from .csv_watcher import (
@@ -230,6 +230,25 @@ async def upload_csv(file: UploadFile = File(...)):
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to process CSV: {str(e)}")
+
+
+@app.get("/api/leads/more")
+async def get_more_leads(offset: int = 0, limit: int = 5000):
+    """
+    On-demand chunked loader: Fetches the next batch of evaluated leads from SQLite.
+    Allows browsing 20,000+ leads without memory exhaustion or browser crash.
+    """
+    total = get_total_leads_count()
+    leads = get_recent_leads(limit=limit, offset=offset)
+    return {
+        "status": "success",
+        "offset": offset,
+        "limit": limit,
+        "total": total,
+        "returned": len(leads),
+        "leads": leads
+    }
+
 
 @app.post("/api/crm/webhook")
 async def crm_webhook(lead: CRMWebhookLead):

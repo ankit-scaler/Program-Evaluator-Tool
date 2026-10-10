@@ -248,11 +248,30 @@ def find_lead_by_query(query: str, exclude_bulk_csv: bool = False) -> Optional[D
         
     return None
 
-def get_recent_leads(limit: int = 50) -> List[Dict[str, Any]]:
+def get_recent_leads(limit: int = 5000, offset: int = 0) -> List[Dict[str, Any]]:
     init_db()
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT evaluated_json FROM leads ORDER BY created_at DESC LIMIT ?;", (limit,))
+    cursor.execute("SELECT evaluated_json, source, lead_id FROM leads ORDER BY rowid ASC LIMIT ? OFFSET ?;", (limit, offset))
     rows = cursor.fetchall()
     conn.close()
-    return [json.loads(r['evaluated_json']) for r in rows]
+    results = []
+    for r in rows:
+        try:
+            d = json.loads(r['evaluated_json'])
+            if 'lead_id' not in d or not d['lead_id']:
+                d['lead_id'] = r['lead_id']
+            d['source'] = r['source']
+            results.append(d)
+        except Exception:
+            continue
+    return results
+
+def get_total_leads_count() -> int:
+    init_db()
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) AS cnt FROM leads;")
+    row = cursor.fetchone()
+    conn.close()
+    return row['cnt'] if row else 0

@@ -483,22 +483,39 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
                 "cloud architecture, container clustering, and Linux automation a natural technical pivot."
             )
 
-    # 7. Customer Support / BPO / Helpdesk
-    if any(k in r_lower for k in ['support', 'bpo', 'kpo', 'helpdesk', 'service desk', 'customer care', 'call center']):
-        if 'devops' in p_lower or 'cloud' in p_lower:
+    # 7. Customer Support / Technical Support / BPO / Helpdesk / Operations Support
+    if any(k in r_lower for k in ['support', 'bpo', 'kpo', 'helpdesk', 'service desk', 'customer care', 'call center', 'operations support', 'it support', 'desktop support']):
+        if 'academy' in p_lower or 'software' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), your hands-on experience troubleshooting technical issues and debugging application workflows "
+                "gives you practical domain intuition into software systems. This program equips you with core Data Structures, algorithmic problem-solving, "
+                "and backend engineering from ground up to transition from reactive ticket resolution into proactive software development (SDE)."
+            )
+        elif 'fde' in p_lower or 'forward deployed' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), you already understand real-world customer pain points and system integrations daily. "
+                "The Forward Deployed Engineering track leverages your customer-facing technical support background into deploying production AI systems, "
+                "automating enterprise support workflows with LangGraph and RAG, and integrating custom solutions directly inside client infrastructure."
+            )
+        elif 'devops' in p_lower or 'cloud' in p_lower:
             return (
                 f"As a <b>{raw_role}</b> ({raw_exp}), your technical troubleshooting and ticket triage background translate directly "
-                "into production incident management, SRE monitoring, and CI/CD cloud operations."
+                "into production incident management, SRE monitoring, automated alerting, and CI/CD cloud operations."
             )
         elif 'dsml' in p_lower or 'data' in p_lower:
             return (
-                f"As a <b>{raw_role}</b> ({raw_exp}), this track builds on your customer issue resolution experience by teaching you "
-                "SQL queries, product analytics, and customer churn modeling."
+                f"As a <b>{raw_role}</b> ({raw_exp}), this track builds on your issue resolution and system ticketing experience by equipping you with "
+                "SQL querying, product usage analytics, customer churn modeling, and automated business dashboards."
             )
-        elif 'academy' in p_lower or 'software' in p_lower:
+        elif 'agentic' in p_lower or 'aiml' in p_lower:
             return (
-                f"As a <b>{raw_role}</b> ({raw_exp}), your hands-on experience troubleshooting user issues and understanding application workflows "
-                "gives you practical insight into software development and debugging."
+                f"As a <b>{raw_role}</b> ({raw_exp}), your frontline support domain experience is prime for enterprise LLM automation—building "
+                "autonomous customer resolution agents, multi-turn LangGraph workflows, and retrieval-augmented generation (RAG) pipelines."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this track provides a structured, guided bridge from operational support into "
+                "high-growth software engineering and technology leadership."
             )
 
     # 8. QA / SDET / Testing
@@ -720,24 +737,67 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
                 f"As a <b>{raw_role}</b>, this track provides a structured ramp-up into high-growth technology careers."
             )
 
-    # Generic Fallback
-    return f"As a <b>{raw_role}</b> ({raw_exp}), this program addresses specific skill gaps in your profile and accelerates your career into high-demand tech roles."
+    # Intelligent Career Alignment (Role & Experience Aware)
+    if 'fde' in p_lower or 'forward deployed' in p_lower:
+        return (
+            f"As a <b>{raw_role}</b> ({raw_exp}), combining your practical problem-solving with client-facing enterprise AI integration "
+            "accelerates you into high-compensation Forward Deployed Engineer roles delivering custom LLM systems and production LangGraph pipelines."
+        )
+    elif 'devops' in p_lower or 'cloud' in p_lower:
+        return (
+            f"As a <b>{raw_role}</b> ({raw_exp}), this track equips you with hands-on container orchestration (Kubernetes), "
+            "cloud infrastructure-as-code (Terraform), and automated CI/CD pipelines to step into modern Platform Engineering."
+        )
+    elif 'dsml' in p_lower or 'data' in p_lower:
+        return (
+            f"As a <b>{raw_role}</b> ({raw_exp}), this track translates your operational workflows into data-driven decision making—teaching "
+            "SQL data querying, business metrics dashboards, and applied predictive machine learning."
+        )
+    elif 'agentic' in p_lower or 'aiml' in p_lower:
+        return (
+            f"As a <b>{raw_role}</b> ({raw_exp}), this curriculum fast-tracks your profile into modern Agentic AI, "
+            "retrieval-augmented generation (RAG), and production LLMOps."
+        )
+    else:
+        return (
+            f"As a <b>{raw_role}</b> ({raw_exp}), this program provides a structured curriculum that bridges your current experience "
+            "into core software development, algorithmic problem-solving, and scalable system design."
+        )
 
 
 def generate_curriculum_grounded_why(
     program_name, track_name, raw_role, raw_exp, modules,
     retention_rate, cohort_size, fit_tier, inbound_cat,
-    is_primary=True, base_rationale="", persona=""
+    is_primary=True, base_rationale="", persona="", primary_prog_name=""
 ):
     """
-    Synthesizes a concise, curriculum-grounded explanation for 'Why This Program' / 'Why Fallback'.
-    Grounds the reason directly in the candidate's current role and experience level.
+    Synthesizes a cohesive, curriculum-grounded explanation for 'Why This Program' / 'Why Fallback'.
+    Grounds the reasoning directly in the candidate's current role, experience level, and career trajectory.
     """
     p_lower = str(program_name).lower()
     t_lower = str(track_name).lower()
 
     # 1. Career Pitch grounded in candidate's current role
-    career_desc = generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona)
+    raw_career_desc = generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona)
+
+    if is_primary:
+        career_desc = raw_career_desc
+    else:
+        # For Fallback, craft a smooth transition contrasting with Primary
+        if primary_prog_name and 'academy' in str(primary_prog_name).lower():
+            contrast_prefix = (
+                f"While <b>{primary_prog_name}</b> is your primary route for core software engineering interviews, "
+                f"this alternative path in <b>{program_name}</b> focuses directly on high-demand domain application. "
+            )
+        elif primary_prog_name:
+            contrast_prefix = (
+                f"If you choose not to pursue <b>{primary_prog_name}</b>, "
+                f"this alternative in <b>{program_name}</b> offers an equally high-leverage career accelerator. "
+            )
+        else:
+            contrast_prefix = "As an alternative strategic pathway, "
+        
+        career_desc = f"{contrast_prefix}{raw_career_desc}"
 
     # 2. Extract top module phases for Curricular Milestones
     module_names = []
@@ -820,7 +880,7 @@ def generate_curriculum_grounded_why(
             )
             historical_desc = (
                 f"Candidates without prior coding exposure face a 25.8% drop-off if pushed directly into tensor math; "
-                f"this foundational progression preserves high retention (<b>{retention_rate}% completion rate</b> across {cohort_size}+ learners)."
+                "this foundational progression preserves high retention (<b>{retention_rate}% completion rate</b> across {cohort_size}+ learners)."
             )
         else: # Advanced Track
             content_desc = (
@@ -2020,7 +2080,8 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         fallback.get('program', ''), fallback.get('track', ''), raw_role, raw_exp,
         fallback.get('curriculum_modules', []), fallback.get('retention_rate', 75.0),
         fallback.get('cohort_size', 100), fallback.get('fit_tier', ''), inbound_cat,
-        is_primary=False, base_rationale=fallback.get('why', ''), persona=persona
+        is_primary=False, base_rationale=fallback.get('why', ''), persona=persona,
+        primary_prog_name=primary.get('program', '')
     )
 
     return {

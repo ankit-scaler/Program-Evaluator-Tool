@@ -3205,12 +3205,14 @@
           if (serverLeads && serverLeads.length > 0) {
             allLeads = serverLeads;
             filteredLeads = [...allLeads];
-            const cnt = allLeads.length.toLocaleString();
+            totalServerLeadsCount = data.total || allLeads.length;
+            const cnt = (totalServerLeadsCount || allLeads.length).toLocaleString();
             const statTotal = document.getElementById('stat-total');
             if (statTotal) statTotal.innerText = cnt;
             const tblCount = document.getElementById('table-total-count');
             if (tblCount) tblCount.innerText = cnt;
             renderTable();
+            updateLoadMoreButtonVisibility();
 
             if (urlParams.get('view') !== 'upload' || savedView === 'analysis' || savedActiveLeadJson || savedActiveLeadId) {
               showAnalysisView();

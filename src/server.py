@@ -213,18 +213,16 @@ async def upload_csv(file: UploadFile = File(...)):
         except Exception as db_err:
             print(f"Warning during SQLite persistence: {db_err}")
         
-        # Retain top 5,000 leads in memory cache for sub-second responses and low RAM footprint
-        # All 20,000+ leads remain permanently saved in SQLite and fully exportable via /api/export
-        CACHED_LEADS = evaluated_all[:5000]
-        ui_leads = CACHED_LEADS
+        # Keep all evaluated leads in memory cache for instant UI rendering and search
+        CACHED_LEADS = evaluated_all
         gc.collect()
         
         return {
             "status": "success",
             "filename": file.filename,
             "total": len(evaluated_all),
-            "displayed": len(ui_leads),
-            "leads": ui_leads,
+            "displayed": len(evaluated_all),
+            "leads": evaluated_all,
             "curriculum_catalog": get_all_curricula_catalog()
         }
     except Exception as e:
@@ -474,7 +472,7 @@ async def trigger_csv_stream_sync():
 @app.get("/api/csv-stream/leads")
 async def get_csv_stream_leads():
     """
-    Returns evaluated leads so dashboard retains state across browser refresh.
+    Returns all evaluated leads so dashboard retains complete state across browser refresh.
     Checks memory cache first, then database.
     """
     global CACHED_LEADS
@@ -483,7 +481,7 @@ async def get_csv_stream_leads():
         return {
             "status": "success",
             "total": len(CACHED_LEADS),
-            "leads": CACHED_LEADS[:5000]
+            "leads": CACHED_LEADS
         }
 
     # 2. Query database for all previously evaluated leads
@@ -492,7 +490,7 @@ async def get_csv_stream_leads():
     cursor = conn.cursor()
     cursor.execute("""
         SELECT lead_id, source, evaluated_json FROM leads 
-        ORDER BY created_at DESC LIMIT 5000;
+        ORDER BY created_at DESC;
     """)
     rows = cursor.fetchall()
     conn.close()
@@ -545,7 +543,7 @@ async def sync_metabase():
             
         evaluated_all, _ = process_leads_dataframe(df, include_export_df=False)
         bulk_save_evaluated_leads(evaluated_all, source="METABASE_SYNC")
-        CACHED_LEADS = evaluated_all[:5000]
+        CACHED_LEADS = evaluated_all
         
         return {
             "status": "success",

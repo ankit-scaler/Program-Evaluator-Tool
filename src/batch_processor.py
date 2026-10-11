@@ -19,6 +19,8 @@ def find_col(df, candidates):
                 continue
             if cand == 'role' and any(sub in c_lower for sub in ['owner', 'team']):
                 continue
+            if cand == 'id' and c_lower != 'id':
+                continue
             if cand in c_lower:
                 return orig
     return None
@@ -29,6 +31,7 @@ def process_leads_dataframe(df, include_export_df=False):
     and returns a list of evaluated records plus an enriched exportable dataframe.
     Optimized for high-throughput batch evaluation with low memory footprint.
     """
+    col_lead_id = find_col(df, ['lead_id', 'lead id', 'leadid', 'lsq_id', 'prospect_id', 'candidate_id', 'crm_lead_id', 'id'])
     col_first_name = find_col(df, ['first_name', 'first name', 'firstname', 'fname', 'given_name', 'candidate_first_name', 'lead_first_name', 'contact_first_name'])
     col_last_name = find_col(df, ['last_name', 'last name', 'lastname', 'lname', 'surname', 'family_name', 'candidate_last_name', 'lead_last_name', 'contact_last_name'])
     col_full_name = find_col(df, ['full_name', 'fullname', 'candidate_name', 'lead_name', 'student_name', 'contact_name', 'name'])
@@ -365,8 +368,14 @@ def process_leads_dataframe(df, include_export_df=False):
         }
         
         eval_res = evaluate_lead_profile(lead_dict)
-        lead_id = f"LD-SALES-{idx+1:04d}"
+        raw_lead_id = str(row[col_lead_id]).strip() if col_lead_id and pd.notna(row[col_lead_id]) else ""
+        if raw_lead_id.lower() in ['nan', 'none', 'null', 'n/a', '']:
+            lead_id = ""
+        else:
+            lead_id = raw_lead_id
+
         eval_res['lead_id'] = lead_id
+        eval_res['_uid'] = lead_id if lead_id else f"lead_row_{idx+1}"
         eval_res['touchpoints'] = touchpoint_dict
         eval_res['data_quality_flags'] = data_quality_flags
 

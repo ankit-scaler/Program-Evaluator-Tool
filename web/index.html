@@ -1960,9 +1960,9 @@
             </div>
           </div>
 
-          <!-- MODE 2 (SECONDARY): BULK CSV UPLOAD -->
+          <!-- MODE 2 (SECONDARY): BULK CSV / EXCEL UPLOAD -->
           <div id="mode-content-csv" style="display: none;">
-            <input type="file" id="file-upload-input" accept=".csv" onchange="handleFileChosen(event)">
+            <input type="file" id="file-upload-input" accept=".csv, .xlsx, .xls" onchange="handleFileChosen(event)">
             <div class="dropzone-box" onclick="document.getElementById('file-upload-input').click()">
               <div style="margin-bottom: 14px;">
                 <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8"
@@ -1973,13 +1973,13 @@
                   <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
               </div>
-              <div class="dropzone-title" id="dropzone-status-title">Choose or Drag &amp; Drop Leads CSV File</div>
-              <div class="dropzone-sub" id="dropzone-status-sub">Supports any leads export (Role, Experience,
+              <div class="dropzone-title" id="dropzone-status-title">Choose or Drag &amp; Drop Leads File (.csv, .xlsx)</div>
+              <div class="dropzone-sub" id="dropzone-status-sub">Supports CSV and Excel files (Role, Experience,
                 Organization, Inbound Program). Evaluates automatically upon upload.</div>
               <div style="margin-top: 16px;">
                 <button type="button" class="btn-sm"
                   style="background: var(--scaler-blue); color: #ffffff; border-color: var(--scaler-blue); font-weight: 700; padding: 8px 22px; font-size: 13px; border-radius: 4px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);">
-                  Browse CSV File
+                  Browse Leads File
                 </button>
               </div>
             </div>
@@ -2059,7 +2059,7 @@
           <table id="leads-table">
             <thead>
               <tr>
-                <th style="width: 105px; white-space: nowrap;">Lead ID</th>
+                <th id="th-lead-id" style="width: 105px; white-space: nowrap;">Lead ID</th>
                 <th style="min-width: 160px;">Candidate</th>
                 <th style="min-width: 190px;">Role &amp; Experience</th>
                 <th style="min-width: 220px;">Recommended Program</th>
@@ -3162,7 +3162,8 @@
     function navigateCandidate(delta) {
       if (!allLeads || allLeads.length === 0 || !activeLeadData) return;
       const list = (filteredLeads && filteredLeads.length > 0) ? filteredLeads : allLeads;
-      const curIdx = list.findIndex(l => l.lead_id === activeLeadData.lead_id);
+      const activeKey = activeLeadData._uid || activeLeadData.lead_id || (activeLeadData.person && activeLeadData.person.email);
+      const curIdx = list.findIndex(l => (l._uid || l.lead_id || (l.person && l.person.email)) === activeKey);
       if (curIdx === -1) return;
       const newIdx = curIdx + delta;
       if (newIdx >= 0 && newIdx < list.length) {
@@ -3213,7 +3214,7 @@
 
             // If counselor had an open dossier before refresh, restore it immediately
             if (savedActiveLeadId) {
-              const matched = allLeads.find(l => l.lead_id === savedActiveLeadId);
+              const matched = allLeads.find(l => (l._uid && l._uid === savedActiveLeadId) || (l.lead_id && l.lead_id === savedActiveLeadId) || (l.person && l.person.email === savedActiveLeadId));
               if (matched) {
                 setTimeout(() => {
                   openModalWithLead(matched);
@@ -3390,6 +3391,13 @@
       const displayCountEl = document.getElementById('table-display-count');
       if (displayCountEl) displayCountEl.innerText = filteredLeads.length;
 
+      // Dynamically check whether ANY lead in the current dataset has an actual Lead ID
+      const hasAnyLeadId = allLeads && allLeads.some(l => l.lead_id && String(l.lead_id).trim() !== '');
+      const thLeadId = document.getElementById('th-lead-id');
+      if (thLeadId) {
+        thLeadId.style.display = hasAnyLeadId ? '' : 'none';
+      }
+
       const totalPages = Math.ceil(filteredLeads.length / PAGE_SIZE) || 1;
       if (currentPage > totalPages) currentPage = totalPages;
 
@@ -3403,8 +3411,9 @@
       if (nextBtn) nextBtn.disabled = (currentPage >= totalPages);
 
       const pagInfoEl = document.getElementById('pagination-info');
+      const tableColSpan = hasAnyLeadId ? 7 : 6;
       if (filteredLeads.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">No leads matching active filters.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${tableColSpan}" style="text-align: center; color: var(--text-muted); padding: 30px;">No leads matching active filters.</td></tr>`;
         if (pagInfoEl) pagInfoEl.innerText = 'Showing 0 of 0 leads';
         return;
       }
@@ -3415,23 +3424,28 @@
 
       const pageLeads = filteredLeads.slice(startIdx, endIdx);
 
-      pageLeads.forEach(lead => {
+      pageLeads.forEach((lead, idx) => {
         const p = lead.person;
         const prim = lead.primary;
         const fall = lead.fallback;
         const tp = lead.touchpoints || {};
         const badgeClass = prim.retention_rate >= 80 ? 'tag-green' : (prim.retention_rate >= 75 ? 'tag-amber' : 'tag-red');
 
+        const rowKey = lead._uid || lead.lead_id || (p && p.email) || `row_${idx}`;
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
         tr.title = 'Click to open candidate recommendation card';
-        tr.onclick = () => viewLeadDetails(lead.lead_id);
+        tr.onclick = () => viewLeadDetails(rowKey);
 
-        tr.innerHTML = `
+        const leadIdTd = hasAnyLeadId ? `
           <td style="white-space: nowrap; vertical-align: middle;">
-            <b style="color: var(--scaler-navy); font-size: 12px; font-family: monospace; letter-spacing: 0.3px;">${lead.lead_id}</b>
+            ${lead.lead_id ? `<b style="color: var(--scaler-navy); font-size: 12px; font-family: monospace; letter-spacing: 0.3px;">${lead.lead_id}</b>` : '<span style="color: #94a3b8; font-size: 13px;">—</span>'}
             ${lead._source === 'crm_lookup' ? '<div style="margin-top: 3px;"><span class="crm-source-badge">CRM</span></div>' : ''}
           </td>
+        ` : '';
+
+        tr.innerHTML = `
+          ${leadIdTd}
           <td style="vertical-align: middle;">
             <div style="font-weight: 700; color: #0f172a; font-size: 13px; line-height: 1.3;">${p.name}</div>
             <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${p.email}</div>
@@ -3465,7 +3479,7 @@
             </div>
           </td>
           <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-            <button class="btn-action-view" onclick="event.stopPropagation(); viewLeadDetails('${lead.lead_id}')" title="Open candidate dossier and recommendation breakdown">
+            <button class="btn-action-view" onclick="event.stopPropagation(); viewLeadDetails('${rowKey}')" title="Open candidate dossier and recommendation breakdown">
               View Dossier &rarr;
             </button>
           </td>
@@ -3474,8 +3488,8 @@
       });
     }
 
-    function viewLeadDetails(leadId) {
-      const lead = allLeads.find(l => l.lead_id === leadId);
+    function viewLeadDetails(leadKey) {
+      const lead = allLeads.find(l => (l._uid && l._uid === leadKey) || (l.lead_id && l.lead_id === leadKey) || (l.person && l.person.email === leadKey));
       if (lead) {
         activeLeadData = lead;
         openModalWithLead(lead);
@@ -3755,11 +3769,21 @@
       const s = lead.sales_script || {};
 
       document.getElementById('modal-name').innerText = p.name;
-      document.getElementById('modal-id').innerText = lead.lead_id;
+      const modalIdEl = document.getElementById('modal-id');
+      if (modalIdEl) {
+        if (lead.lead_id) {
+          modalIdEl.innerText = lead.lead_id;
+          modalIdEl.style.display = 'inline-block';
+        } else {
+          modalIdEl.innerText = '';
+          modalIdEl.style.display = 'none';
+        }
+      }
 
       // Update candidate counter and navigation button states
       const list = (filteredLeads && filteredLeads.length > 0) ? filteredLeads : allLeads;
-      const curIdx = list.findIndex(l => l.lead_id === lead.lead_id);
+      const modalKey = lead._uid || lead.lead_id || (p && p.email);
+      const curIdx = list.findIndex(l => (l._uid || l.lead_id || (l.person && l.person.email)) === modalKey);
       const counterEl = document.getElementById('modal-candidate-counter');
       const prevBtn = document.getElementById('modal-btn-prev-candidate');
       const nextBtn = document.getElementById('modal-btn-next-candidate');
@@ -3908,7 +3932,7 @@
       switchCurriculumTab('primary');
 
       try {
-        sessionStorage.setItem('scaler_active_lead_id', lead.lead_id);
+        sessionStorage.setItem('scaler_active_lead_id', lead._uid || lead.lead_id || (p && p.email) || '');
       } catch (e) {}
 
       document.getElementById('lead-modal').classList.add('active');
@@ -4255,8 +4279,8 @@
         if (data.status === 'success' && data.leads && data.leads.length > 0) {
           totalServerLeadsCount = data.total || totalServerLeadsCount;
           // Append new leads avoiding duplicates
-          const existingIds = new Set(allLeads.map(l => l.lead_id));
-          const newUnique = data.leads.filter(l => !existingIds.has(l.lead_id));
+          const existingIds = new Set(allLeads.map(l => l._uid || l.lead_id || (l.person && l.person.email)));
+          const newUnique = data.leads.filter(l => !existingIds.has(l._uid || l.lead_id || (l.person && l.person.email)));
           allLeads = allLeads.concat(newUnique);
           applyFilters();
           

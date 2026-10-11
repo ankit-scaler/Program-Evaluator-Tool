@@ -201,12 +201,12 @@ def sync_single_csv_file(file_path: str, force: bool = False, memory_cache_ref: 
 
         # Preserve lead_id from CSV if present
         csv_lead_id = str(row.get(col_lead_id, '') if col_lead_id else '').strip()
-        if csv_lead_id and csv_lead_id not in ['nan', 'none', 'null', '']:
+        if csv_lead_id and csv_lead_id.lower() not in ['nan', 'none', 'null', 'n/a', '']:
             lead_id = csv_lead_id
         else:
-            lead_id_hash = abs(hash(f"{file_basename}_{email_clean}")) % 100000
-            lead_id = f"LD-CSV-{lead_id_hash:05d}"
+            lead_id = ""
         eval_res['lead_id'] = lead_id
+        eval_res['_uid'] = lead_id or f"LD-CSV-{abs(hash(f'{file_basename}_{email_clean}')) % 100000:05d}"
 
         # Touchpoint metadata
         event_name = str(row.get(col_event, f"CSV: {file_basename}") if col_event else f"CSV: {file_basename}")

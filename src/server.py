@@ -172,14 +172,29 @@ async def upload_csv(file: UploadFile = File(...)):
     try:
         contents = await file.read()
         df = None
-        for enc in ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252']:
+        fname = (file.filename or '').lower()
+        if fname.endswith(('.xlsx', '.xls')):
             try:
-                df = pd.read_csv(io.BytesIO(contents), encoding=enc, low_memory=False)
-                break
-            except (UnicodeDecodeError, Exception):
-                continue
+                df = pd.read_excel(io.BytesIO(contents))
+            except Exception as e_xl:
+                print(f"Excel read error: {e_xl}")
+
         if df is None:
-            df = pd.read_csv(io.BytesIO(contents), encoding='latin-1', sep=None, engine='python')
+            for enc in ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252']:
+                try:
+                    df = pd.read_csv(io.BytesIO(contents), encoding=enc, low_memory=False)
+                    break
+                except (UnicodeDecodeError, Exception):
+                    continue
+
+        if df is None:
+            try:
+                df = pd.read_csv(io.BytesIO(contents), encoding='latin-1', sep=None, engine='python')
+            except Exception:
+                try:
+                    df = pd.read_excel(io.BytesIO(contents))
+                except Exception as final_e:
+                    raise ValueError(f"Could not parse file as CSV or Excel: {final_e}")
         
         evaluated_all, _ = process_leads_dataframe(df, include_export_df=False)
         del contents
@@ -381,9 +396,10 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                     'set_status': 'SET Passed' if str(mb_row.get('test_passed_flag')) == '1' else ('SET Attempted' if str(mb_row.get('test_launched_flag')) == '1' else 'SET Not Attempted'),
                     'set_score': 'Passed (Cleared)' if str(mb_row.get('test_passed_flag')) == '1' else 'Attempted'
                 }
-                eval_res = evaluate_lead_profile(normalized_lead)
-                lead_id = mb_row.get('lead_id') or mb_row.get('Lead ID') or f"LD-MIS-{abs(hash(q_clean)) % 100000:05d}"
+                raw_mb_id = str(mb_row.get('lead_id') or mb_row.get('Lead ID') or '').strip()
+                lead_id = "" if raw_mb_id.lower() in ['nan', 'none', 'null', 'n/a', ''] else raw_mb_id
                 eval_res['lead_id'] = lead_id
+                eval_res['_uid'] = lead_id or f"LD-MIS-{abs(hash(q_clean)) % 100000:05d}"
                 eval_res['touchpoints'] = {
                     'summary': f"Marketing MIS - {mb_row.get('event_name') or mb_row.get('event_type') or mb_row.get('program_type') or 'Live MIS Inquiry'}",
                     'event_name': mb_row.get('event_name') or mb_row.get('event_type') or 'Direct MIS Query',

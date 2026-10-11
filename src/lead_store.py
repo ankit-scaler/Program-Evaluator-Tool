@@ -115,9 +115,10 @@ def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_
         conn.commit()
     
     batch = []
-    for r in records:
+    for idx, r in enumerate(records):
         p = r.get('person', {})
         lead_id = r.get('lead_id', '')
+        db_key = r.get('_uid') or (lead_id if lead_id else f"lead_row_{idx+1}_{p.get('email', '')}")
         email = p.get('email', '')
         email_lower = email.strip().lower()
         phone = re.sub(r'\D', '', str(p.get('phone', '')))
@@ -126,6 +127,7 @@ def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_
         # Compact JSON to prevent massive database bloat
         r_clean = {
             'lead_id': lead_id,
+            '_uid': db_key,
             'person': p,
             'primary': {k: v for k, v in r.get('primary', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
             'fallback': {k: v for k, v in r.get('fallback', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
@@ -133,7 +135,7 @@ def bulk_save_evaluated_leads(records: List[Dict[str, Any]], source: str = "CSV_
             'touchpoints': r.get('touchpoints', {})
         }
         batch.append((
-            lead_id,
+            db_key,
             email,
             email_lower,
             phone,
@@ -186,8 +188,8 @@ def find_lead_by_query(query: str, exclude_bulk_csv: bool = False) -> Optional[D
     # Helper to return formatted lead with lead_id and source
     def format_row(r):
         data = json.loads(r['evaluated_json'])
-        if 'lead_id' not in data or not data['lead_id']:
-            data['lead_id'] = r['lead_id']
+        data['lead_id'] = data.get('lead_id', '')
+        data['_uid'] = data.get('_uid') or r['lead_id']
         data['source'] = r['source']
         return data
 
@@ -259,8 +261,8 @@ def get_recent_leads(limit: int = 5000, offset: int = 0) -> List[Dict[str, Any]]
     for r in rows:
         try:
             d = json.loads(r['evaluated_json'])
-            if 'lead_id' not in d or not d['lead_id']:
-                d['lead_id'] = r['lead_id']
+            d['lead_id'] = d.get('lead_id', '')
+            d['_uid'] = d.get('_uid') or r['lead_id']
             d['source'] = r['source']
             results.append(d)
         except Exception:

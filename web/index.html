@@ -3067,6 +3067,7 @@
           totalServerLeadsCount = data.total || data.leads.length;
           applyFilters();
           updateLoadMoreButtonVisibility();
+          streamRemainingLeadsInBackground();
 
           // Automatically open the dashboard directly upon analysis completion!
           setTimeout(() => {
@@ -3213,6 +3214,7 @@
             if (tblCount) tblCount.innerText = cnt;
             renderTable();
             updateLoadMoreButtonVisibility();
+            streamRemainingLeadsInBackground();
 
             if (urlParams.get('view') !== 'upload' || savedView === 'analysis' || savedActiveLeadJson || savedActiveLeadId) {
               showAnalysisView();
@@ -4306,6 +4308,40 @@
         btn.innerText = `+ Load Next ${nextBatch.toLocaleString()} Leads (${allLeads.length.toLocaleString()} / ${totalServerLeadsCount.toLocaleString()})`;
       } else {
         btn.style.display = 'none';
+      }
+    }
+
+    let isStreamingBackground = false;
+
+    async function streamRemainingLeadsInBackground() {
+      if (isStreamingBackground) return;
+      if (!totalServerLeadsCount || allLeads.length >= totalServerLeadsCount) return;
+      isStreamingBackground = true;
+
+      try {
+        while (allLeads.length < totalServerLeadsCount) {
+          const offset = allLeads.length;
+          const resp = await fetch(`/api/leads/more?offset=${offset}&limit=5000`);
+          if (!resp.ok) break;
+          const data = await resp.json();
+          if (!data || data.status !== 'success' || !data.leads || data.leads.length === 0) break;
+
+          const existingIds = new Set(allLeads.map(l => l._uid || l.lead_id || (l.person && l.person.email)));
+          const newUnique = data.leads.filter(l => !existingIds.has(l._uid || l.lead_id || (l.person && l.person.email)));
+          if (newUnique.length === 0) break;
+
+          allLeads = allLeads.concat(newUnique);
+          applyFilters();
+          updateLoadMoreButtonVisibility();
+
+          // Brief delay to keep browser responsive
+          await new Promise(r => setTimeout(r, 80));
+        }
+      } catch (err) {
+        console.warn('Background stream paused:', err);
+      } finally {
+        isStreamingBackground = false;
+        updateLoadMoreButtonVisibility();
       }
     }
 

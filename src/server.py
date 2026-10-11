@@ -217,12 +217,16 @@ async def upload_csv(file: UploadFile = File(...)):
         CACHED_LEADS = evaluated_all
         gc.collect()
         
+        # Return initial batch (up to 5,000 leads) in response to prevent HTTP 502 payload limit errors
+        # Remaining evaluated leads stream progressively via /api/leads/more
+        initial_leads = evaluated_all[:5000]
+        
         return {
             "status": "success",
             "filename": file.filename,
             "total": len(evaluated_all),
-            "displayed": len(evaluated_all),
-            "leads": evaluated_all,
+            "displayed": len(initial_leads),
+            "leads": initial_leads,
             "curriculum_catalog": get_all_curricula_catalog()
         }
     except Exception as e:
@@ -234,9 +238,21 @@ async def upload_csv(file: UploadFile = File(...)):
 @app.get("/api/leads/more")
 async def get_more_leads(offset: int = 0, limit: int = 5000):
     """
-    On-demand chunked loader: Fetches the next batch of evaluated leads from SQLite.
-    Allows browsing 20,000+ leads without memory exhaustion or browser crash.
+    Progressive chunked loader: Fetches the next batch of evaluated leads.
+    Serves from memory cache if populated, else falls back to SQLite.
     """
+    global CACHED_LEADS
+    if CACHED_LEADS and len(CACHED_LEADS) > offset:
+        leads_slice = CACHED_LEADS[offset:offset + limit]
+        return {
+            "status": "success",
+            "offset": offset,
+            "limit": limit,
+            "total": len(CACHED_LEADS),
+            "returned": len(leads_slice),
+            "leads": leads_slice
+        }
+
     total = get_total_leads_count()
     leads = get_recent_leads(limit=limit, offset=offset)
     return {
@@ -472,46 +488,27 @@ async def trigger_csv_stream_sync():
 @app.get("/api/csv-stream/leads")
 async def get_csv_stream_leads():
     """
-    Returns all evaluated leads so dashboard retains complete state across browser refresh.
-    Checks memory cache first, then database.
+    Returns initial batch of evaluated leads with total count so dashboard retains
+    complete state across browser refresh without proxy timeout / 502 payload size issues.
     """
     global CACHED_LEADS
-    # 1. If memory cache has evaluated leads, return them immediately
+    # 1. If memory cache has evaluated leads, return initial batch with full total
     if CACHED_LEADS and len(CACHED_LEADS) > 0:
         return {
             "status": "success",
             "total": len(CACHED_LEADS),
-            "leads": CACHED_LEADS
+            "leads": CACHED_LEADS[:5000]
         }
 
-    # 2. Query database for all previously evaluated leads
-    import json
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT lead_id, source, evaluated_json FROM leads 
-        ORDER BY created_at DESC;
-    """)
-    rows = cursor.fetchall()
-    conn.close()
-    
-    leads = []
-    for r in rows:
-        try:
-            data = json.loads(r['evaluated_json'])
-            data['lead_id'] = data.get('lead_id', '')
-            data['_uid'] = data.get('_uid') or r['lead_id']
-            data['source'] = r['source']
-            leads.append(data)
-        except Exception:
-            continue
-            
+    # 2. Query database for initial batch and true total
+    total = get_total_leads_count()
+    leads = get_recent_leads(limit=5000, offset=0)
     if leads:
         CACHED_LEADS = leads
         
     return {
         "status": "success",
-        "total": len(leads),
+        "total": total,
         "leads": leads
     }
 

@@ -2014,23 +2014,23 @@
 
             <div class="eval-stages-stepper">
               <div class="eval-stage-item" id="stage-1">
-                <div class="eval-stage-badge"><span id="stage-icon-1">⏳</span> Stage 1</div>
+                <div class="eval-stage-badge"><span id="stage-icon-1">&#9675;</span> Stage 1</div>
                 <div class="eval-stage-title">Ingest Schema</div>
               </div>
               <div class="eval-stage-item" id="stage-2">
-                <div class="eval-stage-badge"><span id="stage-icon-2">⏳</span> Stage 2</div>
+                <div class="eval-stage-badge"><span id="stage-icon-2">&#9675;</span> Stage 2</div>
                 <div class="eval-stage-title">Prerequisite Gates</div>
               </div>
               <div class="eval-stage-item" id="stage-3">
-                <div class="eval-stage-badge"><span id="stage-icon-3">⏳</span> Stage 3</div>
+                <div class="eval-stage-badge"><span id="stage-icon-3">&#9675;</span> Stage 3</div>
                 <div class="eval-stage-title">Funnel Matrix</div>
               </div>
               <div class="eval-stage-item" id="stage-4">
-                <div class="eval-stage-badge"><span id="stage-icon-4">⏳</span> Stage 4</div>
+                <div class="eval-stage-badge"><span id="stage-icon-4">&#9675;</span> Stage 4</div>
                 <div class="eval-stage-title">Curriculum Match</div>
               </div>
               <div class="eval-stage-item" id="stage-5">
-                <div class="eval-stage-badge"><span id="stage-icon-5">⏳</span> Stage 5</div>
+                <div class="eval-stage-badge"><span id="stage-icon-5">&#9675;</span> Stage 5</div>
                 <div class="eval-stage-title">Live Recommend</div>
               </div>
             </div>
@@ -2922,11 +2922,11 @@
       el.classList.add(state);
       if (icon) {
         if (state === 'completed') {
-          icon.innerText = '✅';
+          icon.innerText = '✓';
         } else if (state === 'active') {
-          icon.innerText = '⚡';
+          icon.innerText = '●';
         } else {
-          icon.innerText = '⏳';
+          icon.innerText = '○';
         }
       }
     }
@@ -3008,6 +3008,7 @@
 
       try {
         const res = await fetch('/api/upload-csv', { method: 'POST', body: formData });
+        clearInterval(progressTimer);
         let data = {};
         try {
           data = await res.json();
@@ -3017,7 +3018,6 @@
 
         if (!res.ok) {
           const errDetail = data?.detail || `HTTP ${res.status}: ${res.statusText}`;
-          clearInterval(progressTimer);
           setEvalProgress(0, `Upload error: ${errDetail}`);
           alert('Upload failed: ' + errDetail);
           return;
@@ -3128,7 +3128,17 @@
       if (resumeBanner) {
         if (allLeads && allLeads.length > 0) {
           resumeBanner.style.display = 'flex';
-          if (resumeCount) resumeCount.innerText = allLeads.length.toLocaleString();
+          const totalCount = totalServerLeadsCount || allLeads.length;
+          if (resumeCount) resumeCount.innerText = totalCount.toLocaleString();
+
+          for (let i = 1; i <= 5; i++) {
+            setEvalStage(i, 'completed');
+          }
+          setEvalProgress(100, `Evaluation Complete: ${totalCount.toLocaleString()} Leads Successfully Loaded & Ready for Live Recommendation!`);
+          const pulse = document.getElementById('eval-pulse');
+          const pctEl = document.getElementById('eval-progress-pct');
+          if (pulse) pulse.classList.add('success');
+          if (pctEl) pctEl.classList.add('success');
         } else {
           resumeBanner.style.display = 'none';
         }

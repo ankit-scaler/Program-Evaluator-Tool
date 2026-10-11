@@ -580,8 +580,13 @@ async def export_crm_data(format: str = "csv"):
                 'Primary Duration': prim.get('duration', ''),
                 'Retention Rate (%)': prim.get('retention_rate', ''),
                 'Refund Risk (%)': prim.get('refund_rate', ''),
+                'Primary Rationale': prim.get('why', ''),
                 'Fallback Program': fall.get('program', ''),
                 'Fallback Track': fall.get('track', ''),
+                'Fallback Rationale': fall.get('why', ''),
+                'Call Opening Pitch': data.get('sales_script', {}).get('call_opening', ''),
+                'Program Pitch': data.get('sales_script', {}).get('program_pitch', ''),
+                'Inbound Handling': data.get('sales_script', {}).get('inbound_handling', ''),
                 'Diagnostic SET Status': tp.get('set_status', tp.get('sat_status', 'SET Not Attempted')),
                 'Diagnostic SET Score': tp.get('set_score', tp.get('sat_score', 'N/A')),
                 'Ingestion Source': src,
@@ -603,7 +608,10 @@ def create_export_response(df_export: pd.DataFrame, format_clean: str):
         return Response(
             content=output.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads.xlsx"}
+            headers={
+                "Content-Disposition": "attachment; filename=scaler_evaluated_leads.xlsx",
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
         )
     else:
         csv_buffer = io.StringIO()
@@ -611,7 +619,10 @@ def create_export_response(df_export: pd.DataFrame, format_clean: str):
         return Response(
             content=csv_buffer.getvalue().encode('utf-8-sig'),
             media_type="text/csv",
-            headers={"Content-Disposition": "attachment; filename=scaler_evaluated_leads.csv"}
+            headers={
+                "Content-Disposition": "attachment; filename=scaler_evaluated_leads.csv",
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
         )
 
 

@@ -2052,9 +2052,6 @@
               style="display: inline-flex; align-items: center; gap: 4px;">
               <span>&larr;</span> Upload Another CSV
             </button>
-            <button class="btn-sm" onclick="downloadMasterCsv()">
-              Download Filtered CSV
-            </button>
           </div>
         </div>
 
@@ -4148,40 +4145,64 @@
     }
 
     async function exportActiveLeads(format) {
-      const leadsToExport = (filteredLeads && filteredLeads.length > 0) ? filteredLeads : (allLeads && allLeads.length > 0 ? allLeads : (activeLeadData ? [activeLeadData] : []));
-      
-      if (!leadsToExport || leadsToExport.length === 0) {
-        alert('No leads currently loaded to export. Please search or upload leads first.');
-        return;
-      }
+      const ext = (format === 'xlsx' || format === 'excel') ? 'xlsx' : 'csv';
+      const timestamp = new Date().toISOString().slice(0, 10);
+      const filename = `scaler_evaluated_leads_${timestamp}.${ext}`;
+
+      // Check if specific filter search is currently applied on the table
+      const searchVal = document.getElementById('filter-search')?.value?.trim();
+      const progFilter = document.getElementById('filter-program')?.value;
+      const fitFilter = document.getElementById('filter-fit')?.value;
+      const hasActiveFilters = Boolean(searchVal || (progFilter && progFilter !== 'all') || (fitFilter && fitFilter !== 'all'));
 
       try {
-        const resp = await fetch(`/api/export/active?format=${format}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ leads: leadsToExport })
-        });
+        let resp;
+        // If user actively filtered down to a subset, post the filtered subset
+        if (hasActiveFilters && filteredLeads && filteredLeads.length > 0 && filteredLeads.length < (totalServerLeadsCount || allLeads.length)) {
+          const compactPayload = filteredLeads.map(l => ({
+            lead_id: l.lead_id,
+            person: l.person,
+            primary: l.primary,
+            fallback: l.fallback,
+            touchpoints: l.touchpoints,
+            sales_script: l.sales_script,
+            source: l.source,
+            evaluated_at: l.evaluated_at
+          }));
+          resp = await fetch(`/api/export/active?format=${format}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ leads: compactPayload })
+          });
+        } else {
+          // Direct fast stream from database containing all 20,000+ evaluated leads
+          resp = await fetch(`/api/export?format=${format}`);
+        }
 
         if (!resp.ok) {
-          // If server returns error, fallback to legacy database export
-          window.location.href = `/api/export?format=${format}`;
-          return;
+          const errData = await resp.json().catch(() => ({}));
+          throw new Error(errData.detail || `Server returned HTTP ${resp.status}`);
         }
 
         const blob = await resp.blob();
+        if (blob.size === 0) {
+          throw new Error('Exported file is empty.');
+        }
+
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
+        a.style.display = 'none';
         a.href = url;
-        const ext = (format === 'xlsx' || format === 'excel') ? 'xlsx' : 'csv';
-        const timestamp = new Date().toISOString().slice(0, 10);
-        a.download = `scaler_evaluated_recommendations_${timestamp}.${ext}`;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+          a.remove();
+        }, 1500);
       } catch (err) {
-        // Fallback to direct GET link if post fails
-        window.location.href = `/api/export?format=${format}`;
+        console.error('Export download failed:', err);
+        alert('Could not download evaluated export: ' + (err.message || String(err)));
       }
     }
 

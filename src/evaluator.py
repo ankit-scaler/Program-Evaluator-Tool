@@ -880,7 +880,7 @@ def generate_curriculum_grounded_why(
             )
             historical_desc = (
                 f"Candidates without prior coding exposure face a 25.8% drop-off if pushed directly into tensor math; "
-                "this foundational progression preserves high retention (<b>{retention_rate}% completion rate</b> across {cohort_size}+ learners)."
+                f"this foundational progression preserves high retention (<b>{retention_rate}% completion rate</b> across {cohort_size}+ learners)."
             )
         else: # Advanced Track
             content_desc = (
@@ -1233,21 +1233,38 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     # =========================================================================
     elif is_data:
         if inbound_cat == 'P4_AIML_AGENTIC':
-            primary['program'] = 'AI & Machine Learning with Agentic AI'
-            primary['catalog_code'] = 'Program 4'
-            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
-            primary['fit_tier'] = 'Best Fit (Advanced AI Modeling)'
-            primary['why'] = (
-                f"Your background as a {raw_role} gives you data intuition. Program 4 elevates you into "
-                "deep learning, neural networks, PyTorch, and building multi-agent autonomous AI systems."
-            )
-            primary['guardrail'] = "Catalog Tie-Breaker: Routed to Program 4 due to explicit intent to build/deploy AI models."
-            
-            fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
-            fallback['catalog_code'] = 'Program 2'
-            fallback['track'] = 'Core Analytics & Predictive Modeling Track'
-            fallback['fit_tier'] = 'Alternative Analytics Specialization'
-            fallback['why'] = "A safer, high-retention path focusing on predictive analytics, statistical hypothesis testing, and business ML."
+            if is_student:
+                primary['program'] = 'AI & Machine Learning with Agentic AI'
+                primary['catalog_code'] = 'Program 4'
+                primary['track'] = 'Beginner Track (AI & Machine Learning Foundations)'
+                primary['fit_tier'] = 'Best Fit (Foundational AI & Agentic Systems)'
+                primary['why'] = (
+                    f"As an early-career learner aiming for AI & ML, Program 4's Beginner Track builds your foundation "
+                    "with Python programming and applied math, before advancing into neural networks and autonomous agent systems."
+                )
+                primary['guardrail'] = "Early Career / Fresher: Routed to Beginner Track (AI & ML Foundations) with structured Python onramp."
+
+                fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                fallback['catalog_code'] = 'Program 2'
+                fallback['track'] = 'Beginner Track (Data Analytics, Python & Business ML)'
+                fallback['fit_tier'] = 'Alternative Foundation Analytics Track'
+                fallback['why'] = "A safer, high-retention foundational path focusing on Python data analytics, statistical modeling, and business ML."
+            else:
+                primary['program'] = 'AI & Machine Learning with Agentic AI'
+                primary['catalog_code'] = 'Program 4'
+                primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
+                primary['fit_tier'] = 'Best Fit (Advanced AI Modeling)'
+                primary['why'] = (
+                    f"Your background as a {raw_role} gives you data intuition. Program 4 elevates you into "
+                    "deep learning, neural networks, PyTorch, and building multi-agent autonomous AI systems."
+                )
+                primary['guardrail'] = "Catalog Tie-Breaker: Routed to Program 4 due to explicit intent to build/deploy AI models."
+                
+                fallback['program'] = 'Modern Data Science & Machine Learning (DSML)'
+                fallback['catalog_code'] = 'Program 2'
+                fallback['track'] = 'Core Analytics & Predictive Modeling Track'
+                fallback['fit_tier'] = 'Alternative Analytics Specialization'
+                fallback['why'] = "A safer, high-retention path focusing on predictive analytics, statistical hypothesis testing, and business ML."
         elif inbound_cat == 'P1_ACADEMY':
             primary['program'] = 'Modern Data Science & Machine Learning (DSML)'
             primary['catalog_code'] = 'Program 2'
@@ -1581,7 +1598,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         elif inbound_cat == 'P4_AIML_AGENTIC':
             primary['program'] = 'AI & Machine Learning with Agentic AI'
             primary['catalog_code'] = 'Program 4'
-            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
+            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)' if not is_student else 'Beginner Track (AI & Machine Learning Foundations)'
             primary['fit_tier'] = 'Best Fit (Hardware-Accelerated AI & Agents)'
             primary['why'] = (
                 f"Your systems foundation as a {raw_role} is ideal for GPU-accelerated computing, "
@@ -1697,7 +1714,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         elif inbound_cat == 'P4_AIML_AGENTIC':
             primary['program'] = 'AI & Machine Learning with Agentic AI'
             primary['catalog_code'] = 'Program 4'
-            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)'
+            primary['track'] = 'Advanced Track (Agentic AI & LLMOps)' if not is_student else 'Beginner Track (AI & Machine Learning Foundations)'
             primary['fit_tier'] = 'Best Fit (LLMOps & AI Infrastructure)'
             primary['why'] = (
                 f"As a {raw_role}, your cloud background is ideal for LLMOps, model serving (vLLM), "

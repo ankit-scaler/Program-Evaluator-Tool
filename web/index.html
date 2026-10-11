@@ -3115,6 +3115,7 @@
 
     function showUploadView() {
       currentView = 'upload';
+      try { sessionStorage.setItem('scaler_current_view', 'upload'); } catch (e) {}
       const uploadView = document.getElementById('view-upload');
       const analysisView = document.getElementById('view-analysis');
       const filterStrip = document.getElementById('nav-filter-strip');
@@ -3149,6 +3150,7 @@
 
     function showAnalysisView() {
       currentView = 'analysis';
+      try { sessionStorage.setItem('scaler_current_view', 'analysis'); } catch (e) {}
       const uploadView = document.getElementById('view-upload');
       const analysisView = document.getElementById('view-analysis');
       const filterStrip = document.getElementById('nav-filter-strip');
@@ -3181,6 +3183,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const savedActiveLeadId = sessionStorage.getItem('scaler_active_lead_id');
+      const savedActiveLeadJson = sessionStorage.getItem('scaler_active_lead_json');
+      const savedView = sessionStorage.getItem('scaler_current_view');
 
       // Fetch all evaluated leads from server session
       fetch('/api/csv-stream/leads')
@@ -3208,20 +3212,42 @@
             if (tblCount) tblCount.innerText = cnt;
             renderTable();
 
-            if (urlParams.get('view') !== 'upload') {
+            if (urlParams.get('view') !== 'upload' || savedView === 'analysis' || savedActiveLeadJson || savedActiveLeadId) {
               showAnalysisView();
             }
 
-            // If counselor had an open dossier before refresh, restore it immediately
+            // Restore active lead modal if counselor had an open dossier before refresh
+            let restored = false;
             if (savedActiveLeadId) {
               const matched = allLeads.find(l => (l._uid && l._uid === savedActiveLeadId) || (l.lead_id && l.lead_id === savedActiveLeadId) || (l.person && l.person.email === savedActiveLeadId));
               if (matched) {
-                setTimeout(() => {
-                  openModalWithLead(matched);
-                }, 200);
+                restored = true;
+                setTimeout(() => { openModalWithLead(matched); }, 200);
               }
             }
+            if (!restored && savedActiveLeadJson) {
+              try {
+                const parsed = JSON.parse(savedActiveLeadJson);
+                if (parsed && parsed.primary) {
+                  setTimeout(() => { openModalWithLead(parsed); }, 200);
+                }
+              } catch (e) {}
+            }
           } else {
+            // If server list has 0 items, but counselor had a single dossier open, restore it
+            if (savedActiveLeadJson) {
+              try {
+                const parsed = JSON.parse(savedActiveLeadJson);
+                if (parsed && parsed.primary) {
+                  allLeads = [parsed];
+                  filteredLeads = [parsed];
+                  renderTable();
+                  showAnalysisView();
+                  setTimeout(() => { openModalWithLead(parsed); }, 200);
+                  return;
+                }
+              } catch (e) {}
+            }
             showUploadView();
           }
         })
@@ -3235,12 +3261,25 @@
               renderTable();
               showAnalysisView();
               if (savedActiveLeadId) {
-                const matched = allLeads.find(l => l.lead_id === savedActiveLeadId);
+                const matched = allLeads.find(l => (l._uid && l._uid === savedActiveLeadId) || (l.lead_id && l.lead_id === savedActiveLeadId) || (l.person && l.person.email === savedActiveLeadId));
                 if (matched) openModalWithLead(matched);
               }
               return;
             }
           } catch (e) {}
+          if (savedActiveLeadJson) {
+            try {
+              const parsed = JSON.parse(savedActiveLeadJson);
+              if (parsed && parsed.primary) {
+                allLeads = [parsed];
+                filteredLeads = [parsed];
+                renderTable();
+                showAnalysisView();
+                openModalWithLead(parsed);
+                return;
+              }
+            } catch (e) {}
+          }
           showUploadView();
         });
 
@@ -3933,6 +3972,7 @@
 
       try {
         sessionStorage.setItem('scaler_active_lead_id', lead._uid || lead.lead_id || (p && p.email) || '');
+        sessionStorage.setItem('scaler_active_lead_json', JSON.stringify(lead));
       } catch (e) {}
 
       document.getElementById('lead-modal').classList.add('active');
@@ -3968,6 +4008,7 @@
     function closeModal() {
       try {
         sessionStorage.removeItem('scaler_active_lead_id');
+        sessionStorage.removeItem('scaler_active_lead_json');
       } catch (e) {}
       document.getElementById('lead-modal').classList.remove('active');
     }
@@ -4066,6 +4107,7 @@
           }
 
           setTimeout(() => {
+            showAnalysisView();
             openModalWithLead(lead);
           }, 350);
         } else {
@@ -4109,6 +4151,7 @@
 
       if (localMatches.length > 0) {
         activeLeadData = localMatches[0];
+        showAnalysisView();
         openModalWithLead(localMatches[0]);
         return;
       }
@@ -4136,6 +4179,7 @@
 
           renderTable();
           activeLeadData = lead;
+          showAnalysisView();
           openModalWithLead(lead);
         } else {
           alert(`No lead found in Marketing MIS or CRM matching "${q}".`);

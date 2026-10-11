@@ -396,10 +396,12 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                     'set_status': 'SET Passed' if str(mb_row.get('test_passed_flag')) == '1' else ('SET Attempted' if str(mb_row.get('test_launched_flag')) == '1' else 'SET Not Attempted'),
                     'set_score': 'Passed (Cleared)' if str(mb_row.get('test_passed_flag')) == '1' else 'Attempted'
                 }
+                eval_res = evaluate_lead_profile(normalized_lead)
                 raw_mb_id = str(mb_row.get('lead_id') or mb_row.get('Lead ID') or '').strip()
                 lead_id = "" if raw_mb_id.lower() in ['nan', 'none', 'null', 'n/a', ''] else raw_mb_id
                 eval_res['lead_id'] = lead_id
                 eval_res['_uid'] = lead_id or f"LD-MIS-{abs(hash(q_clean)) % 100000:05d}"
+                eval_res['source'] = "METABASE_LIVE"
                 eval_res['touchpoints'] = {
                     'summary': f"Marketing MIS - {mb_row.get('event_name') or mb_row.get('event_type') or mb_row.get('program_type') or 'Live MIS Inquiry'}",
                     'event_name': mb_row.get('event_name') or mb_row.get('event_type') or 'Direct MIS Query',
@@ -417,7 +419,9 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                     'lead_score': str(mb_row.get('lead_score') or 'Active'),
                     'landing_page': 'https://www.scaler.com'
                 }
-                # Pure On-Demand: Do NOT persist to SQLite disk. Handled purely in-flight.
+                # Keep in memory cache and SQLite so browser refresh retains evaluated recommendation
+                CACHED_LEADS.insert(0, eval_res)
+                save_evaluated_lead(eval_res, source="METABASE_LIVE")
                 return {"status": "success", "source": "metabase_live", "lead": eval_res}
         except Exception as e:
             pass
@@ -470,27 +474,42 @@ async def trigger_csv_stream_sync():
 @app.get("/api/csv-stream/leads")
 async def get_csv_stream_leads():
     """
-    Returns bulk uploaded CSV leads so dashboard table retains uploaded files across refresh.
-    Individual Marketing MIS lookups remain on-demand per salesperson search, fetched from DB or MIS.
+    Returns evaluated leads so dashboard retains state across browser refresh.
+    Checks memory cache first, then database.
     """
+    global CACHED_LEADS
+    # 1. If memory cache has evaluated leads, return them immediately
+    if CACHED_LEADS and len(CACHED_LEADS) > 0:
+        return {
+            "status": "success",
+            "total": len(CACHED_LEADS),
+            "leads": CACHED_LEADS[:5000]
+        }
+
+    # 2. Query database for all previously evaluated leads
     import json
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
         SELECT lead_id, source, evaluated_json FROM leads 
-        WHERE source LIKE 'CSV:%' OR source = 'CSV_UPLOAD'
-        ORDER BY created_at DESC;
+        ORDER BY created_at DESC LIMIT 5000;
     """)
     rows = cursor.fetchall()
     conn.close()
     
     leads = []
     for r in rows:
-        data = json.loads(r['evaluated_json'])
-        if 'lead_id' not in data or not data['lead_id']:
-            data['lead_id'] = r['lead_id']
-        data['source'] = r['source']
-        leads.append(data)
+        try:
+            data = json.loads(r['evaluated_json'])
+            data['lead_id'] = data.get('lead_id', '')
+            data['_uid'] = data.get('_uid') or r['lead_id']
+            data['source'] = r['source']
+            leads.append(data)
+        except Exception:
+            continue
+            
+    if leads:
+        CACHED_LEADS = leads
         
     return {
         "status": "success",

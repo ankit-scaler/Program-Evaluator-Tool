@@ -68,6 +68,7 @@ def fetch_leads_from_metabase() -> pd.DataFrame:
     cfg = load_metabase_config()
     base_url = cfg.get("metabase_url", "").rstrip("/")
     api_key = cfg.get("api_key", "").strip()
+    session_token = cfg.get("session_token", "").strip()
     card_id = cfg.get("card_id")
     public_uuid = cfg.get("public_uuid", "").strip()
     username = cfg.get("username", "").strip()
@@ -85,7 +86,18 @@ def fetch_leads_from_metabase() -> pd.DataFrame:
         data = res.json()
         return pd.DataFrame(data)
 
-    # 2. Authenticated API Key Endpoint (Metabase v0.46+)
+    # 2. Authenticated Session Token or API Key Endpoint
+    if session_token and card_id:
+        url = f"{base_url}/api/card/{card_id}/query/json"
+        headers = {
+            "X-Metabase-Session": session_token,
+            "Content-Type": "application/json"
+        }
+        res = requests.post(url, headers=headers, json={}, timeout=timeout)
+        res.raise_for_status()
+        data = res.json()
+        return pd.DataFrame(data)
+
     if api_key and card_id:
         url = f"{base_url}/api/card/{card_id}/query/json"
         headers = {

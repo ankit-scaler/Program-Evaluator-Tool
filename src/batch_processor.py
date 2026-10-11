@@ -23,10 +23,11 @@ def find_col(df, candidates):
                 return orig
     return None
 
-def process_leads_dataframe(df):
+def process_leads_dataframe(df, include_export_df=False):
     """
     Defensively processes an arbitrary leads dataframe, evaluates each lead,
     and returns a list of evaluated records plus an enriched exportable dataframe.
+    Optimized for high-throughput batch evaluation with low memory footprint.
     """
     col_first_name = find_col(df, ['first_name', 'first name', 'firstname', 'fname', 'given_name', 'candidate_first_name', 'lead_first_name', 'contact_first_name'])
     col_last_name = find_col(df, ['last_name', 'last name', 'lastname', 'lname', 'surname', 'family_name', 'candidate_last_name', 'lead_last_name', 'contact_last_name'])
@@ -368,62 +369,75 @@ def process_leads_dataframe(df):
         eval_res['lead_id'] = lead_id
         eval_res['touchpoints'] = touchpoint_dict
         eval_res['data_quality_flags'] = data_quality_flags
+
+        # Strip heavyweight duplicate curriculum modules and market intelligence in-flight
+        # to prevent memory bloat (curricula catalog is delivered globally once to the UI)
+        if 'curriculum_modules' in eval_res.get('primary', {}):
+            del eval_res['primary']['curriculum_modules']
+        if 'market_intelligence' in eval_res.get('primary', {}):
+            del eval_res['primary']['market_intelligence']
+        if 'curriculum_modules' in eval_res.get('fallback', {}):
+            del eval_res['fallback']['curriculum_modules']
+        if 'market_intelligence' in eval_res.get('fallback', {}):
+            del eval_res['fallback']['market_intelligence']
+        if 'market_intelligence' in eval_res:
+            del eval_res['market_intelligence']
+
         evaluated_records.append(eval_res)
 
-        s = eval_res.get('sales_script', {})
+        if include_export_df:
+            s = eval_res.get('sales_script', {})
+            flat_row = {
+                'Lead ID': lead_id,
+                'Data Quality Flags': ", ".join(data_quality_flags) if data_quality_flags else "Complete Data",
+                'Name': eval_res['person']['name'],
+                'Email': eval_res['person']['email'],
+                'Phone': eval_res['person']['phone'],
+                'Current Role': eval_res['person']['role'],
+                'Company Type': eval_res['person']['company_type'],
+                'Previous Org': eval_res['person']['previous_org'],
+                'Total Experience': eval_res['person']['experience'],
+                'Education': eval_res['person']['education'],
+                'Academic Eligibility': 'Eligible' if eval_res['person'].get('education_level') != 'BELOW_GRAD' else 'Ineligible (Degree Prerequisite)',
+                'Enquired Program': eval_res['person']['enquired_program'],
+                'Key Touchpoint': touchpoint_dict['summary'],
+                'Event Name': touchpoint_dict['event_name'],
+                'Attended Status': touchpoint_dict['attended'],
+                'Watch Duration': touchpoint_dict['duration'],
+                'Diagnostic SET Status': touchpoint_dict['sat_status'],
+                'Diagnostic SET Score': touchpoint_dict['sat_score'],
+                'Acquisition Channel': touchpoint_dict['channel'],
+                'Device Platform': touchpoint_dict['platform'],
+                'Signup Date': touchpoint_dict['signup_date'],
+                'Lead Score': touchpoint_dict['lead_score'],
+                'Primary Catalog Code': eval_res['primary'].get('catalog_code', 'Program 1'),
+                'Primary Program': eval_res['primary']['program'],
+                'Primary Track': eval_res['primary']['track'],
+                'Primary Duration': eval_res['primary'].get('duration', '12 Months'),
+                'Primary Fit Tier': eval_res['primary']['fit_tier'],
+                'Primary Retention %': eval_res['primary']['retention_rate'],
+                'Primary Refund %': eval_res['primary']['refund_rate'],
+                'Primary Confidence Tier': eval_res['primary'].get('confidence_tier', 'Mid'),
+                'Primary Confidence Score': eval_res['primary'].get('confidence_score', 70),
+                'Primary Confidence Rationale': eval_res['primary'].get('confidence_rationale', ''),
+                'Primary Career Roles': ", ".join(eval_res['primary'].get('career_options', {}).get('roles', [])),
+                'Primary Career Salary Band': eval_res['primary'].get('career_options', {}).get('salary_range', ''),
+                'Primary Rationale': eval_res['primary']['why'],
+                'Fallback Catalog Code': eval_res['fallback'].get('catalog_code', 'Program 2'),
+                'Fallback Program': eval_res['fallback']['program'],
+                'Fallback Track': eval_res['fallback']['track'],
+                'Fallback Duration': eval_res['fallback'].get('duration', '12 Months'),
+                'Fallback Fit Tier': eval_res['fallback']['fit_tier'],
+                'Fallback Retention %': eval_res['fallback']['retention_rate'],
+                'Fallback Refund %': eval_res['fallback']['refund_rate'],
+                'Fallback Career Roles': ", ".join(eval_res['fallback'].get('career_options', {}).get('roles', [])),
+                'Fallback Career Salary Band': eval_res['fallback'].get('career_options', {}).get('salary_range', ''),
+                'Fallback Rationale': eval_res['fallback']['why'],
+                'Sales Call Opening Script': s.get('call_opening', ''),
+                'Program Value Pitch Script': s.get('program_pitch', ''),
+                'Inbound Handling Script': s.get('inbound_handling', '')
+            }
+            enriched_rows.append(flat_row)
 
-        # Flat row for CRM export
-        flat_row = {
-            'Lead ID': lead_id,
-            'Data Quality Flags': ", ".join(data_quality_flags) if data_quality_flags else "Complete Data",
-            'Name': eval_res['person']['name'],
-            'Email': eval_res['person']['email'],
-            'Phone': eval_res['person']['phone'],
-            'Current Role': eval_res['person']['role'],
-            'Company Type': eval_res['person']['company_type'],
-            'Previous Org': eval_res['person']['previous_org'],
-            'Total Experience': eval_res['person']['experience'],
-            'Education': eval_res['person']['education'],
-            'Academic Eligibility': 'Eligible' if eval_res['person'].get('education_level') != 'BELOW_GRAD' else 'Ineligible (Degree Prerequisite)',
-            'Enquired Program': eval_res['person']['enquired_program'],
-            'Key Touchpoint': touchpoint_dict['summary'],
-            'Event Name': touchpoint_dict['event_name'],
-            'Attended Status': touchpoint_dict['attended'],
-            'Watch Duration': touchpoint_dict['duration'],
-            'Diagnostic SET Status': touchpoint_dict['sat_status'],
-            'Diagnostic SET Score': touchpoint_dict['sat_score'],
-            'Acquisition Channel': touchpoint_dict['channel'],
-            'Device Platform': touchpoint_dict['platform'],
-            'Signup Date': touchpoint_dict['signup_date'],
-            'Lead Score': touchpoint_dict['lead_score'],
-            'Primary Catalog Code': eval_res['primary'].get('catalog_code', 'Program 1'),
-            'Primary Program': eval_res['primary']['program'],
-            'Primary Track': eval_res['primary']['track'],
-            'Primary Duration': eval_res['primary'].get('duration', '12 Months'),
-            'Primary Fit Tier': eval_res['primary']['fit_tier'],
-            'Primary Retention %': eval_res['primary']['retention_rate'],
-            'Primary Refund %': eval_res['primary']['refund_rate'],
-            'Primary Confidence Tier': eval_res['primary'].get('confidence_tier', 'Mid'),
-            'Primary Confidence Score': eval_res['primary'].get('confidence_score', 70),
-            'Primary Confidence Rationale': eval_res['primary'].get('confidence_rationale', ''),
-            'Primary Career Roles': ", ".join(eval_res['primary'].get('career_options', {}).get('roles', [])),
-            'Primary Career Salary Band': eval_res['primary'].get('career_options', {}).get('salary_range', ''),
-            'Primary Rationale': eval_res['primary']['why'],
-            'Fallback Catalog Code': eval_res['fallback'].get('catalog_code', 'Program 2'),
-            'Fallback Program': eval_res['fallback']['program'],
-            'Fallback Track': eval_res['fallback']['track'],
-            'Fallback Duration': eval_res['fallback'].get('duration', '12 Months'),
-            'Fallback Fit Tier': eval_res['fallback']['fit_tier'],
-            'Fallback Retention %': eval_res['fallback']['retention_rate'],
-            'Fallback Refund %': eval_res['fallback']['refund_rate'],
-            'Fallback Career Roles': ", ".join(eval_res['fallback'].get('career_options', {}).get('roles', [])),
-            'Fallback Career Salary Band': eval_res['fallback'].get('career_options', {}).get('salary_range', ''),
-            'Fallback Rationale': eval_res['fallback']['why'],
-            'Sales Call Opening Script': s.get('call_opening', ''),
-            'Program Value Pitch Script': s.get('program_pitch', ''),
-            'Inbound Handling Script': s.get('inbound_handling', '')
-        }
-        enriched_rows.append(flat_row)
-
-    enriched_df = pd.DataFrame(enriched_rows)
+    enriched_df = pd.DataFrame(enriched_rows) if include_export_df else pd.DataFrame()
     return evaluated_records, enriched_df

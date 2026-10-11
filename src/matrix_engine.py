@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import functools
 import pandas as pd
 
 DATA_SOURCE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Data_Source', 'Copy of Refunds Funnel - Raw.csv')
@@ -18,15 +19,21 @@ DEFAULT_FALLBACK = {
     'risk_level': 'High Retention'
 }
 
+_RE_P3 = re.compile(r'\bp3\b')
+_RE_P4 = re.compile(r'\bp4\b')
+_RE_P2 = re.compile(r'\bp2\b')
+_RE_P5 = re.compile(r'\bp5\b')
+
+@functools.lru_cache(maxsize=1024)
 def canonical_prog_key(prog_str):
     s = str(prog_str).lower()
-    if any(k in s for k in ['fde', 'forward', 'program 3']) or re.search(r'\bp3\b', s):
+    if any(k in s for k in ['fde', 'forward', 'program 3']) or _RE_P3.search(s):
         return 'P3_FDE'
-    elif any(k in s for k in ['aiml', 'agentic', 'deep learning', 'program 4']) or re.search(r'\bp4\b', s):
+    elif any(k in s for k in ['aiml', 'agentic', 'deep learning', 'program 4']) or _RE_P4.search(s):
         return 'P4_AIML'
-    elif any(k in s for k in ['dsml', 'data', 'analytics', 'program 2']) or re.search(r'\bp2\b', s):
+    elif any(k in s for k in ['dsml', 'data', 'analytics', 'program 2']) or _RE_P2.search(s):
         return 'P2_DSML'
-    elif any(k in s for k in ['devop', 'cloud', 'program 5']) or re.search(r'\bp5\b', s):
+    elif any(k in s for k in ['devop', 'cloud', 'program 5']) or _RE_P5.search(s):
         return 'P5_DEVOPS'
     return 'P1_ACADEMY'
 
@@ -64,8 +71,8 @@ def match_token(text, token):
     - 'waiter' matching 'ai'
     Uses substring pre-filtering and LRU regex compilation for 16x faster batch evaluation.
     """
-    t = str(token).lower().strip()
-    s = str(text).lower()
+    t = token.lower().strip() if isinstance(token, str) else str(token).lower().strip()
+    s = text if (isinstance(text, str) and text.islower()) else str(text).lower()
     if not t or not s:
         return False
     if t not in s:
@@ -74,8 +81,10 @@ def match_token(text, token):
 
 
 def match_any(text, tokens):
-    return any(match_token(text, t) for t in tokens)
+    s = text if (isinstance(text, str) and text.islower()) else str(text).lower()
+    return any(match_token(s, t) for t in tokens)
 
+@functools.lru_cache(maxsize=8192)
 def classify_world_domain(role_str):
     """
     Identifies the real-world career domain / industry sector for any profession on Earth.
@@ -298,6 +307,7 @@ def classify_world_domain(role_str):
 
     return 'Non-Tech / General Career Background'
 
+@functools.lru_cache(maxsize=8192)
 def canonical_persona_key(persona_str):
     """
     Maps ANY job title or persona string in the world to its canonical Scaler taxonomy key.
@@ -496,6 +506,7 @@ def canonical_persona_key(persona_str):
     return 'NON_TECH'
 
 
+@functools.lru_cache(maxsize=2048)
 def canonical_exp_key(exp_str):
     if exp_str is None:
         return 'EXP_1_3'
@@ -566,6 +577,31 @@ def canonical_exp_key(exp_str):
     return 'EXP_5_PLUS'
 
 _MATRIX_CACHE = None
+_INDEXED_3D = {}
+_INDEXED_2D = {}
+_INDEXED_1D = {}
+
+def _build_matrix_indexes(matrix_data):
+    global _INDEXED_3D, _INDEXED_2D, _INDEXED_1D
+    _INDEXED_3D = {}
+    for k, stat in matrix_data.get('by_program_persona_exp', {}).items():
+        parts = k.split('___')
+        if len(parts) == 3:
+            p = canonical_prog_key(parts[0])
+            pers = canonical_persona_key(parts[1])
+            exp = canonical_exp_key(parts[2])
+            _INDEXED_3D[(p, pers, exp)] = stat
+
+    _INDEXED_2D = {}
+    for k, stat in matrix_data.get('by_program_persona', {}).items():
+        parts = k.split('___')
+        p = canonical_prog_key(parts[0]) if len(parts) >= 2 else canonical_prog_key(k)
+        pers = canonical_persona_key(parts[1]) if len(parts) >= 2 else canonical_persona_key(k)
+        _INDEXED_2D[(p, pers)] = stat
+
+    _INDEXED_1D = {}
+    for k, stat in matrix_data.get('by_program', {}).items():
+        _INDEXED_1D[canonical_prog_key(k)] = stat
 
 def load_matrix():
     global _MATRIX_CACHE
@@ -575,6 +611,7 @@ def load_matrix():
         try:
             with open(MATRIX_JSON_PATH, 'r', encoding='utf-8') as f:
                 _MATRIX_CACHE = json.load(f)
+                _build_matrix_indexes(_MATRIX_CACHE)
                 return _MATRIX_CACHE
         except Exception:
             pass
@@ -584,7 +621,7 @@ def load_matrix():
 def get_cohort_stats(program, persona, experience=None, matrix_data=None):
     """
     Defensively retrieves retention and refund rates with canonical key matching and Bayesian fallback.
-    Guaranteed NEVER to return None.
+    Guaranteed NEVER to return None. Uses precomputed O(1) indexes for lightning-fast batch processing.
     """
     if matrix_data is None:
         matrix_data = load_matrix()
@@ -593,61 +630,50 @@ def get_cohort_stats(program, persona, experience=None, matrix_data=None):
     pers_key = canonical_persona_key(persona)
     exp_key = canonical_exp_key(experience) if experience else 'EXP_1_3'
 
-    # Search in structured JSON
-    # 1. 3D search by exact dimensions in by_program_persona_exp
-    exp_dict = matrix_data.get('by_program_persona_exp', {})
-    for k, stat in exp_dict.items():
-        parts = k.split('___')
-        if len(parts) == 3:
-            k_prog, k_pers, k_exp = parts[0], parts[1], parts[2]
-            if (canonical_prog_key(k_prog) == p_key and 
-                canonical_persona_key(k_pers) == pers_key and 
-                canonical_exp_key(k_exp) == exp_key):
-                ret = stat.get('smoothed_retention_rate', stat.get('raw_retention_rate', stat.get('retention_rate', 78.2)))
-                ref = stat.get('smoothed_refund_rate', stat.get('raw_refund_rate', stat.get('refund_rate', 21.8)))
-                tot = stat.get('cohort_size', stat.get('total', 100))
-                return {
-                    'retention_rate': ret,
-                    'refund_rate': ref,
-                    'total': tot,
-                    'cohort_size': tot,
-                    'risk_level': 'High Retention' if ret >= 80 else ('Moderate' if ret >= 75 else 'High Risk')
-                }
+    if not _INDEXED_3D and matrix_data:
+        _build_matrix_indexes(matrix_data)
+
+    # 1. 3D search by exact dimensions
+    stat = _INDEXED_3D.get((p_key, pers_key, exp_key))
+    if stat:
+        ret = stat.get('smoothed_retention_rate', stat.get('raw_retention_rate', stat.get('retention_rate', 78.2)))
+        ref = stat.get('smoothed_refund_rate', stat.get('raw_refund_rate', stat.get('refund_rate', 21.8)))
+        tot = stat.get('cohort_size', stat.get('total', 100))
+        return {
+            'retention_rate': ret,
+            'refund_rate': ref,
+            'total': tot,
+            'cohort_size': tot,
+            'risk_level': 'High Retention' if ret >= 80 else ('Moderate' if ret >= 75 else 'High Risk')
+        }
 
     # 2. 2D search in by_program_persona
-    pers_dict = matrix_data.get('by_program_persona', {})
-    for k, stat in pers_dict.items():
-        parts = k.split('___')
-        if len(parts) >= 2:
-            k_prog, k_pers = parts[0], parts[1]
-        else:
-            k_prog, k_pers = k, k
-        if canonical_prog_key(k_prog) == p_key and canonical_persona_key(k_pers) == pers_key:
-            ret = stat.get('retention_rate', stat.get('smoothed_retention_rate', 78.2))
-            ref = stat.get('refund_rate', stat.get('smoothed_refund_rate', 21.8))
-            tot = stat.get('cohort_size', stat.get('total', 100))
-            return {
-                'retention_rate': ret,
-                'refund_rate': ref,
-                'total': tot,
-                'cohort_size': tot,
-                'risk_level': 'High Retention' if ret >= 80 else ('Moderate' if ret >= 75 else 'High Risk')
-            }
+    stat = _INDEXED_2D.get((p_key, pers_key))
+    if stat:
+        ret = stat.get('retention_rate', stat.get('smoothed_retention_rate', 78.2))
+        ref = stat.get('refund_rate', stat.get('smoothed_refund_rate', 21.8))
+        tot = stat.get('cohort_size', stat.get('total', 100))
+        return {
+            'retention_rate': ret,
+            'refund_rate': ref,
+            'total': tot,
+            'cohort_size': tot,
+            'risk_level': 'High Retention' if ret >= 80 else ('Moderate' if ret >= 75 else 'High Risk')
+        }
 
     # 3. 1D search in by_program
-    prog_dict = matrix_data.get('by_program', {})
-    for k, stat in prog_dict.items():
-        if canonical_prog_key(k) == p_key:
-            ret = stat.get('retention_rate', 78.2)
-            ref = stat.get('refund_rate', 21.8)
-            tot = stat.get('cohort_size', stat.get('total', 500))
-            return {
-                'retention_rate': ret,
-                'refund_rate': ref,
-                'total': tot,
-                'cohort_size': tot,
-                'risk_level': 'High Retention' if ret >= 80 else ('Moderate' if ret >= 75 else 'High Risk')
-            }
+    stat = _INDEXED_1D.get(p_key)
+    if stat:
+        ret = stat.get('retention_rate', 78.2)
+        ref = stat.get('refund_rate', 21.8)
+        tot = stat.get('cohort_size', stat.get('total', 500))
+        return {
+            'retention_rate': ret,
+            'refund_rate': ref,
+            'total': tot,
+            'cohort_size': tot,
+            'risk_level': 'High Retention' if ret >= 80 else ('Moderate' if ret >= 75 else 'High Risk')
+        }
 
     # Guaranteed Default Fallback
     return dict(DEFAULT_FALLBACK)

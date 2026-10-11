@@ -181,43 +181,27 @@ async def upload_csv(file: UploadFile = File(...)):
         if df is None:
             df = pd.read_csv(io.BytesIO(contents), encoding='latin-1', sep=None, engine='python')
         
-        evaluated_all, CACHED_DF = process_leads_dataframe(df)
+        evaluated_all, _ = process_leads_dataframe(df, include_export_df=False)
         del contents
         del df
         import gc
         gc.collect()
         
-        # Build high-performance compact records
-        compact_records = []
+        # Tag source on records in-place without memory duplication
+        source_label = f"CSV: {file.filename}"
         for r in evaluated_all:
-            c = {
-                'lead_id': r.get('lead_id'),
-                'person': r.get('person'),
-                'primary': {k: v for k, v in r.get('primary', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
-                'fallback': {k: v for k, v in r.get('fallback', {}).items() if k not in ['curriculum_modules', 'market_intelligence']},
-                'sales_script': r.get('sales_script'),
-                'touchpoints': r.get('touchpoints'),
-                'source': f"CSV: {file.filename}"
-            }
-            compact_records.append(c)
+            r['source'] = source_label
         
         # Fast bulk save into SQLite database
         try:
-            bulk_save_evaluated_leads(compact_records, source=f"CSV: {file.filename}", replace_existing=True)
+            bulk_save_evaluated_leads(evaluated_all, source=source_label, replace_existing=True)
         except Exception as db_err:
             print(f"Warning during SQLite persistence: {db_err}")
         
-        CACHED_LEADS = compact_records
-        
-        try:
-            os.makedirs(OUTPUT_DIR, exist_ok=True)
-            CACHED_DF.to_csv(EXPORT_CSV_PATH, index=False)
-        except Exception as csv_err:
-            print(f"Warning exporting master CSV: {csv_err}")
-        
-        # Deliver top 5,000 leads for sub-second, crash-free browser rendering on Railway 512MB RAM
-        # All 20,000+ leads remain persisted in SQLite and fully exportable via Export CSV/Excel
-        ui_leads = compact_records[:5000]
+        # Retain top 5,000 leads in memory cache for sub-second responses and low RAM footprint
+        # All 20,000+ leads remain permanently saved in SQLite and fully exportable via /api/export
+        CACHED_LEADS = evaluated_all[:5000]
+        ui_leads = CACHED_LEADS
         gc.collect()
         
         return {
@@ -229,6 +213,8 @@ async def upload_csv(file: UploadFile = File(...)):
             "curriculum_catalog": get_all_curricula_catalog()
         }
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail=f"Failed to process CSV: {str(e)}")
 
 
@@ -522,12 +508,9 @@ async def sync_metabase():
         if df.empty:
             return {"status": "empty", "message": "Metabase query returned 0 rows."}
             
-        evaluated_all, CACHED_DF = process_leads_dataframe(df)
+        evaluated_all, _ = process_leads_dataframe(df, include_export_df=False)
         bulk_save_evaluated_leads(evaluated_all, source="METABASE_SYNC")
-        CACHED_LEADS = evaluated_all[:25000]
-        
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-        CACHED_DF.to_csv(EXPORT_CSV_PATH, index=False)
+        CACHED_LEADS = evaluated_all[:5000]
         
         return {
             "status": "success",

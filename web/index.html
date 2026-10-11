@@ -3011,11 +3011,17 @@
 
       try {
         const res = await fetch('/api/upload-csv', { method: 'POST', body: formData });
-        const data = await res.json();
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          data = { detail: `HTTP ${res.status}: ${res.statusText || 'Server Error'}` };
+        }
+
         if (!res.ok) {
           const errDetail = data?.detail || `HTTP ${res.status}: ${res.statusText}`;
           clearInterval(progressTimer);
-          setEvalProgress(0, 'Upload error');
+          setEvalProgress(0, `Upload error: ${errDetail}`);
           alert('Upload failed: ' + errDetail);
           return;
         }

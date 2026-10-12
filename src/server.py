@@ -527,7 +527,7 @@ async def append_lead_to_csv_endpoint(lead_input: AppendLeadInput):
     return res
 
 @app.post("/api/metabase/sync")
-async def sync_metabase():
+async def sync_metabase(force: bool = False):
     """
     Dynamically pulls latest query results from Metabase API, evaluates all records,
     persists them in SQLite database, updates memory cache, and updates master CSV.
@@ -540,7 +540,7 @@ async def sync_metabase():
         }
         
     try:
-        df = fetch_leads_from_metabase()
+        df = fetch_leads_from_metabase(force_refresh=force)
         if df.empty:
             return {"status": "empty", "message": "Metabase query returned 0 rows."}
             

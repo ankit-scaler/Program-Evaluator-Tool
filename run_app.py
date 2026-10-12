@@ -23,5 +23,7 @@ if __name__ == '__main__':
     print("=" * 70)
     print(">> Empirical Funnel Matrix: 13,180 records precomputed")
     print(f">> Server listening on: http://{host}:{port}")
+    workers_count = int(os.environ.get("WEB_CONCURRENCY", os.environ.get("WORKERS", 4)))
+    print(f">> Worker Processes: {workers_count}")
     print("=" * 70)
-    uvicorn.run("src.server:app", host=host, port=port, log_level="info", timeout_keep_alive=120)
+    uvicorn.run("src.server:app", host=host, port=port, workers=workers_count, log_level="info", timeout_keep_alive=120)

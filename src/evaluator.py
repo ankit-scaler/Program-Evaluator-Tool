@@ -114,6 +114,107 @@ def classify_education(education_str):
 
     return 'GRAD_GENERAL'
 
+def parse_academic_credentials(email: str, education_str: str, org_str: str, org_year_str: str = ""):
+    """
+    Infers degree level (PG vs UG), entry batch year, and estimated graduation year
+    from candidate email patterns, education string, and organization fields.
+    """
+    em = str(email or '').strip().lower()
+    user_part = em.split('@')[0] if '@' in em else em
+    edu_lower = str(education_str or '').lower()
+    org_lower = str(org_str or '').lower()
+    combined_text = f"{em} {edu_lower} {org_lower} {str(org_year_str or '')}"
+
+    # 1. Detect Postgraduate (PG) status: M.Tech, MCA, MBA, M.Sc, MS, PhD
+    pg_keywords = [
+        'm.tech', 'mtech', 'mca', 'mba', 'm.sc', 'msc', 'master', 'post graduate',
+        'postgraduate', 'phd', 'doctorate', 'm.e.', 'm.e ', 'me cse', 'ms in cs'
+    ]
+    # Email patterns indicating PG: e.g. '24m05', 'cs24m', 'h2024' (BITS higher degree)
+    is_pg_email = bool(re.search(r'\b[a-z]{0,4}\d{2}m\d{2,}', user_part) or re.search(r'^h20\d{2}', user_part) or 'mtech' in user_part or 'mca' in user_part)
+    is_pg = any(k in edu_lower for k in pg_keywords) or is_pg_email or ('pg' in user_part and ('student' in em or 'ac.in' in em))
+
+    # 2. Extract Entry Batch Year or Explicit Graduation Year
+    entry_year = None
+    explicit_grad_year = None
+
+    if org_year_str and re.search(r'\b(201\d|202\d)\b', str(org_year_str)):
+        explicit_grad_year = int(re.search(r'\b(201\d|202\d)\b', str(org_year_str)).group(1))
+
+    # Extract 4-digit year from username (e.g. h2024, f2022, kavya.2023)
+    m4_user = re.search(r'(20[12]\d)', user_part)
+    # Extract 2-digit year prefix from roll number (e.g. 24m05, 22b03, cs23b, ee21b)
+    m2_user = re.search(r'(?:^|[a-z]{1,4})([12]\d)(?:[a-z]{1,2}|\d{3,})', user_part)
+
+    four_digit_match = re.search(r'\b(201\d|202\d)\b', combined_text)
+
+    if m4_user:
+        yr = int(m4_user.group(1))
+        entry_year = yr
+    elif m2_user:
+        yr_short = int(m2_user.group(1))
+        if 15 <= yr_short <= 30:
+            entry_year = 2000 + yr_short
+    elif four_digit_match:
+        yr = int(four_digit_match.group(1))
+        if yr >= 2026:
+            explicit_grad_year = yr
+        else:
+            entry_year = yr
+
+    # 3. Calculate Estimated Graduation Year
+    current_year = 2026
+    expected_grad_year = explicit_grad_year
+
+    if not expected_grad_year and entry_year:
+        if is_pg:
+            # Master's degrees are typically 2 years
+            expected_grad_year = entry_year + 2
+        elif any(k in edu_lower for k in ['bca', 'b.sc', 'bsc', 'b.com', 'bba', 'b.a']):
+            # 3-year bachelor degrees
+            expected_grad_year = entry_year + 3
+        else:
+            # 4-year engineering degrees (B.Tech / B.E default)
+            expected_grad_year = entry_year + 4
+
+    # 4. Eligibility Determination
+    degree_tier = "Postgraduate (Master's / PG)" if is_pg else "Undergraduate (Bachelor's / UG)"
+
+    if is_pg:
+        # Postgraduate students ALREADY hold an undergraduate bachelor degree
+        is_eligible = True
+        status_text = "Eligible (Master's Student - Degree Verified)"
+        batch_label = f"Batch {expected_grad_year} (PG Master's)" if expected_grad_year else "Master's Degree Enrolled"
+    elif expected_grad_year:
+        if expected_grad_year <= current_year:
+            is_eligible = True
+            status_text = f"Eligible (Batch {expected_grad_year} - Graduating / Passed Out)"
+            batch_label = f"Batch {expected_grad_year} (Graduating / Passed Out)"
+        elif expected_grad_year == current_year + 1:
+            # Batch 2027 (Pre-final year entering final year)
+            is_eligible = True
+            status_text = f"Eligible (Batch {expected_grad_year} - Pre-Final Year Placement Prep)"
+            batch_label = f"Batch {expected_grad_year} (Pre-Final Year)"
+        else:
+            # Batch 2028 or later (1st / 2nd year)
+            is_eligible = True
+            status_text = f"Early Career Prep (Batch {expected_grad_year} - Placement Deferred)"
+            batch_label = f"Batch {expected_grad_year} (Early College Prep)"
+    else:
+        is_eligible = True
+        status_text = "Degree Verified"
+        batch_label = "Graduated / Degree Holder"
+
+    return {
+        'is_pg': is_pg,
+        'degree_tier': degree_tier,
+        'entry_year': entry_year,
+        'expected_grad_year': expected_grad_year,
+        'is_eligible': is_eligible,
+        'status_text': status_text,
+        'batch_label': batch_label
+    }
+
 def calculate_confidence(program_name, inbound_cat, cohort_size, retention_rate, sat_status, sat_score, edu_level):
     """
     Computes an empirical 0-100 Confidence Score based on:
@@ -941,23 +1042,76 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     name = clean_str(_field(['name', 'full_name', 'candidate_name', 'student_name']), 'Prospective Learner')
     email = clean_str(_field(['email', 'email_id', 'contact_email', 'lead_email']), 'unspecified@lead.com')
     phone = clean_str(_field(['phone', 'mobile', 'contact', 'phone_number']), 'N/A')
-    raw_role = clean_str(_field(['role', 'current_role', 'designation', 'job_title', 'profile']), 'General Tech Professional')
-    company_type = clean_str(_field(['company type', 'company_type', 'industry', 'sector']), 'IT Services / Technology')
-    prev_org = clean_str(_field(['previous org name', 'company', 'organization', 'employer']), 'Current Company')
+    raw_role_explicit = _field(['role', 'current_role', 'designation', 'job_title', 'profile'], '')
+    raw_exp_explicit = _field(['experience', 'yoe', 'total_experience', 'work_experience', 'exp'], '')
+    raw_org_explicit = _field(['previous org name', 'company', 'organization', 'employer', 'orgname'], '')
+    raw_comp_explicit = _field(['company type', 'company_type', 'industry', 'sector'], '')
     prev_year = clean_str(_field(['previous org year', 'year', 'org_year']), '1-2 years')
-    raw_exp = clean_str(_field(['experience', 'yoe', 'total_experience', 'work_experience', 'exp']), '2 years')
     inbound_prog_raw = clean_str(_field(['program', 'inbound_program', 'enquired_program', 'course']), 'Academy')
     raw_edu = clean_str(_field(['education', 'degree', 'qualification', 'highest_qualification', 'stream']), 'Graduated / Degree')
     raw_sat_status = clean_str(_field(['set_status', 'sat_status', 'diagnostic set status', 'diagnostic sat status', 'test_launched_flag']), 'SET Not Attempted')
     if 'sat' in raw_sat_status.lower():
         raw_sat_status = raw_sat_status.replace('SAT', 'SET').replace('Sat', 'Set').replace('sat', 'set')
     raw_sat_score = clean_str(_field(['set_score', 'sat_score', 'diagnostic set score', 'diagnostic sat score']), 'Not Attempted')
-    
+
+    # Check for College / Academic email domain (.ac.in, .edu.in, .edu, .res.in, campus subdomains)
+    email_lower = str(email).lower()
+    email_domain = email_lower.split('@')[-1] if '@' in email_lower else ''
+    is_academic_email = any(
+        email_domain.endswith(ext) for ext in ['.ac.in', '.edu.in', '.edu', '.res.in']
+    ) or any(
+        k in email_domain for k in ['college', 'univ', 'campus', 'student', 'institute', 'iit', 'nit', 'bits', 'vit', 'srm', 'thapar', 'manipal']
+    )
+
+    # Check if organization is a college / university / institute
+    org_lower = str(raw_org_explicit).lower()
+    is_academic_org = any(k in org_lower for k in [
+        'college', 'university', 'institute', 'campus', 'polytechnic', 'vidyalaya',
+        'iit ', 'iit-', 'nit ', 'nit-', 'bits ', 'iiit', 'vit ', 'srm '
+    ])
+
+    is_detected_student = is_academic_email or is_academic_org or any(k in str(raw_role_explicit).lower() for k in ['student', 'intern', 'fresher', 'learner'])
+
+    if is_detected_student and not raw_role_explicit:
+        raw_role = "College Student / Learner"
+    else:
+        raw_role = clean_str(raw_role_explicit, 'Prospective Learner' if is_detected_student else 'General Tech Professional')
+
+    if is_detected_student and not raw_exp_explicit:
+        raw_exp = "Fresher (College Student)"
+    else:
+        raw_exp = clean_str(raw_exp_explicit, '0 years' if is_detected_student else '2 years')
+
+    if is_detected_student and not raw_comp_explicit:
+        company_type = "College / University Campus"
+    else:
+        company_type = clean_str(raw_comp_explicit, 'College Campus' if is_detected_student else 'IT Services / Technology')
+
+    if is_detected_student and not raw_org_explicit:
+        prev_org = email_domain.split('.')[0].upper() + " Campus" if is_academic_email else "College / University"
+    else:
+        prev_org = clean_str(raw_org_explicit, 'Current Organization')
+
+    # Parse detailed academic credentials (UG vs PG, Entry Year, Expected Graduation Year)
+    acad_info = parse_academic_credentials(email, raw_edu, prev_org, prev_year)
+    is_pg_student = acad_info['is_pg']
+    expected_grad_year = acad_info['expected_grad_year']
+    acad_status_text = acad_info['status_text']
+
+    if is_detected_student:
+        if acad_info['expected_grad_year']:
+            prev_year = str(acad_info['expected_grad_year'])
+        if is_pg_student:
+            raw_role = "Postgraduate (Master's Student)" if not raw_role_explicit else raw_role
+            raw_edu = "Master's Degree (PG Enrolled - Bachelor's Complete)" if not raw_edu or raw_edu in ['Graduated / Degree', 'Degree'] else raw_edu
+        elif acad_info['expected_grad_year']:
+            raw_role = f"College Student (Batch {acad_info['expected_grad_year']})" if not raw_role_explicit else raw_role
+
     # Normalized taxonomy & education
-    persona = normalize_persona('', raw_role)
-    persona_name = get_canonical_persona_name(persona)
-    role_domain = classify_world_domain(raw_role)
-    exp_bracket = normalize_experience(raw_exp)
+    persona = 'NON_TECH' if is_detected_student else normalize_persona('', raw_role)
+    persona_name = ('Postgraduate / Master\'s Student' if is_pg_student else 'Student / College Fresher') if is_detected_student else get_canonical_persona_name(persona)
+    role_domain = 'Early Career & College Transitions' if is_detected_student else classify_world_domain(raw_role)
+    exp_bracket = 'EXP_0_1' if is_detected_student else normalize_experience(raw_exp)
     edu_level = classify_education(raw_edu)
     inbound_str = str(inbound_prog_raw).lower().replace('_', ' ').replace('-', ' ')
 
@@ -1053,7 +1207,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         inbound_cat = 'P1_ACADEMY'
 
     is_career_break = any(k in raw_role.lower() for k in ['career break', 'break', 'sabbatical', 'gap', 'gap year', 'returning', 'homemaker', 'restart'])
-    is_student = (exp_bracket == 'EXP_0_1') or any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
+    is_student = is_detected_student or is_academic_email or is_academic_org or (exp_bracket == 'EXP_0_1') or any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
     
     # 1. Allowlist for Tech Roles
     tech_keywords = [
@@ -2129,8 +2283,12 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         'sales_script': sales_script,
         'market_intelligence': prim_market,
         'academic_eligibility': {
-            'status': 'Degree Verified',
-            'is_eligible': True,
-            'rationale': f"Education background ({raw_edu or 'Degree'}) satisfies Bachelor's degree prerequisite."
+            'status': acad_status_text if is_detected_student else 'Degree Verified',
+            'is_eligible': acad_info['is_eligible'],
+            'degree_tier': acad_info['degree_tier'],
+            'is_pg': is_pg_student,
+            'expected_grad_year': expected_grad_year,
+            'batch_label': acad_info['batch_label'],
+            'rationale': f"Academic Profile: {acad_info['degree_tier']}. Status: {acad_status_text}. Education background satisfies Scaler degree prerequisites."
         }
     }

@@ -396,15 +396,21 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
         try:
             mb_row = fetch_lead_by_email_from_metabase(q_clean)
             if mb_row:
+                mb_email = str(mb_row.get('email') or mb_row.get('Email') or q_clean).strip().lower()
+                mb_org = mb_row.get('orgname') or mb_row.get('previous org name') or ''
+                mb_role = mb_row.get('role') or mb_row.get('Role') or ''
+                mb_exp = mb_row.get('experience') or mb_row.get('Experience') or ''
+                mb_comp = mb_row.get('company_type') or mb_row.get('Company Type') or ''
+
                 normalized_lead = {
                     'name': mb_row.get('name') or mb_row.get('Name') or 'Prospective Learner',
-                    'email': mb_row.get('email') or mb_row.get('Email') or q_clean,
+                    'email': mb_email,
                     'phone': str(mb_row.get('phone') or mb_row.get('Phone') or 'N/A'),
-                    'role': mb_row.get('role') or mb_row.get('Role') or 'Software Professional',
-                    'experience': str(mb_row.get('experience') or mb_row.get('Experience') or '2 years'),
+                    'role': mb_role,
+                    'experience': str(mb_exp) if mb_exp else '',
                     'education': mb_row.get('education') or mb_row.get('Education') or 'Graduated / Degree',
-                    'company type': mb_row.get('company_type') or mb_row.get('Company Type') or 'IT Services / Technology',
-                    'previous org name': mb_row.get('orgname') or mb_row.get('previous org name') or 'Current Organization',
+                    'company type': mb_comp,
+                    'previous org name': mb_org,
                     'previous org year': str(mb_row.get('orgyear') or mb_row.get('previous org year') or ''),
                     'program': mb_row.get('program_type') or mb_row.get('program') or mb_row.get('which_bda_team') or 'Academy',
                     'set_status': 'SET Passed' if str(mb_row.get('test_passed_flag')) == '1' else ('SET Attempted' if str(mb_row.get('test_launched_flag')) == '1' else 'SET Not Attempted'),

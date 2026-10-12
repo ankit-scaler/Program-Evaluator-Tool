@@ -440,6 +440,7 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                     'landing_page': 'https://www.scaler.com'
                 }
                 # Keep in memory cache and SQLite so browser refresh retains evaluated recommendation
+                CACHED_LEADS = [l for l in CACHED_LEADS if (l.get('person', {}).get('email', '').strip().lower() != mb_email)]
                 CACHED_LEADS.insert(0, eval_res)
                 save_evaluated_lead(eval_res, source="METABASE_LIVE")
                 return {"status": "success", "source": "metabase_live", "lead": eval_res}

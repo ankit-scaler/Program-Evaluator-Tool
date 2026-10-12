@@ -4108,8 +4108,17 @@
           const personName = lead.person ? lead.person.name : 'Candidate';
           const srcLabel = data.source === 'metabase_live' ? 'Marketing MIS (Live)' : 'Marketing MIS / CRM';
 
-          // Remove any duplicate if already present in allLeads
-          allLeads = allLeads.filter(l => l.lead_id !== lead.lead_id && (l.person?.email || '').toLowerCase() !== (lead.person?.email || '').toLowerCase());
+          // Remove any existing duplicate matching by email or lead_id or _uid
+          const targetEmail = (lead.person?.email || '').trim().toLowerCase();
+          const targetId = (lead.lead_id || lead._uid || '').trim().toLowerCase();
+
+          allLeads = allLeads.filter(l => {
+            const lEmail = (l.person?.email || '').trim().toLowerCase();
+            const lId = (l.lead_id || l._uid || '').trim().toLowerCase();
+            if (targetEmail && lEmail && targetEmail === lEmail) return false;
+            if (targetId && lId && targetId === lId) return false;
+            return true;
+          });
           allLeads.unshift(lead);
           filteredLeads = [...allLeads];
 

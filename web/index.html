@@ -3227,18 +3227,7 @@
           }
 
           if (serverLeads && serverLeads.length > 0) {
-            // Deduplicate incoming leads preserving the first (most recent) evaluation
-            const seen = new Set();
-            const deduped = [];
-            for (const l of serverLeads) {
-              const em = (l.person && l.person.email ? l.person.email.trim().toLowerCase() : '');
-              const id = (l.lead_id ? String(l.lead_id).trim() : '');
-              const key = em || id || l._uid;
-              if (key && seen.has(key)) continue;
-              if (key) seen.add(key);
-              deduped.push(l);
-            }
-            allLeads = deduped;
+            allLeads = serverLeads;
             filteredLeads = [...allLeads];
             totalServerLeadsCount = data.total || allLeads.length;
             const cnt = (totalServerLeadsCount || allLeads.length).toLocaleString();
@@ -4120,15 +4109,7 @@
           const srcLabel = data.source === 'metabase_live' ? 'Marketing MIS (Live)' : 'Marketing MIS / CRM';
 
           // Remove any duplicate if already present in allLeads
-          const newEm = (lead.person?.email || '').trim().toLowerCase();
-          const newId = (lead.lead_id ? String(lead.lead_id).trim() : '');
-          allLeads = allLeads.filter(l => {
-            const lEm = (l.person?.email || '').trim().toLowerCase();
-            const lId = (l.lead_id ? String(l.lead_id).trim() : '');
-            if (newEm && lEm && newEm === lEm) return false;
-            if (newId && lId && newId === lId) return false;
-            return true;
-          });
+          allLeads = allLeads.filter(l => l.lead_id !== lead.lead_id && (l.person?.email || '').toLowerCase() !== (lead.person?.email || '').toLowerCase());
           allLeads.unshift(lead);
           filteredLeads = [...allLeads];
 
@@ -4209,15 +4190,7 @@
 
         if (data && data.status === 'success' && data.lead) {
           const lead = data.lead;
-          const newLookupEm = (lead.person?.email || '').trim().toLowerCase();
-          const newLookupId = (lead.lead_id ? String(lead.lead_id).trim() : '');
-          allLeads = allLeads.filter(l => {
-            const lEm = (l.person?.email || '').trim().toLowerCase();
-            const lId = (l.lead_id ? String(l.lead_id).trim() : '');
-            if (newLookupEm && lEm && newLookupEm === lEm) return false;
-            if (newLookupId && lId && newLookupId === lId) return false;
-            return true;
-          });
+          allLeads = allLeads.filter(l => l.lead_id !== lead.lead_id && (l.person?.email || '').toLowerCase() !== (lead.person?.email || '').toLowerCase());
           allLeads.unshift(lead);
           filteredLeads = [...allLeads];
 

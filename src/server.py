@@ -113,23 +113,6 @@ async def serve_avatar_female():
 CACHED_LEADS = []
 CACHED_DF = None
 
-def prepend_or_update_cached_lead(eval_res: Dict[str, Any]):
-    global CACHED_LEADS
-    lead_id = (eval_res.get('lead_id') or '').strip()
-    p = eval_res.get('person', {})
-    email = (p.get('email') or '').strip().lower()
-    
-    # Remove any existing instance of this lead from memory cache so duplicates never accumulate
-    CACHED_LEADS = [
-        l for l in CACHED_LEADS
-        if not (
-            (lead_id and (l.get('lead_id') or '').strip() == lead_id) or
-            (email and (l.get('person', {}).get('email') or '').strip().lower() == email)
-        )
-    ]
-    CACHED_LEADS.insert(0, eval_res)
-
-
 class SingleLeadInput(BaseModel):
     name: Optional[str] = "Prospective Learner"
     email: Optional[str] = ""
@@ -333,8 +316,8 @@ async def crm_webhook(lead: CRMWebhookLead):
     # Save to SQLite database for instant search
     save_evaluated_lead(eval_res, source="CRM_WEBHOOK")
     
-    # Prepend to memory cache and remove prior stale copies so UI never displays duplicates
-    prepend_or_update_cached_lead(eval_res)
+    # Prepend to memory cache so UI live updates
+    CACHED_LEADS.insert(0, eval_res)
     
     return {
         "status": "success",
@@ -390,7 +373,7 @@ async def evaluate_single(lead_input: SingleLeadInput):
     eval_res['touchpoints'] = touchpoint_dict
     
     save_evaluated_lead(eval_res, source="MANUAL_INTAKE")
-    prepend_or_update_cached_lead(eval_res)
+    CACHED_LEADS.insert(0, eval_res)
     
     return {
         "status": "success",
@@ -451,7 +434,7 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                     'landing_page': 'https://www.scaler.com'
                 }
                 # Keep in memory cache and SQLite so browser refresh retains evaluated recommendation
-                prepend_or_update_cached_lead(eval_res)
+                CACHED_LEADS.insert(0, eval_res)
                 save_evaluated_lead(eval_res, source="METABASE_LIVE")
                 return {"status": "success", "source": "metabase_live", "lead": eval_res}
         except Exception as e:
@@ -509,18 +492,8 @@ async def get_csv_stream_leads():
     complete state across browser refresh without proxy timeout / 502 payload size issues.
     """
     global CACHED_LEADS
-    # 1. If memory cache has evaluated leads, deduplicate and return initial batch with full total
+    # 1. If memory cache has evaluated leads, return initial batch with full total
     if CACHED_LEADS and len(CACHED_LEADS) > 0:
-        seen = set()
-        deduped = []
-        for l in CACHED_LEADS:
-            key = (l.get('person', {}).get('email') or '').strip().lower() or (l.get('lead_id') or '').strip() or l.get('_uid')
-            if key and key in seen:
-                continue
-            if key:
-                seen.add(key)
-            deduped.append(l)
-        CACHED_LEADS = deduped
         return {
             "status": "success",
             "total": len(CACHED_LEADS),

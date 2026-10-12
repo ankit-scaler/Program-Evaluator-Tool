@@ -959,7 +959,7 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     role_domain = classify_world_domain(raw_role)
     exp_bracket = normalize_experience(raw_exp)
     edu_level = classify_education(raw_edu)
-    inbound_str = str(inbound_prog_raw).lower()
+    inbound_str = str(inbound_prog_raw).lower().replace('_', ' ').replace('-', ' ')
 
     
     # =========================================================================

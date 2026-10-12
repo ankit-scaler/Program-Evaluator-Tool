@@ -177,7 +177,10 @@ def parse_academic_credentials(email: str, education_str: str, org_str: str, org
             # 4-year engineering degrees (B.Tech / B.E default)
             expected_grad_year = entry_year + 4
 
-    # 4. Eligibility Determination
+    # 4. Strict Degree Eligibility Determination
+    # Rule: Candidates MUST have completed graduation to be eligible for any Scaler course.
+    # PG students are eligible because they ALREADY completed their Bachelor's degree.
+    # UG college students who have not completed graduation (expected_grad_year >= 2026 or currently enrolled) are NOT eligible.
     degree_tier = "Postgraduate (Master's / PG)" if is_pg else "Undergraduate (Bachelor's / UG)"
 
     if is_pg:
@@ -185,21 +188,16 @@ def parse_academic_credentials(email: str, education_str: str, org_str: str, org
         is_eligible = True
         status_text = "Eligible (Master's Student - Degree Verified)"
         batch_label = f"Batch {expected_grad_year} (PG Master's)" if expected_grad_year else "Master's Degree Enrolled"
-    elif expected_grad_year:
-        if expected_grad_year <= current_year:
-            is_eligible = True
-            status_text = f"Eligible (Batch {expected_grad_year} - Graduating / Passed Out)"
-            batch_label = f"Batch {expected_grad_year} (Graduating / Passed Out)"
-        elif expected_grad_year == current_year + 1:
-            # Batch 2027 (Pre-final year entering final year)
-            is_eligible = True
-            status_text = f"Eligible (Batch {expected_grad_year} - Pre-Final Year Placement Prep)"
-            batch_label = f"Batch {expected_grad_year} (Pre-Final Year)"
-        else:
-            # Batch 2028 or later (1st / 2nd year)
-            is_eligible = True
-            status_text = f"Early Career Prep (Batch {expected_grad_year} - Placement Deferred)"
-            batch_label = f"Batch {expected_grad_year} (Early College Prep)"
+    elif expected_grad_year and expected_grad_year >= current_year:
+        # Currently enrolled undergraduate student who has NOT graduated yet
+        is_eligible = False
+        status_text = f"Ineligible (College Student - Batch {expected_grad_year} Degree Incomplete)"
+        batch_label = f"College Student (Batch {expected_grad_year} - Expected Grad)"
+    elif expected_grad_year and expected_grad_year < current_year:
+        # Graduated in past (e.g. 2025 or earlier)
+        is_eligible = True
+        status_text = f"Eligible (Graduated - Batch {expected_grad_year})"
+        batch_label = f"Batch {expected_grad_year} (Passed Out)"
     else:
         is_eligible = True
         status_text = "Degree Verified"
@@ -1117,20 +1115,51 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
     
     # =========================================================================
-    # ACADEMIC ELIGIBILITY GATE: BELOW GRADUATION (10th/12th/Diploma)
+    # ACADEMIC ELIGIBILITY GATE: BELOW GRADUATION OR INCOMPLETE COLLEGE DEGREE
+    # Strict Rule: Candidate MUST have completed graduation to be eligible for any Scaler course.
+    # PG Master's students are eligible because they already hold a completed Bachelor's degree.
     # =========================================================================
-    if edu_level == 'BELOW_GRAD':
+    is_undergrad_incomplete = (is_detected_student and not is_pg_student and (expected_grad_year is None or expected_grad_year >= 2026))
+
+    if edu_level == 'BELOW_GRAD' or is_undergrad_incomplete:
+        first_name = name.split()[0] if name else 'there'
+        if is_undergrad_incomplete:
+            prim_why = (
+                f"Candidate is an undergraduate college student ({prev_org}"
+                f"{f', Batch {expected_grad_year}' if expected_grad_year else ''}) who has not completed graduation. "
+                "All Scaler programs strictly mandate a completed undergraduate Bachelor's degree prior to enrollment. "
+                "Candidates currently enrolled in college are not eligible for any Scaler career course until formal graduation."
+            )
+            guardrail_text = "Hard Academic Gate: Mandatory Bachelor degree completion required prior to enrollment in any Scaler course."
+            status_badge_text = f"Ineligible (College Student - Degree Incomplete{f' Batch {expected_grad_year}' if expected_grad_year else ''})"
+            pitch_text = (
+                f'"Hi {first_name}, thank you for your interest in Scaler. Based on your profile, you are currently an undergraduate college student at {prev_org}. '
+                'At Scaler, all our career programs strictly require candidates to have formally completed their Bachelor\'s degree prior to enrollment. '
+                'Because companies and our curriculum mandate complete graduation, college students are not eligible to enroll in any Scaler courses until they graduate."'
+            )
+            inbound_handle_text = '"We encourage you to focus fully on completing your college semester academics and GPA. Once you complete your graduation, we will be delighted to welcome you into our cohorts."'
+        else:
+            prim_why = (
+                f"Candidate's education background ({raw_edu}) does not satisfy Scaler's formal graduation prerequisite. "
+                "All Scaler career programs strictly mandate a completed undergraduate Bachelor's degree. "
+                "Enrolling without graduation is not permitted."
+            )
+            guardrail_text = "Hard Academic Gate: Mandatory Bachelor degree completion required prior to enrollment in any Scaler course."
+            status_badge_text = "Ineligible (Degree Prerequisite)"
+            pitch_text = (
+                f'"Hi {first_name}, thank you for connecting with Scaler. I reviewed your profile and noticed your education background is {raw_edu}. '
+                'At Scaler, all our programs strictly require learners to hold an undergraduate Bachelor\'s degree. '
+                'Because companies enforce strict degree cutoffs in technical hiring rounds, candidates without a Bachelor\'s degree are not eligible to enroll in any Scaler course."'
+            )
+            inbound_handle_text = '"Our honest recommendation is to first complete a formal degree program (such as a BCA, B.Sc, or B.Tech). Upon completion of your degree, we will gladly fast-track your enrollment into our technical cohorts."'
+
         prim = {
-            'program': 'Not Eligible (Degree Prerequisite)',
+            'program': 'Not Eligible (Degree Completion Prerequisite)',
             'catalog_code': 'Academic Prerequisite Gate',
             'track': 'Academic Eligibility Prerequisite',
-            'fit_tier': 'Ineligible for Placement-Linked Programs',
-            'why': (
-                f"Candidate's education background ({raw_edu}) does not satisfy Scaler's formal graduation prerequisite. "
-                "All Scaler career programs and hiring partner placement drives mandate an undergraduate Bachelor's degree "
-                "(or enrolled final-year student). Enrolling without graduation risks placement disqualification."
-            ),
-            'guardrail': 'Hard Academic Gate: Mandatory Bachelor degree completion required prior to placement-linked tracks.',
+            'fit_tier': 'Ineligible for Enrollment',
+            'why': prim_why,
+            'guardrail': guardrail_text,
             'duration': 'N/A',
             'retention_rate': 0.0,
             'refund_rate': 100.0,
@@ -1138,22 +1167,22 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
             'risk_tag': 'Ineligible',
             'confidence_tier': 'Low',
             'confidence_score': 0,
-            'confidence_rationale': 'Ineligible: Mandatory Bachelor degree completion required.',
+            'confidence_rationale': 'Ineligible: Mandatory Bachelor degree completion required for all Scaler courses.',
             'confidence_breakdown': {
                 'cohort_pts': 0, 'cohort_max': 35, 'cohort_desc': 'Ineligible',
                 'ret_pts': 0, 'ret_max': 25, 'ret_desc': 'Ineligible',
                 'intent_pts': 0, 'intent_max': 25, 'intent_desc': 'Ineligible',
-                'apt_pts': 0, 'apt_max': 15, 'apt_desc': 'Degree prerequisite unfulfilled'
+                'apt_pts': 0, 'apt_max': 15, 'apt_desc': 'Degree completion prerequisite unfulfilled'
             }
         }
         fall = {
-            'program': 'Degree Pathway Consultation / Open Learning',
-            'catalog_code': 'Alternative Path',
-            'track': 'Formal Degree Enrolment Route',
+            'program': 'Degree Completion Pathway / College Academic Focus',
+            'catalog_code': 'Academic Prerequisite Pathway',
+            'track': 'Degree Completion Route',
             'fit_tier': 'Preparatory Route',
-            'why': "Advise candidate to pursue a recognized BCA / B.Tech / B.Sc degree first before applying to professional placement accelerators.",
+            'why': "Advise candidate to complete their college graduation first before applying to Scaler career accelerators.",
             'guardrail': 'Academic counseling path',
-            'duration': '3 - 4 Years',
+            'duration': f"{max(1, (expected_grad_year - 2026))} Year(s)" if expected_grad_year and expected_grad_year > 2026 else "Until Graduation",
             'retention_rate': 0.0,
             'refund_rate': 0.0,
             'cohort_size': 0,
@@ -1165,14 +1194,13 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 'cohort_pts': 0, 'cohort_max': 35, 'cohort_desc': 'Ineligible',
                 'ret_pts': 0, 'ret_max': 25, 'ret_desc': 'Ineligible',
                 'intent_pts': 0, 'intent_max': 25, 'intent_desc': 'Ineligible',
-                'apt_pts': 0, 'apt_max': 15, 'apt_desc': 'Preparatory degree route'
+                'apt_pts': 0, 'apt_max': 15, 'apt_desc': 'College degree completion required'
             }
         }
-        first_name = name.split()[0] if name else 'there'
         sales_script = {
-            'call_opening': f'"Hi {first_name}, thank you for connecting with Scaler. I reviewed your profile and noticed your education background is {raw_edu}. Before discussing technical curricula, I want to be completely transparent with you regarding our program prerequisites."',
-            'program_pitch': '"At Scaler, our career accelerators and hiring partner placement networks strictly require learners to hold an undergraduate Bachelor\'s degree (or be in their final year of graduation). Because companies enforce strict degree cutoffs in technical hiring rounds, we never want you to invest time and money into a program where corporate recruiters might disqualify you on degree credentials alone."',
-            'inbound_handling': '"We sincerely appreciate your drive to learn software development. Our honest recommendation is to first complete a formal degree program (such as a BCA, B.Sc, or B.Tech). As you approach your graduation year, we will gladly fast-track your enrollment into our technical cohorts."'
+            'call_opening': f'"Hi {first_name}, thank you for reaching out to Scaler. I reviewed your academic profile and see you are currently {raw_role} at {prev_org}."',
+            'program_pitch': pitch_text,
+            'inbound_handling': inbound_handle_text
         }
         return {
             'person': {
@@ -1182,15 +1210,20 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 'experience': raw_exp, 'enquired_program': inbound_prog_raw,
                 'education': raw_edu, 'education_level': edu_level,
                 'sat_score': raw_sat_score, 'sat_status': raw_sat_status,
+                'set_score': raw_sat_score, 'set_status': raw_sat_status,
                 'normalized_persona': persona_name, 'persona_key': persona, 'normalized_experience': exp_bracket
             },
             'primary': prim,
             'fallback': fall,
             'sales_script': sales_script,
             'academic_eligibility': {
-                'status': 'Ineligible (Degree Prerequisite)',
+                'status': status_badge_text,
                 'is_eligible': False,
-                'rationale': f"Education background ({raw_edu}) does not satisfy Bachelor's degree requirement."
+                'degree_tier': acad_info['degree_tier'],
+                'is_pg': is_pg_student,
+                'expected_grad_year': expected_grad_year,
+                'batch_label': acad_info['batch_label'],
+                'rationale': f"Education status: {status_badge_text}. Formal Bachelor's degree completion is mandatory for enrollment in all Scaler courses."
             }
         }
 

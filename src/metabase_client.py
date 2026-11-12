@@ -184,27 +184,34 @@ def fetch_lead_by_email_from_metabase(query_str: str, force_refresh: bool = Fals
     base_url = cfg.get("metabase_url", "").rstrip("/")
     card_id = cfg.get("card_id", "28973")
     session_token = cfg.get("session_token", "").strip()
-    param_id = cfg.get("email_parameter_id", "2dcd8f80-e4b6-46cf-936b-2102140cb7f2")
+    param_id = cfg.get("email_parameter_id", "")
+    api_key = cfg.get("api_key", "").strip()
     timeout = cfg.get("timeout_seconds", 30)
 
+    # Resolve auth: session token, API key, or username/password login
+    auth_headers = None
+    if session_token:
+        auth_headers = {"X-Metabase-Session": session_token}
+    elif api_key:
+        auth_headers = {"x-api-key": api_key}
+    elif cfg.get("username") and cfg.get("password"):
+        token = get_session_token(base_url, cfg["username"], cfg["password"], timeout=timeout)
+        if token:
+            auth_headers = {"X-Metabase-Session": token}
+
     # 1. Parameterized Metabase Query (Instant sub-second query execution)
-    if session_token and card_id:
+    if auth_headers and card_id:
         try:
             url = f"{base_url}/api/card/{card_id}/query"
-            headers = {
-                "Content-Type": "application/json",
-                "X-Metabase-Session": session_token
+            headers = {"Content-Type": "application/json", **auth_headers}
+            param = {
+                "type": "string/=",
+                "value": [q_clean],
+                "target": ["dimension", ["template-tag", "email"]]
             }
-            payload = {
-                "parameters": [
-                    {
-                        "id": param_id,
-                        "type": "string/=",
-                        "value": [q_clean],
-                        "target": ["dimension", ["template-tag", "email"]]
-                    }
-                ]
-            }
+            if param_id:
+                param["id"] = param_id
+            payload = {"parameters": [param]}
             res = requests.post(url, headers=headers, json=payload, timeout=timeout)
             if res.status_code in (200, 202):
                 data = res.json()
@@ -228,7 +235,9 @@ def fetch_lead_by_email_from_metabase(query_str: str, force_refresh: bool = Fals
                         _MB_LEAD_CACHE[q_clean] = {'data': filtered_dict, 'timestamp': now}
                     return filtered_dict
             elif res.status_code == 401:
-                logger.warning("Metabase session token expired (HTTP 401). Please update session_token in metabase_config.json.")
+                logger.warning("Metabase authentication failed (HTTP 401). Check credentials or session token.")
+            else:
+                logger.warning(f"Metabase lookup for '{q_clean}' returned HTTP {res.status_code}: {res.text[:200]}")
         except Exception as e:
             logger.warning(f"Error executing parameterized Metabase live query for '{q_clean}': {e}")
 

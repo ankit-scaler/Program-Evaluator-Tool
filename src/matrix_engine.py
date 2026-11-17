@@ -278,7 +278,9 @@ def classify_world_domain(role_str):
             'engineering manager', 'tech lead', 'technical lead', 'software manager', 'dev manager',
             'technical architect', 'solutions architect', 'enterprise architect', 'lead architect',
             'software architect', 'cloud architect', 'systems architect', 'data architect', 'cto',
-            'vp of engineering', 'director of engineering', 'chief technology officer'
+            'vp of engineering', 'director of engineering', 'chief technology officer',
+            'engineering leadership', 'tech leadership', 'technical leadership',
+            'software leadership', 'engineering lead'
         ]) or 
         (
             match_token(s, 'team lead') and not any(op in s for op in [
@@ -287,7 +289,7 @@ def classify_world_domain(role_str):
             ])
         ) or
         (
-            match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead']) and 
+            match_any(s, ['manager', 'director', 'founder', 'vp', 'architect', 'lead', 'leadership']) and 
             match_any(s, ['software', 'tech', 'dev', 'engineering', 'platform', 'cloud', 'data'])
         )
     ):
@@ -511,6 +513,8 @@ def canonical_exp_key(exp_str):
     if exp_str is None:
         return 'EXP_1_3'
     s = str(exp_str).strip().lower()
+    if any(k in s for k in ['not specified', 'unspecified', 'unknown', 'not provided', 'not mentioned']):
+        return 'EXP_1_3'
     
     # 1. Check if a 4-digit graduation year is present (e.g. Batch 2025, Batch 2023, Batch 2012)
     year_match = re.search(r'\b(19\d\d|20\d\d)\b', s.replace(',', ''))

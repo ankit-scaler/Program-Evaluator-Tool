@@ -132,21 +132,28 @@ def parse_academic_credentials(email: str, education_str: str, org_str: str, org
     ]
     # Email patterns indicating PG: e.g. '24m05', 'cs24m', 'h2024' (BITS higher degree)
     is_pg_email = bool(re.search(r'\b[a-z]{0,4}\d{2}m\d{2,}', user_part) or re.search(r'^h20\d{2}', user_part) or 'mtech' in user_part or 'mca' in user_part)
-    is_pg = any(k in edu_lower for k in pg_keywords) or is_pg_email or ('pg' in user_part and ('student' in em or 'ac.in' in em))
+    is_pg = any(k in edu_lower for k in pg_keywords) or is_pg_email or ('pg' in user_part and ('student' in em or 'ac.in' in em)) or ('fms.edu' in em or 'iim' in em or 'xlri' in em or 'isb' in em)
 
     # 2. Extract Entry Batch Year or Explicit Graduation Year
     entry_year = None
     explicit_grad_year = None
 
-    if org_year_str and re.search(r'\b(201\d|202\d)\b', str(org_year_str)):
-        explicit_grad_year = int(re.search(r'\b(201\d|202\d)\b', str(org_year_str)).group(1))
+    # Check if org_str is an academic institution (College / University / School)
+    is_org_academic = any(k in str(org_str or '').lower() for k in [
+        'college', 'university', 'campus', 'institute', 'iit', 'nit', 'iiit', 'bits', 'school',
+        'academy', 'polytechnic', 'vidyapith', 'engineering college', 'technology institute'
+    ])
+    # If org_year_str is provided and org_str is academic, treat it as graduation / batch year
+    if org_year_str and is_org_academic and re.search(r'\b(19\d\d|20\d\d)\b', str(org_year_str)):
+        explicit_grad_year = int(re.search(r'\b(19\d\d|20\d\d)\b', str(org_year_str)).group(1))
 
     # Extract 4-digit year from username (e.g. h2024, f2022, kavya.2023)
-    m4_user = re.search(r'(20[12]\d)', user_part)
+    m4_user = re.search(r'(19\d\d|20[12]\d)', user_part)
     # Extract 2-digit year prefix from roll number (e.g. 24m05, 22b03, cs23b, ee21b)
     m2_user = re.search(r'(?:^|[a-z]{1,4})([12]\d)(?:[a-z]{1,2}|\d{3,})', user_part)
 
-    four_digit_match = re.search(r'\b(201\d|202\d)\b', combined_text)
+    # Check combined text specifically within education string or user part
+    four_digit_match = re.search(r'\b(19\d\d|20\d\d)\b', f"{edu_lower} {user_part}")
 
     if m4_user:
         yr = int(m4_user.group(1))
@@ -797,7 +804,10 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
             )
 
     # 11e. Engineering Leadership & Technical Architects
-    if any(k in r_lower for k in ['tech lead', 'technical lead', 'team lead', 'engineering manager', 'director', 'cto', 'architect']):
+    if any(k in r_lower for k in [
+        'tech lead', 'technical lead', 'team lead', 'engineering manager', 'director', 'cto', 'architect',
+        'engineering leadership', 'tech leadership', 'technical leadership', 'software leadership', 'leadership'
+    ]):
         if 'academy' in p_lower or 'software' in p_lower:
             return (
                 f"As a <b>{raw_role}</b> with {raw_exp}, this track sharpens your architectural authority - mastering distributed systems scalability, "
@@ -812,6 +822,11 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
             return (
                 f"As a <b>{raw_role}</b> with {raw_exp}, modernizing your infrastructure strategy with Kubernetes, multi-region cloud resilience, "
                 "and GitOps automation equips you to lead modern cloud engineering organizations."
+            )
+        elif 'dsml' in p_lower or 'data' in p_lower:
+            return (
+                f"As a <b>{raw_role}</b> with {raw_exp}, this track equips you to direct enterprise ML strategy — translating predictive modeling, "
+                "deep learning architectures, and scalable AWS MLOps into high-impact organizational capabilities to lead modern data science teams."
             )
 
     # 12. Freshers / Students
@@ -848,10 +863,21 @@ def generate_role_pitch(raw_role, raw_exp, p_lower, t_lower, is_primary, persona
             "cloud infrastructure-as-code (Terraform), and automated CI/CD pipelines to step into modern Platform Engineering."
         )
     elif 'dsml' in p_lower or 'data' in p_lower:
-        return (
-            f"As a <b>{raw_role}</b> ({raw_exp}), this track translates your operational workflows into data-driven decision making—teaching "
-            "SQL data querying, business metrics dashboards, and applied predictive machine learning."
-        )
+        if any(k in r_lower for k in ['data scientist', 'machine learning', 'ml engineer', 'ai engineer', 'statistician']):
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this track elevates your predictive modeling expertise into production-grade ML systems—covering "
+                "deep learning neural architectures, mathematical AI foundations, and scalable MLOps pipelines."
+            )
+        elif any(k in r_lower for k in ['analyst', 'analytics', 'bi', 'tableau', 'power bi', 'business analyst']):
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this track translates your analytics foundation into predictive data science—teaching "
+                "advanced statistical modeling, Python data engineering at scale, and applied machine learning."
+            )
+        else:
+            return (
+                f"As a <b>{raw_role}</b> ({raw_exp}), this track translates your domain experience into data-driven decision making—teaching "
+                "SQL data querying, business metrics dashboards, and applied predictive machine learning."
+            )
     elif 'agentic' in p_lower or 'aiml' in p_lower:
         return (
             f"As a <b>{raw_role}</b> ({raw_exp}), this curriculum fast-tracks your profile into modern Agentic AI, "
@@ -939,7 +965,7 @@ def generate_curriculum_grounded_why(
             )
 
     elif 'dsml' in p_lower or 'data science' in p_lower:
-        if 'beginner' in t_lower or 'analytics' in t_lower:
+        if 'beginner' in t_lower or ('analytics' in t_lower and 'machine' not in t_lower and 'core' not in t_lower and 'intermediate' not in t_lower):
             content_desc = (
                 "Begins with <i>Advanced SQL & AI for Data Professionals</i>, <i>Excel & Dashboarding with AI Storytelling</i>, "
                 "<i>Python Foundations + AI Coding Assistants</i>, and <i>Product Analytics with AI</i>, seamlessly progressing into "
@@ -949,15 +975,23 @@ def generate_curriculum_grounded_why(
                 f"Proven by a <b>{retention_rate}% completion rate</b> across {cohort_size}+ learners. "
                 "This progressive ramp-up achieves the highest retention of any career pivot, virtually eliminating refund risk."
             )
-        else: # Intermediate / Core ML
+        else: # Intermediate / Core ML / Advanced
             content_desc = (
                 "Dives directly into <i>Advanced Analytics with Python & Pandas</i>, <i>Statistics & Experimentation for AI (A/B Testing Frameworks)</i>, "
                 "<i>Supervised & Unsupervised Machine Learning</i>, <i>Deep Learning & Neural Networks</i>, and <i>Production MLOps on AWS</i>."
             )
-            historical_desc = (
-                f"Validated by an audited <b>{retention_rate}% completion rate</b> across quantitative cohorts. "
-                "Analysts transitioning through predictive modeling experience rapid career acceleration into senior ML titles."
-            )
+            # Persona-aware cohort retention blurb
+            _is_leadership = any(k in persona.lower() for k in ['leadership', 'leader']) if persona else False
+            if _is_leadership:
+                historical_desc = (
+                    f"Validated by an audited <b>{retention_rate}% completion rate</b> across senior engineering cohorts. "
+                    "Technical leaders advancing through production ML and MLOps experience rapid impact scaling machine learning initiatives."
+                )
+            else:
+                historical_desc = (
+                    f"Validated by an audited <b>{retention_rate}% completion rate</b> across quantitative cohorts. "
+                    "Analysts transitioning through predictive modeling experience rapid career acceleration into senior ML titles."
+                )
 
     elif 'fde' in p_lower or 'forward deployed' in p_lower:
         content_desc = (
@@ -1040,11 +1074,11 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     name = clean_str(_field(['name', 'full_name', 'candidate_name', 'student_name']), 'Prospective Learner')
     email = clean_str(_field(['email', 'email_id', 'contact_email', 'lead_email']), 'unspecified@lead.com')
     phone = clean_str(_field(['phone', 'mobile', 'contact', 'phone_number']), 'N/A')
-    raw_role_explicit = _field(['role', 'current_role', 'designation', 'job_title', 'profile'], '')
-    raw_exp_explicit = _field(['experience', 'yoe', 'total_experience', 'work_experience', 'exp'], '')
-    raw_org_explicit = _field(['previous org name', 'company', 'organization', 'employer', 'orgname'], '')
-    raw_comp_explicit = _field(['company type', 'company_type', 'industry', 'sector'], '')
-    prev_year = clean_str(_field(['previous org year', 'year', 'org_year']), '1-2 years')
+    raw_role_explicit = _field(['role', 'current_role', 'designation', 'job_title', 'profile', 'raw_role'], '')
+    raw_exp_explicit = _field(['experience', 'yoe', 'total_experience', 'work_experience', 'exp', 'raw_exp'], '')
+    raw_org_explicit = _field(['previous org name', 'previous_org_name', 'previous_org', 'company', 'organization', 'employer', 'orgname', 'raw_org', 'cand_org'], '')
+    raw_comp_explicit = _field(['company type', 'company_type', 'industry', 'sector', 'cand_comp_type'], '')
+    prev_year = clean_str(_field(['previous org year', 'previous_org_year', 'year', 'org_year', 'grad_year', 'graduation_year', 'orgyear']), '')
     inbound_prog_raw = clean_str(_field(['program', 'inbound_program', 'enquired_program', 'course']), 'Academy')
     raw_edu = clean_str(_field(['education', 'degree', 'qualification', 'highest_qualification', 'stream']), 'Graduated / Degree')
     raw_sat_status = clean_str(_field(['set_status', 'sat_status', 'diagnostic set status', 'diagnostic sat status', 'test_launched_flag']), 'SET Not Attempted')
@@ -1068,17 +1102,124 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         'iit ', 'iit-', 'nit ', 'nit-', 'bits ', 'iiit', 'vit ', 'srm '
     ])
 
-    is_detected_student = is_academic_email or is_academic_org or any(k in str(raw_role_explicit).lower() for k in ['student', 'intern', 'fresher', 'learner'])
+    # Check if organization or company type is a commercial enterprise (non-academic, non-placeholder)
+    raw_org_clean = str(raw_org_explicit or '').strip()
+    is_empty_or_placeholder_org = raw_org_clean.lower() in [
+        '', 'nan', 'none', 'null', 'not applicable', 'not applicable account',
+        'student', 'na', 'n/a', '-', 'current organization', 'current company', 'fresher',
+        'independent / transitioning', 'independent', 'transitioning', 'self employed',
+        'freelancer', 'unemployed', 'job seeker', 'looking for job'
+    ]
+    has_commercial_company = bool(raw_org_clean) and (not is_empty_or_placeholder_org) and (not is_academic_org)
+    comp_clean = str(raw_comp_explicit or '').strip().lower()
+    if any(k in comp_clean for k in ['product', 'service', 'tech', 'startup', 'bfsi', 'enterprise', 'corporate']):
+        if not is_academic_org and not is_empty_or_placeholder_org:
+            has_commercial_company = True
+
+    # Check experience numeric value and tenure
+    exp_num = 0.0
+    if raw_exp_explicit:
+        # Strip out 4-digit calendar years (e.g. Batch 2026, 2024) so they are not treated as 2000+ years of experience!
+        exp_clean_str = re.sub(r'\b(19\d\d|20\d\d)\b', '', str(raw_exp_explicit))
+        m_exp = re.search(r'[-+]?\d*\.?\d+', exp_clean_str.replace(',', ''))
+        if m_exp:
+            try:
+                num_v = float(m_exp.group())
+                if any(m in str(raw_exp_explicit).lower() for m in ['month', 'mo', 'mos', 'mth']) and not any(y in str(raw_exp_explicit).lower() for y in ['year', 'yr', 'yrs']):
+                    num_v = num_v / 12.0
+                if num_v < 60.0:
+                    exp_num = num_v
+            except Exception:
+                pass
+    has_work_experience = (exp_num >= 1.0)
+
+    # Check graduation year (<= 2025 is a completed past degree)
+    grad_year_val = None
+    if prev_year and is_academic_org:
+        m_yr = re.search(r'\b(19\d\d|20\d\d)\b', str(prev_year).replace(',', ''))
+        if m_yr:
+            grad_year_val = int(m_yr.group(1))
+    if not grad_year_val and raw_exp_explicit:
+        m_yr_exp = re.search(r'\b(19\d\d|20\d\d)\b', str(raw_exp_explicit).replace(',', ''))
+        if m_yr_exp:
+            grad_year_val = int(m_yr_exp.group(1))
+
+    has_past_graduation = (grad_year_val is not None and grad_year_val <= 2025)
+    is_future_graduation = (grad_year_val is not None and grad_year_val >= 2026)
+
+    is_role_explicitly_student = any(k in str(raw_role_explicit).lower() for k in ['student', 'intern', 'undergrad', 'learner', 'college'])
+
+    # Strict Rule for Academic Emails (.edu / .ac.in / campus domains):
+    # - If their graduation year is past (<= 2025) OR they work at a commercial company (or have >= 1 YOE):
+    #   They are recognized as an Alumnus / Degree Holder -> Academic Status: Degree Verified (Eligible).
+    # - If they have NO company, NO experience, and their graduation batch is future (2026+ or blank):
+    #   Only then are they flagged as an Active College Student.
+    if is_academic_email:
+        if has_past_graduation or has_commercial_company or has_work_experience:
+            is_detected_student = False if not is_role_explicitly_student else True
+        else:
+            is_detected_student = True
+    elif is_academic_org:
+        if has_commercial_company or has_work_experience or has_past_graduation:
+            is_detected_student = False if not is_role_explicitly_student else True
+        else:
+            is_detected_student = True
+    elif is_role_explicitly_student and not has_commercial_company and not has_work_experience:
+        is_detected_student = True
+    elif is_future_graduation and not has_commercial_company and not has_work_experience:
+        is_detected_student = True
+    else:
+        is_detected_student = False
 
     if is_detected_student and not raw_role_explicit:
         raw_role = "College Student / Learner"
     else:
         raw_role = clean_str(raw_role_explicit, 'Prospective Learner' if is_detected_student else 'General Tech Professional')
 
-    if is_detected_student and not raw_exp_explicit:
-        raw_exp = "Fresher (College Student)"
+    exp_is_explicit = False
+    raw_exp_str = str(raw_exp_explicit).strip() if raw_exp_explicit is not None else ""
+    if raw_exp_str.lower() in ['none', 'nan', 'null', '', '-']:
+        raw_exp_str = ""
+
+    if is_detected_student:
+        if raw_exp_str:
+            raw_exp = raw_exp_str if any(c.isdigit() for c in raw_exp_str) else f"{raw_exp_str}"
+            exp_is_explicit = True
+        else:
+            raw_exp = "Fresher (College Student)"
+            exp_is_explicit = False
     else:
-        raw_exp = clean_str(raw_exp_explicit, '0 years' if is_detected_student else '2 years')
+        if raw_exp_str:
+            if exp_num == 0.0 or raw_exp_str in ['0', '0.0', '0 yrs', '0 years', '0.0 years', '0.0 yrs']:
+                if has_past_graduation and grad_year_val:
+                    inferred_yoe = max(1, 2026 - grad_year_val)
+                    raw_exp = f"{inferred_yoe} yrs (Batch {grad_year_val})"
+                    exp_is_explicit = False
+                elif prev_year and re.search(r'\b(19\d\d|20\d\d)\b', str(prev_year)):
+                    # Company joining/tenure year
+                    company_join_yr = int(re.search(r'\b(19\d\d|20\d\d)\b', str(prev_year)).group(1))
+                    org_display = raw_org_clean if raw_org_clean and not is_empty_or_placeholder_org else "organization"
+                    raw_exp = f"0 yrs in role (With {org_display} since {company_join_yr})"
+                    exp_is_explicit = False
+                elif has_commercial_company and not is_role_explicitly_student:
+                    raw_exp = "Not Specified (Inferred 1-2 yrs)"
+                    exp_is_explicit = False
+                else:
+                    raw_exp = "0 years (Fresher / Entry-Level)"
+                    exp_is_explicit = True
+            else:
+                raw_exp = f"{raw_exp_str} years" if raw_exp_str.replace('.', '', 1).isdigit() else raw_exp_str
+                exp_is_explicit = True
+        else:
+            exp_is_explicit = False
+            if has_past_graduation and grad_year_val:
+                inferred_yoe = max(1, 2026 - grad_year_val)
+                raw_exp = f"{inferred_yoe} yrs (Batch {grad_year_val})"
+            elif prev_year and re.search(r'\b(19\d\d|20\d\d)\b', str(prev_year)):
+                company_join_yr = int(re.search(r'\b(19\d\d|20\d\d)\b', str(prev_year)).group(1))
+                raw_exp = f"1-2 yrs baseline (Joined {company_join_yr})"
+            else:
+                raw_exp = "Not Specified (Inferred 1-2 yrs)"
 
     if is_detected_student and not raw_comp_explicit:
         company_type = "College / University Campus"
@@ -1091,25 +1232,35 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         prev_org = clean_str(raw_org_explicit, 'Current Organization')
 
     # Parse detailed academic credentials (UG vs PG, Entry Year, Expected Graduation Year)
-    acad_info = parse_academic_credentials(email, raw_edu, prev_org, prev_year)
+    acad_info = parse_academic_credentials(email, raw_edu, prev_org, prev_year or (str(grad_year_val) if grad_year_val else ''))
     is_pg_student = acad_info['is_pg']
-    expected_grad_year = acad_info['expected_grad_year']
+    expected_grad_year = acad_info['expected_grad_year'] or grad_year_val
     acad_status_text = acad_info['status_text']
 
     if is_detected_student:
-        if acad_info['expected_grad_year']:
-            prev_year = str(acad_info['expected_grad_year'])
+        if expected_grad_year:
+            prev_year = str(expected_grad_year)
         if is_pg_student:
             raw_role = "Postgraduate (Master's Student)" if not raw_role_explicit else raw_role
             raw_edu = "Master's Degree (PG Enrolled - Bachelor's Complete)" if not raw_edu or raw_edu in ['Graduated / Degree', 'Degree'] else raw_edu
-        elif acad_info['expected_grad_year']:
-            raw_role = f"College Student (Batch {acad_info['expected_grad_year']})" if not raw_role_explicit else raw_role
+        elif expected_grad_year:
+            raw_role = f"College Student (Batch {expected_grad_year})" if not raw_role_explicit else raw_role
 
     # Normalized taxonomy & education
     persona = 'NON_TECH' if is_detected_student else normalize_persona('', raw_role)
     persona_name = ('Postgraduate / Master\'s Student' if is_pg_student else 'Student / College Fresher') if is_detected_student else get_canonical_persona_name(persona)
     role_domain = 'Early Career & College Transitions' if is_detected_student else classify_world_domain(raw_role)
-    exp_bracket = 'EXP_0_1' if is_detected_student else normalize_experience(raw_exp)
+    if is_detected_student:
+        exp_bracket = 'EXP_0_1'
+    elif not exp_is_explicit:
+        if has_past_graduation and grad_year_val:
+            exp_bracket = normalize_experience(str(max(1, 2026 - grad_year_val)))
+        elif any(k in raw_role.lower() for k in ['leadership', 'director', 'vp', 'head of', 'architect', 'principal']):
+            exp_bracket = 'EXP_5_PLUS'
+        else:
+            exp_bracket = 'EXP_1_3'
+    else:
+        exp_bracket = normalize_experience(raw_exp)
     edu_level = classify_education(raw_edu)
     inbound_str = str(inbound_prog_raw).lower().replace('_', ' ').replace('-', ' ')
 
@@ -1239,9 +1390,6 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     else:
         inbound_cat = 'P1_ACADEMY'
 
-    is_career_break = any(k in raw_role.lower() for k in ['career break', 'break', 'sabbatical', 'gap', 'gap year', 'returning', 'homemaker', 'restart'])
-    is_student = is_detected_student or is_academic_email or is_academic_org or (exp_bracket == 'EXP_0_1') or any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
-    
     # 1. Allowlist for Tech Roles
     tech_keywords = [
         'sde', 'swe', 'software', 'developer', 'frontend', 'backend', 'full stack', 'fullstack', 'programmer',
@@ -1267,6 +1415,15 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     if persona == 'NON_TECH':
         is_tech = False
 
+    is_career_break = any(k in raw_role.lower() for k in ['career break', 'break', 'sabbatical', 'gap', 'gap year', 'returning', 'homemaker', 'restart'])
+    is_role_explicitly_student = any(k in raw_role.lower() for k in ['student', 'intern', 'undergrad', 'learner', 'college'])
+    if has_commercial_company and is_tech and not is_role_explicitly_student:
+        is_student = False
+    else:
+        is_student = is_detected_student or is_role_explicitly_student or (
+            (exp_bracket == 'EXP_0_1') and not has_commercial_company and not has_work_experience and not has_past_graduation
+        )
+
     is_non_tech = (
         is_career_break or 
         (edu_level == 'GRAD_NON_CS' and is_student) or 
@@ -1283,7 +1440,8 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
     )
     is_senior = (not is_student) and (not is_non_tech) and (
         exp_bracket in ['EXP_5_PLUS', '5-8 years', '8+ years', '5+ yrs (Senior / Lead)'] or 
-        (exp_bracket == 'EXP_3_5' and any(k in raw_role.lower() for k in ['lead', 'senior', 'manager', 'leadership', 'director', 'founder', 'architect', 'vp']))
+        (exp_bracket == 'EXP_3_5' and any(k in raw_role.lower() for k in ['lead', 'senior', 'manager', 'leadership', 'director', 'founder', 'architect', 'vp'])) or
+        (any(k in raw_role.lower() for k in ['leadership', 'director', 'vp', 'head of', 'architect', 'principal']) and has_commercial_company)
     )
 
     # 3. FIX: Strict FDE Eligibility (Must be tech & 2+ YOE)
@@ -1987,6 +2145,22 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
                 fallback['track'] = 'Beginner Track (AI & Machine Learning Foundations)'
                 fallback['fit_tier'] = 'Alternative Applied AI Track'
                 fallback['why'] = "Direct entry with intensive math and Python machine learning preparation."
+            elif exp_bracket in ['EXP_0_1', '0-1 years', 'Fresher / Entry-Level'] or not has_work_experience:
+                primary['program'] = 'Software & AI Engineering (Scaler Academy)'
+                primary['catalog_code'] = 'Program 1'
+                primary['track'] = 'Intermediate Track (Data Structures, Algorithms & LLD)'
+                primary['fit_tier'] = 'Best Fit (Core Engineering Foundations for AI)'
+                primary['why'] = (
+                    f"As an early-career {raw_role}, mastering core algorithmic problem-solving, data structures, "
+                    "and low-level system design (LLD) is essential before specializing in autonomous agents and frontier AI."
+                )
+                primary['guardrail'] = "Catalog Gate: Production Agentic AI engineering requires established DSA and backend coding proficiency."
+
+                fallback['program'] = 'AI & Machine Learning with Agentic AI'
+                fallback['catalog_code'] = 'Program 4'
+                fallback['track'] = 'Beginner Track (AI & Machine Learning Foundations)'
+                fallback['fit_tier'] = 'Alternative Applied AI Track'
+                fallback['why'] = "Applied foundational track covering Python, ML mathematics, and prompt-driven agentic workflows."
             else:
                 primary['program'] = 'AI & Machine Learning with Agentic AI'
                 primary['catalog_code'] = 'Program 4'
@@ -2000,9 +2174,9 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
 
                 fallback['program'] = 'Software & AI Engineering (Scaler Academy)'
                 fallback['catalog_code'] = 'Program 1'
-                fallback['track'] = 'Advanced Track (High-Level System Design & Architecture)'
+                fallback['track'] = 'Advanced Track (High-Level System Design & Architecture)' if is_senior else 'Intermediate Track (Data Structures, Algorithms & LLD)'
                 fallback['fit_tier'] = 'Alternative Product SDE Track'
-                fallback['why'] = "If you prioritize Tier-1 product SDE-2/3 roles, Academy provides High-Level System Design and concurrency."
+                fallback['why'] = "Mastering High-Level System Design and concurrency for product company SDE roles."
 
         elif inbound_cat == 'P5_DEVOPS_CLOUD':
             primary['program'] = 'DevOps, Cloud & AI Platform Engineering'
@@ -2192,29 +2366,40 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         lead_first_name = name.split()[0]
     
     # 1. Opening Dialogue
+    org_for_pitch = f"at {prev_org}" if prev_org and prev_org not in ['Current Organization', 'Not Applicable Account', 'Not Applicable', 'NA', 'N/A'] else ""
+    exp_phrase = f"with {raw_exp}" if exp_is_explicit else (org_for_pitch if org_for_pitch else "in your current role")
+    
+    is_data_role = any(k in raw_role.lower() for k in ['data scientist', 'data science', 'machine learning', 'ml engineer', 'ai engineer', 'data analyst', 'bi analyst'])
+
     if is_student:
         call_opening = (
             f"\"Hi {lead_first_name}, I saw that you're currently {raw_role} ({raw_exp}). "
             "Many candidates at this stage want to build ironclad fundamentals in programming and algorithmic problem solving "
             "so they stand out in product company recruitment. What is the main career milestone you're aiming for?\""
         )
+    elif is_data_role:
+        call_opening = (
+            f"\"Hi {lead_first_name}, I saw you're currently working as a {raw_role} {exp_phrase}. "
+            "Many data professionals at this career stage look to move beyond routine reporting and models into building end-to-end "
+            "production ML pipelines and deep learning systems. What specific career milestone are you aiming to hit over the next 6 to 12 months?\""
+        )
     elif is_non_tech:
         call_opening = (
-            f"\"Hi {lead_first_name}, I saw that you're currently working in {raw_role} with {raw_exp} of experience. "
+            f"\"Hi {lead_first_name}, I saw that you're currently working in {raw_role} {exp_phrase}. "
             "A lot of professionals reaching out to us from non-technical backgrounds are looking to make a structured, "
             "long-term transition into tech, but are worried about coding prerequisites. "
             "What has been the main trigger behind your plan to upskill right now?\""
         )
     elif is_senior:
         call_opening = (
-            f"\"Hi {lead_first_name}, I noticed you've been working as a {raw_role} with {raw_exp} of experience. "
+            f"\"Hi {lead_first_name}, I noticed you've been working as a {raw_role} {exp_phrase}. "
             "At your seniority, most engineers aren't looking for basic tutorials - they're looking to master large-scale "
             "system architecture, high-level design, and lead engineering teams at top product companies. "
             "Is that the primary transition you're targeting?\""
         )
     else:
         call_opening = (
-            f"\"Hi {lead_first_name}, I saw you're currently working as a {raw_role} with {raw_exp} of experience. "
+            f"\"Hi {lead_first_name}, I saw you're currently working as a {raw_role} {exp_phrase}. "
             "Many engineers at this career stage feel ready to move beyond routine project tasks and crack top-tier product SDE roles. "
             "What specific career milestone are you aiming to hit over the next 6 to 12 months?\""
         )
@@ -2317,11 +2502,11 @@ def evaluate_lead_profile(lead_dict, matrix_data=None):
         'market_intelligence': prim_market,
         'academic_eligibility': {
             'status': acad_status_text if is_detected_student else 'Degree Verified',
-            'is_eligible': acad_info['is_eligible'],
+            'is_eligible': False if (is_undergrad_incomplete or edu_level == 'BELOW_GRAD') else True,
             'degree_tier': acad_info['degree_tier'],
             'is_pg': is_pg_student,
             'expected_grad_year': expected_grad_year,
-            'batch_label': acad_info['batch_label'],
-            'rationale': f"Academic Profile: {acad_info['degree_tier']}. Status: {acad_status_text}. Education background satisfies Scaler degree prerequisites."
+            'batch_label': acad_info['batch_label'] if is_detected_student else 'Graduated / Degree Verified',
+            'rationale': f"Academic Profile: {acad_info['degree_tier']}. Status: {'Degree Verified' if not is_detected_student else acad_status_text}. Education background satisfies Scaler degree prerequisites."
         }
     }

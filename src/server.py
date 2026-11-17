@@ -122,6 +122,7 @@ class SingleLeadInput(BaseModel):
     education: Optional[str] = "Graduated / Degree"
     company_type: Optional[str] = "IT Services / Technology"
     previous_org: Optional[str] = "Current Company"
+    previous_org_year: Optional[str] = ""
     program: Optional[str] = "Academy"
     set_score: Optional[str] = None
     set_status: Optional[str] = None
@@ -132,8 +133,8 @@ class CRMWebhookLead(BaseModel):
     name: Optional[str] = "Prospective Learner"
     email: str
     phone: Optional[str] = "N/A"
-    role: Optional[str] = "Software Engineer"
-    experience: Optional[str] = "2 years"
+    role: Optional[str] = "Software Professional"
+    experience: Optional[str] = "Not Specified"
     education: Optional[str] = "Graduated / Degree"
     company_type: Optional[str] = "IT Services / Technology"
     previous_org: Optional[str] = "Current Company"
@@ -279,7 +280,7 @@ async def crm_webhook(lead: CRMWebhookLead):
         'email': lead.email,
         'phone': lead.phone or "N/A",
         'role': lead.role or "Software Professional",
-        'experience': lead.experience or "2 years",
+        'experience': lead.experience or "Not Specified",
         'education': lead.education or "Graduated / Degree",
         'company type': lead.company_type or "IT Services / Technology",
         'previous org name': lead.previous_org or "Current Company",
@@ -342,6 +343,7 @@ async def evaluate_single(lead_input: SingleLeadInput):
         'education': lead_input.education or "Graduated / Degree",
         'company type': lead_input.company_type or "IT Services / Technology",
         'previous org name': lead_input.previous_org or "Current Organization",
+        'previous org year': lead_input.previous_org_year or "",
         'program': lead_input.program or "Academy",
         'set_score': single_set_score,
         'set_status': single_set_status,
@@ -399,7 +401,29 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                 mb_email = str(mb_row.get('email') or mb_row.get('Email') or q_clean).strip().lower()
                 mb_org = mb_row.get('orgname') or mb_row.get('previous org name') or ''
                 mb_role = mb_row.get('role') or mb_row.get('Role') or ''
-                mb_exp = mb_row.get('experience') or mb_row.get('Experience') or ''
+                raw_mb_exp = mb_row.get('experience') if mb_row.get('experience') is not None else mb_row.get('Experience')
+                if raw_mb_exp is not None and str(raw_mb_exp).strip() not in ['', 'None', 'nan', 'null']:
+                    mb_exp_clean = str(raw_mb_exp).strip()
+                    try:
+                        exp_num = float(mb_exp_clean)
+                        # In Metabase temp.marketing_mis, the experience column is stored as total MONTHS
+                        # (Common multiples: 6, 12, 18, 24, 30, 36, 48, 60, 72, 84, 96, 108, 120, etc.)
+                        # Values >= 6 are treated as months unless they are an unrealistic number (> 480 mos = 40 yrs)
+                        if 6.0 <= exp_num <= 480.0:
+                            years_val = round(exp_num / 12.0, 1)
+                            mb_exp = f"{int(years_val) if years_val.is_integer() else years_val} yrs ({int(exp_num)} mos)"
+                        elif exp_num > 480.0:
+                            # Garbled number in MIS (e.g. phone number or timestamp passed into exp)
+                            mb_exp = "Not Specified"
+                        elif 0.0 < exp_num < 6.0:
+                            # 1 to 5: could be months or years; express clearly
+                            mb_exp = f"{int(exp_num) if exp_num.is_integer() else exp_num} yrs"
+                        else:
+                            mb_exp = "0 years"
+                    except ValueError:
+                        mb_exp = mb_exp_clean
+                else:
+                    mb_exp = ''
                 mb_comp = mb_row.get('company_type') or mb_row.get('Company Type') or ''
 
                 normalized_lead = {
@@ -407,7 +431,7 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                     'email': mb_email,
                     'phone': str(mb_row.get('phone') or mb_row.get('Phone') or 'N/A'),
                     'role': mb_role,
-                    'experience': str(mb_exp) if mb_exp else '',
+                    'experience': mb_exp,
                     'education': mb_row.get('education') or mb_row.get('Education') or 'Graduated / Degree',
                     'company type': mb_comp,
                     'previous org name': mb_org,
@@ -445,7 +469,9 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
                 save_evaluated_lead(eval_res, source="METABASE_LIVE")
                 return {"status": "success", "source": "metabase_live", "lead": eval_res}
         except Exception as e:
-            pass
+            print(f"[MIS Lookup Error] {e}")
+            import traceback
+            traceback.print_exc()
         return {"status": "not_found", "message": f"No record found in Marketing MIS matching '{q}'."}
 
     # 2. General CRM / Search lookup (checks RAM & local database)
@@ -462,15 +488,22 @@ async def lookup_lead(q: str, scope: Optional[str] = None):
     if db_lead:
         return {"status": "success", "source": "crm_database", "lead": db_lead}
 
+    # 3. Fallback: If not found in cache/db and query looks like an email or phone, check live Marketing MIS
+    if "@" in q_clean or (q_clean.replace("+", "").replace("-", "").isdigit() and len(q_clean) >= 10):
+        try:
+            return await lookup_lead(q=q, scope="mis")
+        except Exception:
+            pass
+
     return {"status": "not_found", "message": f"No lead found in CRM matching '{q}'."}
 
 class AppendLeadInput(BaseModel):
     name: str = "Prospective Learner"
     email: str
     phone: Optional[str] = "N/A"
-    role: str = "Software Engineer"
-    experience: str = "2 years"
-    education: Optional[str] = "B.Tech CSE"
+    role: str = "Software Professional"
+    experience: str = "Not Specified"
+    education: Optional[str] = "Graduated / Degree"
     company_type: Optional[str] = "IT Services / Technology"
     previous_org: Optional[str] = "Current Company"
     program: Optional[str] = "Academy"

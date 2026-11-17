@@ -3521,7 +3521,7 @@
             <div style="font-weight: 700; color: #0f172a; font-size: 12.5px; line-height: 1.3;">${p.role || 'Not Specified'}</div>
             <div style="font-size: 11px; color: #475569; margin-top: 4px;">
               ${p.previous_org ? `<div><span style="color: #94a3b8; font-weight: 600;">Org:</span> <b style="color: #1e293b;">${p.previous_org}</b></div>` : ''}
-              ${p.experience ? `<div><span style="color: #94a3b8; font-weight: 600;">Exp:</span> <b style="color: #1e293b;">${p.experience}</b></div>` : ''}
+              ${p.experience ? `<div><span style="color: #94a3b8; font-weight: 600;">Exp:</span> <b style="${(p.experience.includes('Not Specified') || p.experience.includes('Inferred')) ? 'color: #b45309; font-weight: 600;' : 'color: #1e293b;'}">${p.experience.includes('Not Specified') ? 'Not Specified' : p.experience}</b></div>` : ''}
             </div>
           </td>
           <td style="vertical-align: middle;">
@@ -3891,7 +3891,14 @@
       document.getElementById('modal-org').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.previous_org}</div>`;
       document.getElementById('modal-org').title = p.previous_org;
 
-      document.getElementById('modal-exp').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.experience}</div>`;
+      let expDisplayHtml = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.experience}</div>`;
+      if (p.experience && (p.experience.includes('Not Specified') || p.experience.includes('Unspecified') || p.experience.includes('Inferred'))) {
+        expDisplayHtml = `<div style="line-height:1.25;">
+          <span style="display:inline-block; font-size:11px; font-weight:700; color:#92400e; background:#fef3c7; border:1px solid #fde68a; padding:1px 6px; border-radius:4px;">Not Specified</span>
+          <div style="font-size:10px; color:#64748b; font-weight:600; margin-top:2px;">(Calibrated: 1–2 yrs baseline)</div>
+        </div>`;
+      }
+      document.getElementById('modal-exp').innerHTML = expDisplayHtml;
       document.getElementById('modal-exp').title = p.experience;
 
       document.getElementById('modal-edu').innerHTML = `<div style="font-weight:700; color:#0f172a; line-height:1.25;">${p.education || 'Graduated / Degree'}</div>`;

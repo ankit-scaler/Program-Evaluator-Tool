@@ -184,10 +184,21 @@ def process_leads_dataframe(df, include_export_df=False):
                         has_month = any(m in raw_exp_str for m in ['month', 'mo', 'mth'])
                         has_year = any(y in raw_exp_str for y in ['year', 'yr'])
                         if num_val > 0:
-                            # Only divide by 12 if explicitly stated in months, or if num_val > 36 without explicit year
-                            if (has_month and not has_year) or (num_val > 36 and not has_year):
+                            # In Marketing MIS / CRM, numeric experience is typically logged in total months
+                            # (multiples of 6, 12, 18, 24, 36, 48, 60, etc.)
+                            if has_month and not has_year:
                                 exp_years = round(num_val / 12.0, 1)
                                 exp_display = f"{exp_years} yrs ({int(num_val)} mos)"
+                            elif has_year and not has_month:
+                                exp_years = num_val
+                                exp_display = f"{num_val} yrs"
+                            elif num_val >= 6.0 and num_val <= 480.0:
+                                # When bare integer >= 6, it represents months in Marketing MIS
+                                exp_years = round(num_val / 12.0, 1)
+                                exp_display = f"{exp_years} yrs ({int(num_val)} mos)"
+                            elif num_val > 480.0:
+                                exp_years = 1.0
+                                exp_display = "Not Specified"
                             else:
                                 exp_years = num_val
                                 exp_display = f"{num_val} yrs"
@@ -203,10 +214,15 @@ def process_leads_dataframe(df, include_export_df=False):
         is_senior_role = any(k in raw_role.lower() for k in ['leadership', 'director', 'vp', 'manager', 'head of', 'architect', 'principal'])
         is_entry_role = any(k in raw_role.lower() for k in ['student', 'intern', 'learner', 'fresher', 'non coder', 'college'])
 
-        if exp_years is None or (raw_exp is None and exp_years == 0.0):
+        if exp_years is None or exp_years == 0.0:
             if is_senior_role:
-                exp_years = 7.0
-                exp_display = "7+ yrs (Senior Profile)"
+                if grad_year is not None and grad_year <= 2024:
+                    inferred_yoe = max(7, CURRENT_YEAR - grad_year)
+                    exp_years = float(inferred_yoe)
+                    exp_display = f"{inferred_yoe} yrs (Batch {grad_year})"
+                else:
+                    exp_years = 7.0
+                    exp_display = "7+ yrs (Senior Profile)"
                 data_quality_flags.append("experience_inferred_from_title")
             elif is_entry_role:
                 exp_years = 0.0
@@ -214,15 +230,23 @@ def process_leads_dataframe(df, include_export_df=False):
                 data_quality_flags.append("experience_inferred_from_title")
             elif grad_year is not None:
                 if grad_year >= 2025:
-                    exp_years = 0.0
-                    exp_display = f"Fresher (Batch {grad_year})"
-                    if not raw_role or raw_role.lower() in ['learner', 'other']:
-                        raw_role = "College Student"
+                    if cand_org not in ['Independent / Transitioning', 'College / University', 'Student'] and not any(k in cand_org.lower() for k in ['student', 'learner', 'college', 'university', 'campus']):
+                        exp_years = 1.0
+                        exp_display = f"Junior / Associate (Batch {grad_year})"
+                    else:
+                        exp_years = 0.0
+                        exp_display = f"Fresher (Batch {grad_year})"
+                        if not raw_role or raw_role.lower() in ['learner', 'other']:
+                            raw_role = "College Student"
                 else:
-                    inferred_yoe = max(0, CURRENT_YEAR - grad_year)
+                    inferred_yoe = max(1, CURRENT_YEAR - grad_year)
                     exp_years = float(inferred_yoe)
                     exp_display = f"{inferred_yoe} yrs (Batch {grad_year})"
                 data_quality_flags.append("experience_inferred_from_grad_year")
+            elif cand_org not in ['Independent / Transitioning', 'College / University', 'Student'] and not any(k in cand_org.lower() for k in ['student', 'learner', 'college', 'university', 'campus']):
+                exp_years = 2.0
+                exp_display = "Not Specified (Inferred 1-2 yrs)"
+                data_quality_flags.append("experience_not_specified")
             elif is_beginner_event:
                 exp_years = 0.0
                 exp_display = "Fresher / Learner"
@@ -234,9 +258,13 @@ def process_leads_dataframe(df, include_export_df=False):
                 exp_display = "6+ yrs (Senior Profile)"
                 data_quality_flags.append("experience_inferred_from_title")
             else:
-                exp_years = 2.0
-                exp_display = "2 yrs (Estimated)"
-                data_quality_flags.append("experience_estimated_default")
+                if raw_exp is not None and (raw_exp == 0 or str(raw_exp).strip() in ['0', '0.0']):
+                    exp_years = 0.0
+                    exp_display = "0 years (Fresher / Entry-Level)"
+                else:
+                    exp_years = 2.0
+                    exp_display = "Not Specified (Inferred 1-2 yrs)"
+                    data_quality_flags.append("experience_not_specified")
 
         if not raw_role:
             if exp_years == 0.0:

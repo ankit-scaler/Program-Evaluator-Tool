@@ -60,6 +60,43 @@ def get_session_token(base_url: str, username: str, password: str, timeout: int 
         logger.error(f"Metabase session authentication failed: {e}")
     return None
 
+
+def _refresh_and_persist_token() -> Optional[str]:
+    """
+    Auto-renews the Metabase session token using stored username+password
+    and persists the new token back to metabase_config.json so it survives restarts.
+    Returns the new token or None if credentials are missing / login fails.
+    """
+    cfg = load_metabase_config()
+    base_url = cfg.get("metabase_url", "").rstrip("/")
+    username = cfg.get("username", "").strip()
+    password = cfg.get("password", "").strip()
+
+    if not username or not password:
+        logger.warning("Cannot auto-renew Metabase token: username/password not set in metabase_config.json.")
+        return None
+
+    logger.info("Metabase session token expired — auto-renewing via username/password login...")
+    new_token = get_session_token(base_url, username, password)
+    if not new_token:
+        logger.error("Auto-renewal of Metabase session token failed.")
+        return None
+
+    # Persist new token to disk so it survives server restarts
+    try:
+        disk_cfg = {}
+        if os.path.exists(CONFIG_PATH):
+            with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
+                disk_cfg = json.load(f)
+        disk_cfg["session_token"] = new_token
+        with open(CONFIG_PATH, 'w', encoding='utf-8') as f:
+            json.dump(disk_cfg, f, indent=2)
+        logger.info("New Metabase session token persisted to metabase_config.json.")
+    except Exception as e:
+        logger.warning(f"Could not persist new Metabase token to disk: {e}")
+
+    return new_token
+
 import time
 from threading import Lock
 
@@ -113,19 +150,36 @@ def fetch_leads_from_metabase(force_refresh: bool = False) -> pd.DataFrame:
         df_result = pd.DataFrame(data)
 
     # 2. Authenticated Session Token or API Key Endpoint
-    elif session_token and card_id:
-        url = f"{base_url}/api/card/{card_id}/query/json"
-        headers = {
-            "X-Metabase-Session": session_token,
-            "Content-Type": "application/json"
-        }
-        res = requests.post(url, headers=headers, json={}, timeout=timeout)
-        res.raise_for_status()
-        data = res.json()
-        df_result = pd.DataFrame(data)
+    elif (session_token or (username and password)) and card_id:
+        url = f"{base_url}/api/card/{card_id}/query"
+        token = session_token
+        
+        # Try up to 2 times (with token auto-renewal if 401 Unauthorized occurs)
+        for attempt in range(2):
+            if not token and username and password:
+                token = _refresh_and_persist_token()
+            if not token:
+                raise PermissionError("Failed to obtain Metabase session token.")
+
+            headers = {
+                "X-Metabase-Session": token,
+                "Content-Type": "application/json"
+            }
+            res = requests.post(url, headers=headers, json={}, timeout=timeout)
+            if res.status_code in (401, 403) and attempt == 0 and username and password:
+                logger.info("Metabase bulk query returned 401/403. Auto-renewing session token...")
+                token = _refresh_and_persist_token()
+                continue
+            res.raise_for_status()
+            data = res.json()
+            rows = data.get("data", {}).get("rows", [])
+            cols = data.get("data", {}).get("cols", [])
+            col_names = [col.get("display_name", col.get("name", "unknown")) for col in cols]
+            df_result = pd.DataFrame(rows, columns=col_names)
+            break
 
     elif api_key and card_id:
-        url = f"{base_url}/api/card/{card_id}/query/json"
+        url = f"{base_url}/api/card/{card_id}/query"
         headers = {
             "x-api-key": api_key,
             "Content-Type": "application/json"
@@ -133,22 +187,10 @@ def fetch_leads_from_metabase(force_refresh: bool = False) -> pd.DataFrame:
         res = requests.post(url, headers=headers, json={}, timeout=timeout)
         res.raise_for_status()
         data = res.json()
-        df_result = pd.DataFrame(data)
-
-    # 3. Username / Password Session Authentication
-    elif username and password and card_id:
-        token = get_session_token(base_url, username, password, timeout=timeout)
-        if not token:
-            raise PermissionError("Failed to authenticate with Metabase using provided username/password.")
-        url = f"{base_url}/api/card/{card_id}/query/json"
-        headers = {
-            "X-Metabase-Session": token,
-            "Content-Type": "application/json"
-        }
-        res = requests.post(url, headers=headers, json={}, timeout=timeout)
-        res.raise_for_status()
-        data = res.json()
-        df_result = pd.DataFrame(data)
+        rows = data.get("data", {}).get("rows", [])
+        cols = data.get("data", {}).get("cols", [])
+        col_names = [col.get("display_name", col.get("name", "unknown")) for col in cols]
+        df_result = pd.DataFrame(rows, columns=col_names)
     else:
         raise ValueError("Incomplete Metabase credentials. Set 'public_uuid' OR ('card_id' + 'api_key') in metabase_config.json.")
 
@@ -162,9 +204,9 @@ def fetch_leads_from_metabase(force_refresh: bool = False) -> pd.DataFrame:
 
 def fetch_lead_by_email_from_metabase(query_str: str, force_refresh: bool = False) -> Optional[Dict[str, Any]]:
     """
-    Looks up a specific lead by email from Metabase Card 28973 using a parameterized query.
-    Cached in-memory with a 15-minute TTL to shield Metabase from high concurrency spikes.
-    Returns a normalized dictionary of the lead profile or None if not found.
+    Looks up any specific lead by email, phone, or name from Metabase temp.marketing_mis.
+    Enables looking up ANY lead out of the entire database on demand.
+    Cached in-memory with a 15-minute TTL.
     """
     if not is_metabase_configured():
         return None
@@ -187,50 +229,110 @@ def fetch_lead_by_email_from_metabase(query_str: str, force_refresh: bool = Fals
     param_id = cfg.get("email_parameter_id", "2dcd8f80-e4b6-46cf-936b-2102140cb7f2")
     timeout = cfg.get("timeout_seconds", 30)
 
-    # 1. Parameterized Metabase Query (Instant sub-second query execution)
-    if session_token and card_id:
-        try:
-            url = f"{base_url}/api/card/{card_id}/query"
-            headers = {
-                "Content-Type": "application/json",
-                "X-Metabase-Session": session_token
-            }
-            payload = {
-                "parameters": [
-                    {
-                        "id": param_id,
-                        "type": "string/=",
-                        "value": [q_clean],
-                        "target": ["dimension", ["template-tag", "email"]]
-                    }
-                ]
-            }
-            res = requests.post(url, headers=headers, json=payload, timeout=timeout)
-            if res.status_code in (200, 202):
-                data = res.json()
-                rows = data.get("data", {}).get("rows", [])
-                cols = data.get("data", {}).get("cols", [])
-                col_names = [col.get("display_name", col.get("name", "unknown")) for col in cols]
-                if rows:
-                    raw_dict = dict(zip(col_names, rows[0]))
-                    
-                    # Strictly filter and keep only the columns needed by the recommendation engine
-                    REQUIRED_COLS = {
-                        'email', 'name', 'phone', 'role', 'experience', 'orgname', 'orgyear',
-                        'company_type', 'education', 'program_type', 'which_bda_team',
-                        'test_launched_flag', 'test_passed_flag', 'event_name', 'event_type',
-                        'attended_before_payment_flag', 'duration', 'signed_up_date',
-                        'lead_created_at', 'lead_score', 'batch', 'platform', 'country_type',
-                        'event_category'
-                    }
-                    filtered_dict = {k: v for k, v in raw_dict.items() if k in REQUIRED_COLS}
-                    with _MB_CACHE_LOCK:
-                        _MB_LEAD_CACHE[q_clean] = {'data': filtered_dict, 'timestamp': now}
-                    return filtered_dict
-            elif res.status_code == 401:
-                logger.warning("Metabase session token expired (HTTP 401). Please update session_token in metabase_config.json.")
-        except Exception as e:
-            logger.warning(f"Error executing parameterized Metabase live query for '{q_clean}': {e}")
+    REQUIRED_COLS = {
+        'email', 'name', 'phone', 'role', 'experience', 'orgname', 'orgyear',
+        'company_type', 'education', 'program_type', 'which_bda_team',
+        'test_launched_flag', 'test_passed_flag', 'event_name', 'event_type',
+        'attended_before_payment_flag', 'duration', 'signed_up_date',
+        'lead_created_at', 'lead_score', 'batch', 'platform', 'country_type',
+        'event_category'
+    }
+
+    # 1. If it's an email address, first attempt parameterized card query
+    is_email = "@" in q_clean
+    if is_email and session_token and card_id:
+        for attempt in range(2):
+            try:
+                url = f"{base_url}/api/card/{card_id}/query"
+                headers = {
+                    "Content-Type": "application/json",
+                    "X-Metabase-Session": session_token
+                }
+                email_param = {
+                    "type": "string/=",
+                    "value": [q_clean],
+                    "target": ["dimension", ["template-tag", "email"]]
+                }
+                if param_id:
+                    email_param["id"] = param_id
+                payload = {"parameters": [email_param]}
+                res = requests.post(url, headers=headers, json=payload, timeout=timeout)
+                if res.status_code in (200, 202):
+                    data = res.json()
+                    rows = data.get("data", {}).get("rows", [])
+                    cols = data.get("data", {}).get("cols", [])
+                    col_names = [col.get("display_name", col.get("name", "unknown")) for col in cols]
+                    if rows:
+                        raw_dict = dict(zip(col_names, rows[0]))
+                        filtered_dict = {k: v for k, v in raw_dict.items() if k in REQUIRED_COLS}
+                        with _MB_CACHE_LOCK:
+                            _MB_LEAD_CACHE[q_clean] = {'data': filtered_dict, 'timestamp': now}
+                        return filtered_dict
+                    break
+                elif res.status_code == 401:
+                    if attempt == 0:
+                        new_token = _refresh_and_persist_token()
+                        if new_token:
+                            session_token = new_token
+                            continue
+                    break
+            except Exception as e:
+                logger.warning(f"Error querying Card 28973 for '{q_clean}': {e}")
+                break
+
+    # 2. Universal On-Demand Search: Direct native query across ANY of the 17M+ rows in temp.marketing_mis
+    # Works for ANY email, phone number, or exact name
+    clean_digits = "".join(ch for ch in q_clean if ch.isdigit())
+    safe_str = q_clean.replace("'", "''").strip()
+    
+    where_clauses = []
+    if is_email:
+        where_clauses.append(f"lower(email) = '{safe_str}'")
+    if len(clean_digits) >= 10:
+        phone_suffix = clean_digits[-10:]
+        where_clauses.append(f"phone like '%{phone_suffix}'")
+    if not is_email and len(clean_digits) < 10 and len(safe_str) >= 3:
+        where_clauses.append(f"lower(name) = '{safe_str}'")
+
+    if where_clauses:
+        sql = f"select * from temp.marketing_mis where ({' or '.join(where_clauses)}) order by signed_up_date desc limit 1"
+        for attempt in range(2):
+            try:
+                if not session_token:
+                    session_token = _refresh_and_persist_token()
+                url = f"{base_url}/api/dataset"
+                headers = {
+                    "Content-Type": "application/json",
+                    "X-Metabase-Session": session_token
+                }
+                payload = {
+                    "database": 5,
+                    "type": "native",
+                    "native": {"query": sql}
+                }
+                res = requests.post(url, headers=headers, json=payload, timeout=timeout)
+                if res.status_code in (200, 202):
+                    data = res.json()
+                    rows = data.get("data", {}).get("rows", [])
+                    cols = data.get("data", {}).get("cols", [])
+                    col_names = [col.get("display_name", col.get("name", "unknown")) for col in cols]
+                    if rows:
+                        raw_dict = dict(zip(col_names, rows[0]))
+                        filtered_dict = {k: v for k, v in raw_dict.items() if k in REQUIRED_COLS}
+                        with _MB_CACHE_LOCK:
+                            _MB_LEAD_CACHE[q_clean] = {'data': filtered_dict, 'timestamp': now}
+                        return filtered_dict
+                    break
+                elif res.status_code == 401:
+                    if attempt == 0:
+                        session_token = _refresh_and_persist_token()
+                        continue
+                    break
+            except Exception as e:
+                logger.warning(f"Universal MIS query error for '{q_clean}': {e}")
+                break
+
+    # 3. Fallback to loaded cache if available
 
     # 2. Fallback: Full table search if public or api_key configured
     try:

@@ -20,7 +20,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all application code and precomputed matrices
 COPY . .
 
+# Ensure required directories exist at build time
+RUN mkdir -p data output
+
+# Generate metabase_config.json from environment variables at container start
+# (metabase_config.json is in .gitignore so we build it dynamically)
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 EXPOSE 8000
 
-# Start server using the robust python runner
-CMD ["python", "run_app.py"]
+CMD ["/docker-entrypoint.sh"]

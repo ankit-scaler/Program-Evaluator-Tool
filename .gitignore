@@ -18,8 +18,10 @@ output/leads_store.db
 output/crm_evaluated_master.csv
 leads_store.db
 *.db
-data/
+data/*.csv
 *.csv
+# Keep data/ directory structure in git (but not CSV contents)
+!data/.gitkeep
 
 # Logs & temp files
 *.log

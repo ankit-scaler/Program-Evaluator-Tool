@@ -23,7 +23,11 @@ if __name__ == '__main__':
     print("=" * 70)
     print(">> Empirical Funnel Matrix: 13,180 records precomputed")
     print(f">> Server listening on: http://{host}:{port}")
-    workers_count = int(os.environ.get("WEB_CONCURRENCY", os.environ.get("WORKERS", 4)))
+    # On Render free/starter (<=1GB RAM), default to 1 worker to prevent OOM.
+    # Each uvicorn worker uses ~150-200MB. 4 workers = 600-800MB -> instant OOM on 512MB.
+    # Set WORKERS env var in Render dashboard to override (max 2 on 512MB, max 4 on 2GB+).
+    default_workers = 1  # Safe default for Render free tier
+    workers_count = int(os.environ.get("WEB_CONCURRENCY", os.environ.get("WORKERS", default_workers)))
     print(f">> Worker Processes: {workers_count}")
     print("=" * 70)
     uvicorn.run("src.server:app", host=host, port=port, workers=workers_count, log_level="info", timeout_keep_alive=120)

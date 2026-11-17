@@ -214,18 +214,21 @@ async def upload_csv(file: UploadFile = File(...)):
         except Exception as db_err:
             print(f"Warning during SQLite persistence: {db_err}")
         
-        # Keep all evaluated leads in memory cache for instant UI rendering and search
-        CACHED_LEADS = evaluated_all
+        # Keep only first 5000 leads in memory cache to cap RAM usage on 512MB Render instances.
+        # Remaining leads are served on-demand from SQLite via /api/leads/more
+        CACHED_LEADS = evaluated_all[:5000]
+        total_count = len(evaluated_all)
+        del evaluated_all
         gc.collect()
         
         # Return initial batch (up to 5,000 leads) in response to prevent HTTP 502 payload limit errors
         # Remaining evaluated leads stream progressively via /api/leads/more
-        initial_leads = evaluated_all[:5000]
+        initial_leads = CACHED_LEADS[:5000]
         
         return {
             "status": "success",
             "filename": file.filename,
-            "total": len(evaluated_all),
+            "total": total_count,
             "displayed": len(initial_leads),
             "leads": initial_leads,
             "curriculum_catalog": get_all_curricula_catalog()

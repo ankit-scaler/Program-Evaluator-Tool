@@ -1,0 +1,22 @@
+name: Render Keepalive Ping
+
+on:
+  schedule:
+    # Runs every 10 minutes - prevents Render free tier from spinning down
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Service
+        run: |
+          echo "Pinging https://scaler-program-evaluator.onrender.com ..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://scaler-program-evaluator.onrender.com/api/curriculum-catalog)
+          echo "Response HTTP status: $STATUS"
+          if [ "$STATUS" -eq 200 ]; then
+            echo "Service is alive and healthy!"
+          else
+            echo "Warning: Service returned status $STATUS"
+          fi

@@ -603,70 +603,151 @@ async def metabase_status():
         "has_api_key": bool(cfg.get("api_key"))
     }
 
-from fastapi.responses import Response
+from fastapi.responses import Response, StreamingResponse
+import csv as csv_module
+
+CSV_EXPORT_HEADERS = [
+    'Lead ID', 'Candidate Name', 'Email', 'Phone', 'Current Role',
+    'Total Experience', 'Education', 'Company Type', 'Previous Organization',
+    'Enquired Program', 'Primary Program', 'Primary Track', 'Primary Fit Tier',
+    'Primary Duration', 'Retention Rate (%)', 'Refund Risk (%)', 'Primary Rationale',
+    'Fallback Program', 'Fallback Track', 'Fallback Rationale',
+    'Call Opening Pitch', 'Program Pitch', 'Inbound Handling',
+    'Diagnostic SET Status', 'Diagnostic SET Score', 'Ingestion Source', 'Evaluated At'
+]
+
+def _lead_to_row(data: dict, src: str = '', dt: str = '') -> dict:
+    """Converts an evaluated lead dict to a flat export row."""
+    p = data.get('person', {})
+    prim = data.get('primary', {}) or {}
+    fall = data.get('fallback', {}) or {}
+    tp = data.get('touchpoints', {}) or {}
+    ss = data.get('sales_script', {}) or {}
+    return {
+        'Lead ID': data.get('lead_id', ''),
+        'Candidate Name': p.get('name', ''),
+        'Email': p.get('email', ''),
+        'Phone': p.get('phone', ''),
+        'Current Role': p.get('role', ''),
+        'Total Experience': p.get('experience', ''),
+        'Education': p.get('education', ''),
+        'Company Type': p.get('company_type', ''),
+        'Previous Organization': p.get('previous_org', ''),
+        'Enquired Program': p.get('enquired_program', p.get('program', 'N/A')),
+        'Primary Program': prim.get('program', ''),
+        'Primary Track': prim.get('track', ''),
+        'Primary Fit Tier': prim.get('fit_tier', ''),
+        'Primary Duration': prim.get('duration', ''),
+        'Retention Rate (%)': prim.get('retention_rate', ''),
+        'Refund Risk (%)': prim.get('refund_rate', ''),
+        'Primary Rationale': prim.get('why', ''),
+        'Fallback Program': fall.get('program', ''),
+        'Fallback Track': fall.get('track', ''),
+        'Fallback Rationale': fall.get('why', ''),
+        'Call Opening Pitch': ss.get('call_opening', ''),
+        'Program Pitch': ss.get('program_pitch', ''),
+        'Inbound Handling': ss.get('inbound_handling', ''),
+        'Diagnostic SET Status': tp.get('set_status', tp.get('sat_status', 'SET Not Attempted')),
+        'Diagnostic SET Score': tp.get('set_score', tp.get('sat_score', 'N/A')),
+        'Ingestion Source': src or data.get('source', ''),
+        'Evaluated At': dt
+    }
 
 @app.get("/api/export")
 async def export_crm_data(format: str = "csv"):
     """
-    Exports evaluated leads directly from SQLite database.
-    Supports ?format=csv or ?format=xlsx (Excel).
-    Never locks files and always reflects the most up-to-date evaluated leads.
+    Exports evaluated leads as a streaming CSV or Excel file.
+    Reads from in-memory cache first (immediate after upload),
+    then falls back to chunked SQLite reads to prevent OOM and proxy timeouts.
     """
+    global CACHED_LEADS
     format_clean = format.lower().strip()
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT evaluated_json, source, created_at FROM leads ORDER BY created_at DESC;")
-    rows = cursor.fetchall()
-    conn.close()
-    
-    if not rows:
-        raise HTTPException(status_code=404, detail="No evaluated leads available in database to export.")
-        
-    records = []
-    for row in rows:
-        try:
-            r_json = row['evaluated_json']
-            src = row['source']
-            dt = row['created_at']
-            data = json.loads(r_json)
-            p = data.get('person', {})
-            prim = data.get('primary', {})
-            fall = data.get('fallback', {})
-            tp = data.get('touchpoints', {})
-            records.append({
-                'Lead ID': data.get('lead_id', ''),
-                'Candidate Name': p.get('name', ''),
-                'Email': p.get('email', ''),
-                'Phone': p.get('phone', ''),
-                'Current Role': p.get('role', ''),
-                'Total Experience': p.get('experience', ''),
-                'Education': p.get('education', ''),
-                'Company Type': p.get('company_type', ''),
-                'Previous Organization': p.get('previous_org', ''),
-                'Enquired Program': p.get('enquired_program', p.get('program', 'N/A')),
-                'Primary Program': prim.get('program', ''),
-                'Primary Track': prim.get('track', ''),
-                'Primary Fit Tier': prim.get('fit_tier', ''),
-                'Primary Duration': prim.get('duration', ''),
-                'Retention Rate (%)': prim.get('retention_rate', ''),
-                'Refund Risk (%)': prim.get('refund_rate', ''),
-                'Primary Rationale': prim.get('why', ''),
-                'Fallback Program': fall.get('program', ''),
-                'Fallback Track': fall.get('track', ''),
-                'Fallback Rationale': fall.get('why', ''),
-                'Call Opening Pitch': data.get('sales_script', {}).get('call_opening', ''),
-                'Program Pitch': data.get('sales_script', {}).get('program_pitch', ''),
-                'Inbound Handling': data.get('sales_script', {}).get('inbound_handling', ''),
-                'Diagnostic SET Status': tp.get('set_status', tp.get('sat_status', 'SET Not Attempted')),
-                'Diagnostic SET Score': tp.get('set_score', tp.get('sat_score', 'N/A')),
-                'Ingestion Source': src,
-                'Evaluated At': dt
-            })
-        except Exception:
-            continue
-            
-    df_export = pd.DataFrame(records)
-    return create_export_response(df_export, format_clean)
+
+    # --- EXCEL: load from memory or SQLite (small-medium datasets) ---
+    if format_clean in ('xlsx', 'excel'):
+        records = []
+        if CACHED_LEADS:
+            for data in CACHED_LEADS:
+                try:
+                    records.append(_lead_to_row(data))
+                except Exception:
+                    continue
+        else:
+            conn = get_connection()
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT evaluated_json, source, created_at FROM leads ORDER BY created_at DESC;")
+                for row in cursor.fetchall():
+                    try:
+                        records.append(_lead_to_row(json.loads(row['evaluated_json']), row['source'], row['created_at']))
+                    except Exception:
+                        continue
+            finally:
+                conn.close()
+        if not records:
+            raise HTTPException(status_code=404, detail="No evaluated leads found. Please upload a CSV first.")
+        df_export = pd.DataFrame(records, columns=CSV_EXPORT_HEADERS)
+        return create_export_response(df_export, 'xlsx')
+
+    # --- CSV: true streaming generator - never loads all rows into RAM ---
+    def csv_row_generator():
+        """Yields UTF-8 BOM + header + rows from memory cache or SQLite in chunks."""
+        buf = io.StringIO()
+        writer = csv_module.DictWriter(buf, fieldnames=CSV_EXPORT_HEADERS, extrasaction='ignore', lineterminator='\n')
+        # UTF-8 BOM so Excel opens correctly
+        yield '\ufeff'
+        writer.writeheader()
+        yield buf.getvalue()
+
+        if CACHED_LEADS:
+            for data in CACHED_LEADS:
+                try:
+                    row_dict = _lead_to_row(data)
+                    buf = io.StringIO()
+                    writer = csv_module.DictWriter(buf, fieldnames=CSV_EXPORT_HEADERS, extrasaction='ignore', lineterminator='\n')
+                    writer.writerow(row_dict)
+                    yield buf.getvalue()
+                except Exception:
+                    continue
+        else:
+            # Chunked SQLite read - 500 rows at a time
+            conn = get_connection()
+            try:
+                cursor = conn.cursor()
+                offset = 0
+                chunk_size = 500
+                while True:
+                    cursor.execute(
+                        "SELECT evaluated_json, source, created_at FROM leads ORDER BY created_at DESC LIMIT ? OFFSET ?;",
+                        (chunk_size, offset)
+                    )
+                    chunk = cursor.fetchall()
+                    if not chunk:
+                        break
+                    for db_row in chunk:
+                        try:
+                            row_dict = _lead_to_row(json.loads(db_row['evaluated_json']), db_row['source'], db_row['created_at'])
+                            buf = io.StringIO()
+                            writer = csv_module.DictWriter(buf, fieldnames=CSV_EXPORT_HEADERS, extrasaction='ignore', lineterminator='\n')
+                            writer.writerow(row_dict)
+                            yield buf.getvalue()
+                        except Exception:
+                            continue
+                    offset += chunk_size
+            finally:
+                conn.close()
+
+    from datetime import date
+    filename = f"scaler_evaluated_leads_{date.today().isoformat()}.csv"
+    return StreamingResponse(
+        csv_row_generator(),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "Access-Control-Expose-Headers": "Content-Disposition",
+            "X-Content-Type-Options": "nosniff"
+        }
+    )
 
 
 def create_export_response(df_export: pd.DataFrame, format_clean: str):
